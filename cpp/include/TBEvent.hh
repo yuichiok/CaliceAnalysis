@@ -89,6 +89,8 @@ public :
    TBranch        *b_hit_isMasked;   //!
    TBranch        *b_hit_isCommissioned;   //!
 
+   TBEvent(TString tree_s);
+   TBEvent(TList *f=0);
    TBEvent(TTree *tree=0);
    virtual ~TBEvent();
    virtual Int_t    Cut(Long64_t entry);
@@ -103,6 +105,31 @@ public :
 #endif
 
 #ifdef TBEvent_cxx
+
+TBEvent::TBEvent(TString tree_s) : fChain(0) 
+{
+   TFile *f = new TFile(tree_s);
+   TTree *tree = (TTree*)f->Get("ecal");
+   //  tree->Print();
+   Init(tree);
+}
+
+TBEvent::TBEvent(TList *f) : fChain(0) 
+{
+   // if parameter tree is not specified (or zero), use a list of of files provided as input
+
+   TIter next(f);
+   TSystemFile *file;
+   TString fname;
+   while((file = (TSystemFile*)next())){
+      fname = file->GetName();
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject(fname);
+      TTree *tree=0;
+      f->GetObject("ecal",tree);
+      Init(tree);
+   }
+}
+
 TBEvent::TBEvent(TTree *tree) : fChain(0) 
 {
 // if parameter tree is not specified (or zero), connect the file
