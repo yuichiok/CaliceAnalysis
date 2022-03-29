@@ -21,10 +21,15 @@ void TBEvent::Loop()
 
       // if (Cut(ientry) < 0) continue;
 
+      if(!(jentry % 10000)){
+         cout << "(#events, cycle, spill, bcid) = (" << event << ", " << cycle << ", " << spill << ", " << bcid << ")" << "\n";
+         cout << "sum energy = " << sum_energy << "\n";
+      }
+
+      // cout << event << "\n";
 
 
 
-      
    }
 
    cout << "loop over\n";
