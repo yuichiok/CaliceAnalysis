@@ -21,6 +21,7 @@ public :
    Hists () {};
    virtual ~Hists () {};
    virtual void init();
+   virtual void writes();
 
    TH1F* h_sum_energy;
 
@@ -35,7 +36,15 @@ private :
 void Hists::init()
 {
 
-   // TH1F* h_sum_energy = new TH1F("h_sum_energy","; sum_energy; Entries",100,0,1000);
    h_sum_energy = new TH1F("h_sum_energy","; sum_energy; Entries",100,0,1000);
+
+   _TH1Fvec.push_back(h_sum_energy);
+
+}
+
+void Hists::writes()
+{
+
+   for(int h=0; h < _TH1Fvec.size(); h++) _TH1Fvec.at(h)->Write();
 
 }

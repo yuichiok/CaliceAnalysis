@@ -15,10 +15,15 @@ void TBEvent::Loop()
 
    Long64_t nentries = fChain->GetEntriesFast();
 
+
+
    Hists H;
    H.init();
 
-   int x = H.h_sum_energy->GetNbinsX();
+   TFile *MyFile = new TFile("output.root","RECREATE");
+
+   MyFile->cd();
+
 
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
@@ -26,18 +31,35 @@ void TBEvent::Loop()
       if (ientry < 0) break;
       nb = fChain->GetEntry(jentry);   nbytes += nb;
 
-      // if (Cut(ientry) < 0) continue;
+      if (Cut(ientry) < 0) continue;
 
-      if(!(jentry % 10000)){
-         cout << "(#events, cycle, spill, bcid) = (" << event << ", " << cycle << ", " << spill << ", " << bcid << ")" << "\n";
-         cout << "sum energy = " << sum_energy << "\n";
-      }
-
-      // cout << event << "\n";
+      H.h_sum_energy->Fill(sum_energy);
 
 
+      // for (int ihit = 0; ihit < nhit_len; ++ihit)
+      // {
 
-   }
+
+      //    if(hit_slab[ihit]==0) {
+
+      //    }
+      // }
+
+
+      // if(!(jentry % 1000)){
+
+
+
+         // cout << "(#events, cycle, nhit_len) = (" << event << ", " << cycle << ", " << nhit_len << ")" << "\n";
+         // cout << "sum energy = " << sum_energy << "\n";
+
+      // }
+
+
+   } // end of loop
+
+
+   H.writes();
 
    cout << "loop over\n";
 

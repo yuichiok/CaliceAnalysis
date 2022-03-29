@@ -241,9 +241,14 @@ void TBEvent::Show(Long64_t entry)
 }
 Int_t TBEvent::Cut(Long64_t entry)
 {
-// This function may be called from Loop.
-// returns  1 if entry is accepted.
-// returns -1 otherwise.
-   return 1;
+
+   int ncycles = (int)(10.0 / 0.011);
+
+   if(cycle < ncycles) {
+      return -1;
+   }else{
+      return 1;
+   }
+   
 }
 #endif // #ifdef TBEvent_cxx
