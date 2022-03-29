@@ -1,8 +1,10 @@
 #define TBEvent_cxx
-#include "../include/TBEvent.hh"
 #include <TH2.h>
 #include <TStyle.h>
 #include <TCanvas.h>
+
+#include "../include/TBEvent.hh"
+#include "../include/Hists.hh"
 
 using std::cout;
 using std::endl;
@@ -12,6 +14,11 @@ void TBEvent::Loop()
    if (fChain == 0) return;
 
    Long64_t nentries = fChain->GetEntriesFast();
+
+   Hists H;
+   H.init();
+
+   int x = H.h_sum_energy->GetNbinsX();
 
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
