@@ -22,7 +22,7 @@ void TBEvent::AnalysisLoop()
 
    TFile *MyFile = new TFile("output.root","RECREATE");
 
-   MyFile->cd();
+   // MyFile->cd();
 
    // TDirectory *cdhisto[15];
    // for(int ilayer=0; ilayer<nlayers; ilayer++) {
@@ -72,7 +72,7 @@ void TBEvent::AnalysisLoop()
    } // end of loop
 
 
-   H.writes();
+   H.writes(MyFile);
 
    cout << "loop over\n";
 
