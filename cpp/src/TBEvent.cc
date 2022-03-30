@@ -9,13 +9,11 @@
 using std::cout;
 using std::endl;
 
-void TBEvent::Loop()
+void TBEvent::AnalysisLoop()
 {
    if (fChain == 0) return;
 
    Long64_t nentries = fChain->GetEntriesFast();
-
-
 
    Hists H;
    H.init();
@@ -23,7 +21,6 @@ void TBEvent::Loop()
    TFile *MyFile = new TFile("output.root","RECREATE");
 
    MyFile->cd();
-
 
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {

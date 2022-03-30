@@ -9,7 +9,7 @@ int run(TString process="default",TString filein="default",TString fileout="defa
 	filein = "../data/3.0GeV_W_run_050282/full_run.root";
 
 	TBEvent TBEvent(filein);
-	TBEvent.Loop();
+	TBEvent.AnalysisLoop();
 
 	ROOT::Math::MinimizerOptions::SetDefaultMaxFunctionCalls( 200 );
 
