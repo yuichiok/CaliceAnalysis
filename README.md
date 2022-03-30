@@ -3,3 +3,4 @@ Personal analysis scripts for the detector analysis will go here before pushing 
 
 ## Usage
 - Symbolic link to the data should be changed to suit individual users
+- Histograms are now looped over the vector list
