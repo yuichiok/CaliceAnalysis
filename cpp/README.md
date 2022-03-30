@@ -1,7 +1,7 @@
 # CaliceAnalysis
 Personal monologue to keep track of findings
 
-#### Variables
+### Variables
 *1 variable per event*
 - `event`\
 	This is event id / cycle
@@ -70,3 +70,8 @@ Personal monologue to keep track of findings
 - `hit_isCommissioned[1949]`\
 	Is commissioned???
 
+### ROOT Tip
+- `tree->Show(n)`\
+	Check n th event
+- `tree->Print()`\
+	Check the tree stats
