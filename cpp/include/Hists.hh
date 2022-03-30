@@ -23,7 +23,12 @@ public :
    virtual void init();
    virtual void writes();
 
+   // TH1F
    TH1F* h_sum_energy;
+   
+   // TH2F
+   int nlayers = 15;
+   TH2F* h_channel_energy[nlayers];
 
 private :
    
@@ -41,6 +46,9 @@ void Hists::init()
    h_sum_energy = new TH1F("h_sum_energy","; sum_energy; Entries",100,0,1000);
 
    _TH1Fvec.push_back(h_sum_energy);
+
+   // Initialize TH2F
+   // h_channel_energy = new TH2F("h_channel_energy","; ;")
 
 }
 

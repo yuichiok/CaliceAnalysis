@@ -33,24 +33,30 @@ void TBEvent::AnalysisLoop()
       H.h_sum_energy->Fill(sum_energy);
 
 
-      // for (int ihit = 0; ihit < nhit_len; ++ihit)
-      // {
+      for (int ihit = 0; ihit < nhit_len; ++ihit)
+      {
+         if(hit_slab[ihit]==0) {
+
+         }
+         
+      }
 
 
-      //    if(hit_slab[ihit]==0) {
+      if(!(jentry % 10000)){
 
-      //    }
-      // }
+         for (int ihit = 0; ihit < nhit_len; ++ihit)
+         {
 
+            cout << hit_slab[ihit] << "=" << hit_z[ihit] << " " ;
 
-      // if(!(jentry % 1000)){
+         }
 
+         cout << endl;
 
+         cout << "(#events, cycle, nhit_len) = (" << event << ", " << cycle << ", " << nhit_len << ")" << "\n";
+         cout << "sum energy = " << sum_energy << "\n";
 
-         // cout << "(#events, cycle, nhit_len) = (" << event << ", " << cycle << ", " << nhit_len << ")" << "\n";
-         // cout << "sum energy = " << sum_energy << "\n";
-
-      // }
+      }
 
 
    } // end of loop
