@@ -9,6 +9,8 @@
 using std::cout;
 using std::endl;
 
+const bool debug = false;
+
 void TBEvent::AnalysisLoop()
 {
    if (fChain == 0) return;
@@ -21,6 +23,11 @@ void TBEvent::AnalysisLoop()
    TFile *MyFile = new TFile("output.root","RECREATE");
 
    MyFile->cd();
+
+   // TDirectory *cdhisto[15];
+   // for(int ilayer=0; ilayer<nlayers; ilayer++) {
+   //  cdhisto[ilayer] = MyFile->mkdir(TString::Format("layer_%i",ilayer));
+   // }
 
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
@@ -35,14 +42,17 @@ void TBEvent::AnalysisLoop()
 
       for (int ihit = 0; ihit < nhit_len; ++ihit)
       {
-         if(hit_slab[ihit]==0) {
 
-         }
-         
+         H.h_channel_energy[hit_slab[ihit]]->Fill(hit_x[ihit],hit_y[ihit],hit_energy[ihit]);
+
+         // if(hit_slab[ihit]==0) {
+
+         // }
+
       }
 
 
-      if(!(jentry % 10000)){
+      if(debug && !(jentry % 10000)){
 
          for (int ihit = 0; ihit < nhit_len; ++ihit)
          {

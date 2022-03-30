@@ -27,7 +27,7 @@ public :
    TH1F* h_sum_energy;
    
    // TH2F
-   int nlayers = 15;
+   const static int nlayers = 15;
    TH2F* h_channel_energy[nlayers];
 
 private :
@@ -48,6 +48,14 @@ void Hists::init()
    _TH1Fvec.push_back(h_sum_energy);
 
    // Initialize TH2F
+   for (int islab = 0; islab < nlayers; ++islab)
+   {
+      TString layer = std::to_string(islab);
+      TString histname = TString::Format("h_channel_energy_layer%s",layer.Data());
+      h_channel_energy[islab] = new TH2F(histname,"; x;y",32,-90,90,32,-90,90);
+      _TH2Fvec.push_back(h_channel_energy[islab]);
+   }
+
    // h_channel_energy = new TH2F("h_channel_energy","; ;")
 
 }
