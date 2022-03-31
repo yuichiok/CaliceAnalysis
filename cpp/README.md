@@ -75,3 +75,8 @@ Personal monologue to keep track of findings
 	Check n th event
 - `tree->Print()`\
 	Check the tree stats
+
+### Thought 03/31/2022
+- Energy is calculated as:\
+	`(hit_hg[hit] - ped) / mip`\
+	where `ped` and `mip` are the one that corresponds to the hit channel.
