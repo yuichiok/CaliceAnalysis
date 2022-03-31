@@ -1,10 +1,3 @@
-//////////////////////////////////////////////////////////
-// This class has been automatically generated on
-// Tue Mar 29 16:00:30 2022 by ROOT version 6.24/06
-// from TTree ecal/Build ecal events
-// found on file: ../data/3.0GeV_W_run_050282/full_run.root
-//////////////////////////////////////////////////////////
-
 #ifndef Hists_h
 #define Hists_h
 
@@ -23,16 +16,25 @@ public :
    virtual void init();
    virtual void writes(TFile* file);
 
+   // Hist Event
    // TH1F
    TH1F* h_sum_energy;
    
-   // TH2F
+
+   // Hist Layer
    const static int nlayers = 15;
-   std::array<TH2F*, nlayers> h_channel_energy;
+
+   // TH1F
+   std::array<TH1F*, nlayers> hL_hitrate;
+
+   // TH2F
+   std::array<TH2F*, nlayers> hL_channel_energy;
 
 private :
    
    std::vector<TH1F*> _TH1Fvec;
+
+   std::vector<std::array<TH1F*, nlayers>> _TH1FvecL;
    std::vector<std::array<TH2F*, nlayers>> _TH2FvecL;
 
 };
@@ -51,11 +53,13 @@ void Hists::init()
    for (int ilayer = 0; ilayer < nlayers; ++ilayer)
    {
       TString layer = std::to_string(ilayer);
-      TString histname = TString::Format("h_channel_energy_layer%s",layer.Data());
-      h_channel_energy[ilayer] = new TH2F(histname,"; x;y",32,-90,90,32,-90,90);
+
+      hL_hitrate[ilayer]        = new TH1F(TString::Format("hL_hitrate_layer%s",layer.Data()),"; Time (s); Hit",3600,0,3600);
+      hL_channel_energy[ilayer] = new TH2F(TString::Format("hL_channel_energy_layer%s",layer.Data()),"; x;y",32,-90,90,32,-90,90);
    }
 
-   _TH2FvecL.push_back(h_channel_energy);
+   _TH1FvecL.push_back(hL_hitrate);
+   _TH2FvecL.push_back(hL_channel_energy);
 
 }
 
@@ -77,6 +81,7 @@ void Hists::writes(TFile* file)
    {
       cdhisto[ilayer]->cd();
 
+      for(int h=0; h < _TH1FvecL.size(); h++) _TH1FvecL.at(h)[ilayer]->Write();
       for(int h=0; h < _TH2FvecL.size(); h++) _TH2FvecL.at(h)[ilayer]->Write();
 
    }

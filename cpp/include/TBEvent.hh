@@ -98,6 +98,7 @@ public :
    virtual Long64_t LoadTree(Long64_t entry);
    virtual void     Init(TTree *tree);
    virtual void     AnalysisLoop();
+   virtual float    CycleToSec(int cyc);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
 };
@@ -242,7 +243,12 @@ void TBEvent::Show(Long64_t entry)
 Int_t TBEvent::Cut(Long64_t entry)
 {
 
-   int ncycles = (int)(10.0 / 0.011);
+   float CutTime     = 10.0;
+   float aq_sec      = 0.001;
+   float aqdelay_sec = 0.01;
+   float spc = aq_sec + aqdelay_sec;
+
+   int ncycles = (int)(CutTime / spc);
 
    if(cycle < ncycles) {
       return -1;
