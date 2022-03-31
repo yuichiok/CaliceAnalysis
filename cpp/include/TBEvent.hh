@@ -243,7 +243,7 @@ void TBEvent::Show(Long64_t entry)
 Int_t TBEvent::Cut(Long64_t entry)
 {
 
-   float CutTime     = 10.0;
+   float CutTime     = 300.0;
    float aq_sec      = 0.001;
    float aqdelay_sec = 0.01;
    float spc = aq_sec + aqdelay_sec;

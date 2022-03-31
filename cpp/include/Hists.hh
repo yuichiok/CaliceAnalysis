@@ -19,6 +19,7 @@ public :
    // Hist Event
    // TH1F
    TH1F* h_sum_energy;
+   TH1F* h_sum_energy_beam;
    
 
    // Hist Layer
@@ -26,6 +27,9 @@ public :
 
    // TH1F
    std::array<TH1F*, nlayers> hL_hitrate;
+
+   std::array<TH1F*, nlayers> hL_hg_beam;
+   std::array<TH1F*, nlayers> hL_energy_beam;
 
    // TH2F
    std::array<TH2F*, nlayers> hL_channel_energy;
@@ -45,20 +49,29 @@ void Hists::init()
 {
 
    // Initialize TH1F
-   h_sum_energy = new TH1F("h_sum_energy","; sum_energy; Entries",100,0,1000);
+   h_sum_energy    = new TH1F("h_sum_energy","; sum_energy; Entries",100,0,1000);
+   h_sum_energy_beam = new TH1F("h_sum_energy_beam","; sum_energy_beam; Entries",100,0,1000);
 
    _TH1Fvec.push_back(h_sum_energy);
+   _TH1Fvec.push_back(h_sum_energy_beam);
 
    // Initialize TH2F
    for (int ilayer = 0; ilayer < nlayers; ++ilayer)
    {
       TString layer = std::to_string(ilayer);
 
-      hL_hitrate[ilayer]        = new TH1F(TString::Format("hL_hitrate_layer%s",layer.Data()),"; Time (s); Hit",3600,0,3600);
+      hL_hitrate[ilayer]     = new TH1F(TString::Format("hL_hitrate_layer%s",layer.Data()),"; Time (s); Hit",3600,0,3600);
+      hL_hg_beam[ilayer]       = new TH1F(TString::Format("hL_hg_beam_layer%s",layer.Data()),"; High Gain; Hit",300,0,3E3);
+      hL_energy_beam[ilayer]   = new TH1F(TString::Format("hL_energy_beam_layer%s",layer.Data()),"; Energy ((HG-Ped)/MIP); Hit",400,0,40);
+
       hL_channel_energy[ilayer] = new TH2F(TString::Format("hL_channel_energy_layer%s",layer.Data()),"; x;y",32,-90,90,32,-90,90);
    }
 
    _TH1FvecL.push_back(hL_hitrate);
+   
+   _TH1FvecL.push_back(hL_hg_beam);
+   _TH1FvecL.push_back(hL_energy_beam);
+
    _TH2FvecL.push_back(hL_channel_energy);
 
 }
