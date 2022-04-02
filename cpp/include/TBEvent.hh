@@ -91,7 +91,6 @@ public :
 
    TBEvent(TString tree_s);
    TBEvent(TList *f=0);
-   TBEvent(TTree *tree=0);
    virtual ~TBEvent();
    virtual Int_t    Cut(Long64_t entry);
    virtual Int_t    GetEntry(Long64_t entry);
@@ -99,6 +98,7 @@ public :
    virtual void     Init(TTree *tree);
    virtual void     AnalysisLoop();
    virtual float    CycleToSec(int cyc);
+   virtual void     Debug(bool debug, Long64_t entry);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
 };
@@ -129,21 +129,6 @@ TBEvent::TBEvent(TList *f) : fChain(0)
       f->GetObject("ecal",tree);
       Init(tree);
    }
-}
-
-TBEvent::TBEvent(TTree *tree) : fChain(0) 
-{
-// if parameter tree is not specified (or zero), connect the file
-// used to generate this class and read the Tree.
-   if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("../data/3.0GeV_W_run_050282/full_run.root");
-      if (!f || !f->IsOpen()) {
-         f = new TFile("../data/3.0GeV_W_run_050282/full_run.root");
-      }
-      f->GetObject("ecal",tree);
-
-   }
-   Init(tree);
 }
 
 TBEvent::~TBEvent()
