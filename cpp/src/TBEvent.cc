@@ -74,9 +74,6 @@ void TBEvent::AnalysisLoop()
       // Playground
       Debug(debug,jentry);
 
-
-
-
    } // end of loop
 
 

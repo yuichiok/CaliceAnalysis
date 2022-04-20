@@ -69,9 +69,9 @@ void Hists::init()
    {
       TString layer = std::to_string(ilayer);
 
-      hL_hitrate[ilayer]     = new TH1F(TString::Format("hL_hitrate_layer%s",layer.Data()),"; Time (s); Hit",3600,0,3600);
-      hL_hg_beam[ilayer]       = new TH1F(TString::Format("hL_hg_beam_layer%s",layer.Data()),"; High Gain; Hit",300,0,3E3);
-      hL_energy_beam[ilayer]   = new TH1F(TString::Format("hL_energy_beam_layer%s",layer.Data()),"; Energy ((HG-Ped)/MIP); Hit",400,0,40);
+      hL_hitrate[ilayer]      = new TH1F(TString::Format("hL_hitrate_layer%s",layer.Data()),"; Time (s); Hit",3600,0,3600);
+      hL_hg_beam[ilayer]      = new TH1F(TString::Format("hL_hg_beam_layer%s",layer.Data()),"; High Gain; Hit",300,0,3E3);
+      hL_energy_beam[ilayer]  = new TH1F(TString::Format("hL_energy_beam_layer%s",layer.Data()),"; Energy ((HG-Ped)/MIP); Hit",400,0,40);
 
       hL_xy_energy[ilayer] = new TH2F(TString::Format("hL_xy_energy_layer%s",layer.Data()),"; x;y",32,-90,90,32,-90,90);
       hL_xy_energy_beam[ilayer] = new TH2F(TString::Format("hL_xy_energy_beam_layer%s",layer.Data()),"; x;y",32,-90,90,32,-90,90);
