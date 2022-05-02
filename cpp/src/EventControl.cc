@@ -1,13 +1,17 @@
+#define EventControl_cxx
 #include "../include/EventControl.hh"
+#include <TH2.h>
+#include <TStyle.h>
+#include <TCanvas.h>
 
-void EventControl(){
+void EventControl::ProcessEvents(bool debug=false){
 
-	TString filename = "/home/calice/Work/TBData/ascii/3GeVMIPscan_run_050043/Run_Settings.txt";
+   if (fChain == 0) return;
+   Long64_t nentries = fChain->GetEntriesFast();
 
-	read_file(filename);
+   cout << "nentries = " << nentries << "\n";
 
-	cout << "aq win = " << detector.acq_window << endl;
-	cout << "aq win = " << detector.acq_delay  << endl;
+   // for (Long64_t jentry=0; jentry<nentries;jentry++) {
 
-
+   // }
 }
