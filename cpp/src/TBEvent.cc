@@ -20,7 +20,7 @@ void TBEvent::AnalysisLoop()
    Hists H;
    H.init();
 
-   TFile *MyFile = new TFile("output.root","RECREATE");
+   TFile *MyFile = new TFile("rootfiles/output.root","RECREATE");
 
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
@@ -44,7 +44,7 @@ void TBEvent::AnalysisLoop()
          // if(hit_chan[ihit]==63){
          // if( -50.0 < hit_x[ihit] && hit_x[ihit] < -23.0 && -50.0 < hit_y[ihit] && hit_y[ihit] < -23.0 ){
          if( (beam_spotX + beam_spotY) < 28.0*28.0 ){
-            H.hL_hg_beam[hit_slab[ihit]]->Fill(hit_hg[ihit]);
+            H.hL_hg_beam[hit_slab[ihit]]->Fill(hit_adc_high[ihit]);
             H.hL_energy_beam[hit_slab[ihit]]->Fill(hit_energy[ihit]);
 
             H.hL_xy_energy_beam[hit_slab[ihit]]->Fill(hit_x[ihit],hit_y[ihit],hit_energy[ihit]);

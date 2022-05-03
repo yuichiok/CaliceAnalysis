@@ -28,32 +28,29 @@ public :
    Int_t           bcid;
    Int_t           bcid_first_sca_full;
    Int_t           bcid_merge_end;
-   Int_t           bcid_prev;
-   Int_t           bcid_next;
    Int_t           id_run;
    Int_t           id_dat;
    Int_t           nhit_slab;
    Int_t           nhit_chip;
    Int_t           nhit_chan;
    Int_t           nhit_len;
-   Float_t         sum_hg;
    Float_t         sum_energy;
    Float_t         sum_energy_lg;
-   Int_t           hit_slab[1949];   //[nhit_len]
-   Int_t           hit_chip[1949];   //[nhit_len]
-   Int_t           hit_chan[1949];   //[nhit_len]
-   Int_t           hit_sca[1949];   //[nhit_len]
-   Float_t         hit_x[1949];   //[nhit_len]
-   Float_t         hit_y[1949];   //[nhit_len]
-   Float_t         hit_z[1949];   //[nhit_len]
-   Int_t           hit_hg[1949];   //[nhit_len]
-   Int_t           hit_lg[1949];   //[nhit_len]
-   Float_t         hit_energy[1949];   //[nhit_len]
-   Float_t         hit_energy_lg[1949];   //[nhit_len]
-   Int_t           hit_n_scas_filled[1949];   //[nhit_len]
-   Int_t           hit_isHit[1949];   //[nhit_len]
-   Int_t           hit_isMasked[1949];   //[nhit_len]
-   Int_t           hit_isCommissioned[1949];   //[nhit_len]
+   Int_t           hit_slab[414];   //[nhit_len]
+   Int_t           hit_chip[414];   //[nhit_len]
+   Int_t           hit_chan[414];   //[nhit_len]
+   Int_t           hit_sca[414];   //[nhit_len]
+   Float_t         hit_x[414];   //[nhit_len]
+   Float_t         hit_y[414];   //[nhit_len]
+   Float_t         hit_z[414];   //[nhit_len]
+   Int_t           hit_adc_high[414];   //[nhit_len]
+   Int_t           hit_adc_low[414];   //[nhit_len]
+   Float_t         hit_energy[414];   //[nhit_len]
+   Float_t         hit_energy_lg[414];   //[nhit_len]
+   Int_t           hit_n_scas_filled[414];   //[nhit_len]
+   Int_t           hit_isHit[414];   //[nhit_len]
+   Int_t           hit_isMasked[414];   //[nhit_len]
+   Int_t           hit_isCommissioned[414];   //[nhit_len]
 
    // List of branches
    TBranch        *b_event;   //!
@@ -62,15 +59,12 @@ public :
    TBranch        *b_bcid;   //!
    TBranch        *b_bcid_first_sca_full;   //!
    TBranch        *b_bcid_merge_end;   //!
-   TBranch        *b_bcid_prev;   //!
-   TBranch        *b_bcid_next;   //!
    TBranch        *b_id_run;   //!
    TBranch        *b_id_dat;   //!
    TBranch        *b_nhit_slab;   //!
    TBranch        *b_nhit_chip;   //!
    TBranch        *b_nhit_chan;   //!
    TBranch        *b_nhit_len;   //!
-   TBranch        *b_sum_hg;   //!
    TBranch        *b_sum_energy;   //!
    TBranch        *b_sum_energy_lg;   //!
    TBranch        *b_hit_slab;   //!
@@ -80,8 +74,8 @@ public :
    TBranch        *b_hit_x;   //!
    TBranch        *b_hit_y;   //!
    TBranch        *b_hit_z;   //!
-   TBranch        *b_hit_hg;   //!
-   TBranch        *b_hit_lg;   //!
+   TBranch        *b_hit_adc_high;   //!
+   TBranch        *b_hit_adc_low;   //!
    TBranch        *b_hit_energy;   //!
    TBranch        *b_hit_energy_lg;   //!
    TBranch        *b_hit_n_scas_filled;   //!
@@ -178,15 +172,12 @@ void TBEvent::Init(TTree *tree)
    fChain->SetBranchAddress("bcid", &bcid, &b_bcid);
    fChain->SetBranchAddress("bcid_first_sca_full", &bcid_first_sca_full, &b_bcid_first_sca_full);
    fChain->SetBranchAddress("bcid_merge_end", &bcid_merge_end, &b_bcid_merge_end);
-   fChain->SetBranchAddress("bcid_prev", &bcid_prev, &b_bcid_prev);
-   fChain->SetBranchAddress("bcid_next", &bcid_next, &b_bcid_next);
    fChain->SetBranchAddress("id_run", &id_run, &b_id_run);
    fChain->SetBranchAddress("id_dat", &id_dat, &b_id_dat);
    fChain->SetBranchAddress("nhit_slab", &nhit_slab, &b_nhit_slab);
    fChain->SetBranchAddress("nhit_chip", &nhit_chip, &b_nhit_chip);
    fChain->SetBranchAddress("nhit_chan", &nhit_chan, &b_nhit_chan);
    fChain->SetBranchAddress("nhit_len", &nhit_len, &b_nhit_len);
-   fChain->SetBranchAddress("sum_hg", &sum_hg, &b_sum_hg);
    fChain->SetBranchAddress("sum_energy", &sum_energy, &b_sum_energy);
    fChain->SetBranchAddress("sum_energy_lg", &sum_energy_lg, &b_sum_energy_lg);
    fChain->SetBranchAddress("hit_slab", hit_slab, &b_hit_slab);
@@ -196,8 +187,8 @@ void TBEvent::Init(TTree *tree)
    fChain->SetBranchAddress("hit_x", hit_x, &b_hit_x);
    fChain->SetBranchAddress("hit_y", hit_y, &b_hit_y);
    fChain->SetBranchAddress("hit_z", hit_z, &b_hit_z);
-   fChain->SetBranchAddress("hit_hg", hit_hg, &b_hit_hg);
-   fChain->SetBranchAddress("hit_lg", hit_lg, &b_hit_lg);
+   fChain->SetBranchAddress("hit_adc_high", hit_adc_high, &b_hit_adc_high);
+   fChain->SetBranchAddress("hit_adc_low", hit_adc_low, &b_hit_adc_low);
    fChain->SetBranchAddress("hit_energy", hit_energy, &b_hit_energy);
    fChain->SetBranchAddress("hit_energy_lg", hit_energy_lg, &b_hit_energy_lg);
    fChain->SetBranchAddress("hit_n_scas_filled", hit_n_scas_filled, &b_hit_n_scas_filled);
