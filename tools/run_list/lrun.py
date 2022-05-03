@@ -2,34 +2,60 @@ import csv
 import numpy as np
 import os
 import subprocess as sb
-# import matplotlib.pyplot as plt
 import ROOT
+import collections
 
+options = {
+	2  : 0, # 0.8 pF
+	3  : 1, # 1.2 pF
+	4  : 2, # 1.6 pF
+	5  : 3, # 0.8 & 1.2 pF
+	15 : 4, # 6.0 pF
+	20 : 5  # 0.8 & 1.2 & 6.0 pF
+}
 
 directory='/eos/project-s/siw-ecal/TB2022-03/beamData/ascii/'
 
-token=0
 
-for runname in os.listdir(directory):
+with open('tmp1.csv', 'w') as outfile1:
 
-	run_setting = os.path.join(directory, runname, "Run_Settings.txt")
+	writer_tmp = csv.writer(outfile1, delimiter=",")
 
-	if os.path.isfile(run_setting):
-		token+=1
+	for runname in os.listdir(directory):
 
-		reader = csv.reader(open(run_setting,"r"), delimiter=" ")
+		run_setting = os.path.join(directory, runname, "Run_Settings.txt")
 
-		for i, line in enumerate(reader):
+		inputs = []
+		FCs=[]
 
-			if 'FeedbackCap:' in line:
-				flg = line.index('FeedbackCap:')
-				int(line[flg+1])
+		if os.path.isfile(run_setting):
 
-		if token>0:
-			break
+			reader = csv.reader(open(run_setting,"r"), delimiter=" ")
+
+			for i, line in enumerate(reader):
+
+				if 'FeedbackCap:' in line:
+					flg = line.index('FeedbackCap:')
+					FCs.append(int(line[flg+1]))
+
+			var = set(FCs)
+			add = 0
+			for i in var: add += i
+			# print(add)
+			# print(options[add])
+
+			runnameID = runname.split("_")
+			runID = runnameID[-1]
+			# print(runID)
+
+			inputs.append(runID)
+			inputs.append(runname)
+			inputs.append(options[add])
+
+			writer_tmp.writerow(inputs)
 
 
-# sb.run(["grep","-r","'FeedbackCap:'","~/siw-ecal/TB2022-03/beamData/ascii/3GeV_MIPscan_eudaq_run_050489/Run_Settings.txt"])
+
 
 
 
