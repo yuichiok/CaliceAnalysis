@@ -6,9 +6,30 @@ import subprocess as sb
 import ROOT
 
 
+directory='/eos/project-s/siw-ecal/TB2022-03/beamData/ascii/'
+
+token=0
+
+for runname in os.listdir(directory):
+
+	run_setting = os.path.join(directory, runname, "Run_Settings.txt")
+
+	if os.path.isfile(run_setting):
+		token+=1
+
+		reader = csv.reader(open(run_setting,"r"), delimiter=" ")
+
+		for i, line in enumerate(reader):
+
+			if 'FeedbackCap:' in line:
+				flg = line.index('FeedbackCap:')
+				int(line[flg+1])
+
+		if token>0:
+			break
 
 
-sb.run(["grep","-r","'FeedbackCap:'","~/siw-ecal/TB2022-03/beamData/ascii/3GeV_MIPscan_eudaq_run_050489/Run_Settings.txt"])
+# sb.run(["grep","-r","'FeedbackCap:'","~/siw-ecal/TB2022-03/beamData/ascii/3GeV_MIPscan_eudaq_run_050489/Run_Settings.txt"])
 
 
 
