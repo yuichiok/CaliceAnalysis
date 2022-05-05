@@ -11,6 +11,8 @@ int run(TString process="default",TString filein="default",TString fileout="defa
 	filein = "../data/3GeV_MIPscan_eudaq_run_050480/full_run.root"; // *
 	// filein = "../data/3GeV_MIPscan_eudaq_run_050470/full_run.root";
 
+	filein = "../../download/3GeV_MIPscan_eudaq/3GeV_MIPscan_eudaq_run_050480_build.root";
+
 	TBEvent TBEvent(filein);
 	TBEvent.AnalysisLoop();
 
