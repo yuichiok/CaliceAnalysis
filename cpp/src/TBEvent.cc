@@ -117,30 +117,55 @@ void TBEvent::Ana_Eff()
 
       if (not_conseq) continue;
 
-      float sum_energy_layer[15] = {0};
+      float sum_energy_beam             = 0;
+      float sum_energy_nobeam           = 0;
+
+      float sum_energy_layer[15]        = {0};
+      float sum_energy_layer_beam[15]   = {0};
+      float sum_energy_layer_nobeam[15] = {0};
 
       for (int ihit=0; ihit<nhit_len; ihit++){
 
-         // choosing reference slab
-         if(hit_slab[ihit]==7){
+         float beam_spotX = (hit_x[ihit] + 20.0)*(hit_x[ihit] + 20.0);
+         float beam_spotY = (hit_y[ihit] + 15.0)*(hit_y[ihit] + 15.0);
+
+         if( (beam_spotX + beam_spotY) < 28.0*28.0 ){ // IN beam spot
+
+            H.hL_xy_energy_beam[hit_slab[ihit]]->Fill(hit_x[ihit],hit_y[ihit],hit_energy[ihit]);
+            sum_energy_layer_beam[hit_slab[ihit]] += hit_energy[ihit];
+            sum_energy_beam += hit_energy[ihit];
+
+         }else{ // OUT beam spot
+
+            sum_energy_layer_nobeam[hit_slab[ihit]] += hit_energy[ihit];
+            sum_energy_nobeam += hit_energy[ihit];
 
          }
 
          H.hL_xy_energy[hit_slab[ihit]]->Fill(hit_x[ihit],hit_y[ihit],hit_energy[ihit]);
+         
          sum_energy_layer[hit_slab[ihit]] += hit_energy[ihit];
 
-      }
+      } // hit loop
+
+      cout << sum_energy_layer_nobeam[6] / sum_energy_layer_nobeam[7] << endl;
+
+      H.h_sum_energy->Fill(sum_energy);
+      H.h_sum_energy_beam->Fill(sum_energy_beam);
+      H.h_sum_energy_nobeam->Fill(sum_energy_nobeam);
 
       for (int islab = 0; islab < 15; ++islab)
       {
          H.h_sum_energy_layer->Fill(sum_energy_layer[islab],islab);
+         H.h_sum_energy_layer_beam->Fill(sum_energy_layer_beam[islab],islab);
+         H.h_sum_energy_layer_nobeam->Fill(sum_energy_layer_nobeam[islab],islab);
       }
 
 
-      // Playground
+      // playground
       Debug(debug,jentry);
 
-   } // end of loop
+   } // end of event loop
 
    H.writes(MyFile);
 
