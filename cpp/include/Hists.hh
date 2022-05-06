@@ -20,8 +20,11 @@ public :
    // TH1F
    TH1F* h_sum_energy;
    TH1F* h_sum_energy_beam;
+   TH1F* h_sum_energy_nobeam;
 
    TH2F* h_sum_energy_layer;
+   TH2F* h_sum_energy_layer_beam;
+   TH2F* h_sum_energy_layer_nobeam;
    
 
    // Hist Layer
@@ -56,13 +59,19 @@ void Hists::init()
    // Initialize TH1F
    h_sum_energy    = new TH1F("h_sum_energy","; sum_energy; Entries",100,0,1000);
    h_sum_energy_beam = new TH1F("h_sum_energy_beam","; sum_energy_beam; Entries",100,0,1000);
+   h_sum_energy_nobeam = new TH1F("h_sum_energy_nobeam","; sum_energy_nobeam; Entries",100,0,1000);
 
    h_sum_energy_layer = new TH2F("h_sum_energy_layer","; sum_energy / layer; layer",50,0,3,15,0,15);
+   h_sum_energy_layer_beam = new TH2F("h_sum_energy_layer_beam","; sum_energy / layer; layer",50,0,3,15,0,15);
+   h_sum_energy_layer_nobeam = new TH2F("h_sum_energy_layer_nobeam","; sum_energy / layer; layer",50,0,3,15,0,15);
 
    _TH1Fvec.push_back(h_sum_energy);
    _TH1Fvec.push_back(h_sum_energy_beam);
+   _TH1Fvec.push_back(h_sum_energy_nobeam);
 
    _TH2Fvec.push_back(h_sum_energy_layer);
+   _TH2Fvec.push_back(h_sum_energy_layer_beam);
+   _TH2Fvec.push_back(h_sum_energy_layer_nobeam);
 
    // Initialize TH2F
    for (int ilayer = 0; ilayer < nlayers; ++ilayer)
