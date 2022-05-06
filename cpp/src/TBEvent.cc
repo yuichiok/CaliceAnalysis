@@ -117,6 +117,9 @@ void TBEvent::Ana_Eff()
 
       if (not_conseq) continue;
 
+      bool beamcheck = false;
+      bool nobeamcheck = false;
+
       float sum_energy_beam             = 0;
       float sum_energy_nobeam           = 0;
 
@@ -131,11 +134,15 @@ void TBEvent::Ana_Eff()
 
          if( (beam_spotX + beam_spotY) < 28.0*28.0 ){ // IN beam spot
 
+            beamcheck = true;
+
             H.hL_xy_energy_beam[hit_slab[ihit]]->Fill(hit_x[ihit],hit_y[ihit],hit_energy[ihit]);
             sum_energy_layer_beam[hit_slab[ihit]] += hit_energy[ihit];
             sum_energy_beam += hit_energy[ihit];
 
          }else{ // OUT beam spot
+
+            nobeamcheck = true;
 
             sum_energy_layer_nobeam[hit_slab[ihit]] += hit_energy[ihit];
             sum_energy_nobeam += hit_energy[ihit];
@@ -148,7 +155,14 @@ void TBEvent::Ana_Eff()
 
       } // hit loop
 
-      cout << sum_energy_layer_nobeam[6] / sum_energy_layer_nobeam[7] << endl;
+      // cout << sum_energy_layer_nobeam[6] / sum_energy_layer_nobeam[7] << endl;
+
+      if(!beamcheck){
+         sum_energy_beam = -1;
+      }
+      if(!nobeamcheck){
+         sum_energy_nobeam = -1;
+      }
 
       H.h_sum_energy->Fill(sum_energy);
       H.h_sum_energy_beam->Fill(sum_energy_beam);
