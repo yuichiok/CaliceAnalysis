@@ -68,12 +68,6 @@ void TBEvent::Ana_SumE()
          H.h_sum_energy_layer->Fill(sum_energy_layer[ilayer],ilayer);
       }
 
-
-
-
-
-
-
       // Playground
       Debug(debug,jentry);
 
@@ -109,8 +103,8 @@ void TBEvent::Ana_Eff()
       bool not_conseq = false;
       int  cslab = -1;
 
+      // conseq check
       for (int ihit=0; ihit<nhit_len; ihit++){
-         // cout << "(event, bcid) = ("<< event << "," << bcid << "), slab hit = " << hit_slab[ihit] << endl;
          if(ihit==0){
             cslab = hit_slab[ihit];
          }else if( !(hit_slab[ihit]==cslab) && !(hit_slab[ihit]==(cslab+1)) ){
@@ -121,6 +115,9 @@ void TBEvent::Ana_Eff()
          }
       }
 
+      if (not_conseq) continue;
+
+      float sum_energy_layer[15] = {0};
 
       for (int ihit=0; ihit<nhit_len; ihit++){
 
@@ -129,8 +126,14 @@ void TBEvent::Ana_Eff()
 
          }
 
-         
+         H.hL_xy_energy[hit_slab[ihit]]->Fill(hit_x[ihit],hit_y[ihit],hit_energy[ihit]);
+         sum_energy_layer[hit_slab[ihit]] += hit_energy[ihit];
 
+      }
+
+      for (int islab = 0; islab < 15; ++islab)
+      {
+         H.h_sum_energy_layer->Fill(sum_energy_layer[islab],islab);
       }
 
 
