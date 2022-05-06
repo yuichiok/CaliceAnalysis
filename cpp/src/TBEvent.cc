@@ -106,8 +106,28 @@ void TBEvent::Ana_Eff()
       bool slab7_check = std::find(std::begin(hit_slab), std::end(hit_slab), 7) != std::end(hit_slab);
       if( (nhit_slab < 6) || (!slab7_check) ) continue;
 
+      bool not_conseq = false;
+      int  cslab = -1;
+
       for (int ihit=0; ihit<nhit_len; ihit++){
          // cout << "(event, bcid) = ("<< event << "," << bcid << "), slab hit = " << hit_slab[ihit] << endl;
+         if(ihit==0){
+            cslab = hit_slab[ihit];
+         }else if( !(hit_slab[ihit]==cslab) && !(hit_slab[ihit]==(cslab+1)) ){
+            not_conseq = true;
+            break;
+         }else{
+            cslab = hit_slab[ihit];
+         }
+      }
+
+
+      for (int ihit=0; ihit<nhit_len; ihit++){
+
+         // choosing reference slab
+         if(hit_slab[ihit]==7){
+
+         }
 
          
 
