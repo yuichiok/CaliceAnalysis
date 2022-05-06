@@ -3,6 +3,9 @@
 #include <TStyle.h>
 #include <TCanvas.h>
 
+#include <algorithm> // for std::find
+#include <iterator> // for std::begin, std::end
+
 #include "../include/TBEvent.hh"
 #include "../include/Hists.hh"
 
@@ -11,7 +14,7 @@ using std::endl;
 
 const bool debug = false;
 
-void TBEvent::AnalysisLoop()
+void TBEvent::Ana_SumE()
 {
    if (fChain == 0) return;
 
@@ -76,6 +79,45 @@ void TBEvent::AnalysisLoop()
 
    } // end of loop
 
+
+   H.writes(MyFile);
+
+   cout << "loop over\n";
+
+}
+
+void TBEvent::Ana_Eff()
+{
+   if (fChain == 0) return;
+
+   Long64_t nentries = fChain->GetEntriesFast();
+
+   Hists H;
+   H.init();
+
+   TFile *MyFile = new TFile("rootfiles/output2.root","RECREATE");
+
+   Long64_t nbytes = 0, nb = 0;
+   for (Long64_t jentry=0; jentry<nentries;jentry++) {
+      Long64_t ientry = LoadTree(jentry);
+      if (ientry < 0) break;
+      nb = fChain->GetEntry(jentry);   nbytes += nb;
+
+      bool slab7_check = std::find(std::begin(hit_slab), std::end(hit_slab), 7) != std::end(hit_slab);
+      if( (nhit_slab < 6) || (!slab7_check) ) continue;
+
+      for (int ihit=0; ihit<nhit_len; ihit++){
+         // cout << "(event, bcid) = ("<< event << "," << bcid << "), slab hit = " << hit_slab[ihit] << endl;
+
+         
+
+      }
+
+
+      // Playground
+      Debug(debug,jentry);
+
+   } // end of loop
 
    H.writes(MyFile);
 
