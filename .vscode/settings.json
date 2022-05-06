@@ -47,5 +47,9 @@
         "stdexcept": "cpp",
         "streambuf": "cpp",
         "typeinfo": "cpp"
-    }
+    },
+    "C_Cpp.default.compilerPath": "/home/okugawa/miniconda3/envs/myenv/bin/root",
+    "C_Cpp.default.includePath": [
+        "/home/okugawa/miniconda3/envs/myenv/include"
+    ]
 }
