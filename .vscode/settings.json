@@ -51,5 +51,6 @@
     "C_Cpp.default.compilerPath": "/home/okugawa/miniconda3/envs/myenv/bin/root",
     "C_Cpp.default.includePath": [
         "/home/okugawa/miniconda3/envs/myenv/include"
-    ]
+    ],
+    "C_Cpp.errorSquiggles": "Disabled"
 }
