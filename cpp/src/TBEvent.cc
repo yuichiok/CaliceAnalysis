@@ -147,6 +147,7 @@ void TBEvent::Ana_Eff()
 
             nobeamcheck = true;
 
+            H.hL_xy_energy_nobeam[hit_slab[ihit]]->Fill(hit_x[ihit],hit_y[ihit],hit_energy[ihit]);
             sum_energy_layer_nobeam[hit_slab[ihit]] += hit_energy[ihit];
             sum_energy_nobeam += hit_energy[ihit];
 

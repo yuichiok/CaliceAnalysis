@@ -38,8 +38,8 @@ public :
 
    // TH2F
    std::array<TH2F*, nlayers> hL_xy_energy;
-
    std::array<TH2F*, nlayers> hL_xy_energy_beam;
+   std::array<TH2F*, nlayers> hL_xy_energy_nobeam;
 
 private :
    
@@ -84,6 +84,12 @@ void Hists::init()
 
       hL_xy_energy[ilayer] = new TH2F(TString::Format("hL_xy_energy_layer%s",layer.Data()),"; x;y",32,-90,90,32,-90,90);
       hL_xy_energy_beam[ilayer] = new TH2F(TString::Format("hL_xy_energy_beam_layer%s",layer.Data()),"; x;y",32,-90,90,32,-90,90);
+      hL_xy_energy_nobeam[ilayer] = new TH2F(TString::Format("hL_xy_energy_nobeam_layer%s",layer.Data()),"; x;y",32,-90,90,32,-90,90);
+
+      hL_xy_energy[ilayer]->SetMinimum(0); 
+      hL_xy_energy_beam[ilayer]->SetMinimum(0);
+      hL_xy_energy_nobeam[ilayer]->SetMinimum(0);
+      
    }
 
    _TH1FvecL.push_back(hL_hitrate);
@@ -93,6 +99,7 @@ void Hists::init()
 
    _TH2FvecL.push_back(hL_xy_energy);
    _TH2FvecL.push_back(hL_xy_energy_beam);
+   _TH2FvecL.push_back(hL_xy_energy_nobeam);
 
 }
 
@@ -118,7 +125,7 @@ void Hists::writes(TFile* file)
 
    }
 
-   TDirectory *DirEff = file->mkdir("eff");
+   TDirectory *DirEff = file->mkdir("eff_beam");
    DirEff->cd();
 
    TH2F * eff7_n[15];
