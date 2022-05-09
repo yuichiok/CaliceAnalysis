@@ -86,14 +86,22 @@ void Hists::init()
       hL_hg_beam[ilayer]      = new TH1F(TString::Format("hL_hg_beam_layer%s",layer.Data()),"; High Gain; Hit",300,0,3E3);
       hL_energy_beam[ilayer]  = new TH1F(TString::Format("hL_energy_beam_layer%s",layer.Data()),"; Energy ((HG-Ped)/MIP); Hit",400,0,40);
 
-      hL_xy_energy[ilayer] = new TH2F(TString::Format("hL_xy_energy_layer%s",layer.Data()),"; x;y",32,-90,90,32,-90,90);
-      hL_xy_energy_beam[ilayer] = new TH2F(TString::Format("hL_xy_energy_beam_layer%s",layer.Data()),"; x;y",32,-90,90,32,-90,90);
+      hL_xy_energy[ilayer]        = new TH2F(TString::Format("hL_xy_energy_layer%s",layer.Data()),"; x;y",32,-90,90,32,-90,90);
+      hL_xy_energy_beam[ilayer]   = new TH2F(TString::Format("hL_xy_energy_beam_layer%s",layer.Data()),"; x;y",32,-90,90,32,-90,90);
       hL_xy_energy_nobeam[ilayer] = new TH2F(TString::Format("hL_xy_energy_nobeam_layer%s",layer.Data()),"; x;y",32,-90,90,32,-90,90);
+
+      hL_xy_energy[ilayer]->SetMinimum(0);
+      hL_xy_energy_beam[ilayer]->SetMinimum(0);
+      hL_xy_energy_nobeam[ilayer]->SetMinimum(0);
 
       hL_xy_hit[ilayer] = new TH2F(TString::Format("hL_xy_hit_layer%s",layer.Data()),"; x;y",32,-90,90,32,-90,90);
       hL_xy_hit_beam[ilayer] = new TH2F(TString::Format("hL_xy_hit_beam_layer%s",layer.Data()),"; x;y",32,-90,90,32,-90,90);
       hL_xy_hit_nobeam[ilayer] = new TH2F(TString::Format("hL_xy_hit_nobeam_layer%s",layer.Data()),"; x;y",32,-90,90,32,-90,90);
       
+      hL_xy_hit[ilayer]->SetMinimum(0);
+      hL_xy_hit_beam[ilayer]->SetMinimum(0);
+      hL_xy_hit_nobeam[ilayer]->SetMinimum(0);
+
    }
 
    _TH1FvecL.push_back(hL_hitrate);
@@ -133,32 +141,65 @@ void Hists::writes(TFile* file)
 
    }
 
-   TDirectory *DirEff = file->mkdir("eff_beam");
-   DirEff->cd();
+   file->mkdir("efficiency");
+   file->cd("efficiency");
+   gDirectory->mkdir("energy/beam");
+   gDirectory->mkdir("energy/nobeam");
 
-   TH2F * eff7_n[15];
-   TH2F * eff_ref = (TH2F*) hL_xy_energy_beam[7]->Clone();
-   eff_ref->SetName("eff_ref");
+   gDirectory->cd("/efficiency/energy/beam");
+
+   TH2F * eff_E7_n[15];
+   TH2F * eff_E_ref = (TH2F*) hL_xy_energy_beam[7]->Clone();
+   eff_E_ref->SetName("eff_E_ref");
    
    for (int islab = 0; islab < 15; islab++){
-      eff7_n[islab] = (TH2F*) hL_xy_energy_beam[islab]->Clone();
-      eff7_n[islab]->SetName(TString::Format("eff7_%i",islab));
-      eff7_n[islab]->Divide(eff_ref);
-      eff7_n[islab]->Write();
+      eff_E7_n[islab] = (TH2F*) hL_xy_energy_beam[islab]->Clone();
+      eff_E7_n[islab]->SetName(TString::Format("eff_E7_%i",islab));
+      eff_E7_n[islab]->Divide(eff_E_ref);
+      eff_E7_n[islab]->Write();
    }
    
-   TDirectory *DirEffNoise = file->mkdir("eff_nobeam");
-   DirEffNoise->cd();
+   gDirectory->cd("/efficiency/energy/nobeam");
 
-   TH2F * eff_noise7_n[15];
-   TH2F * eff_noise_ref = (TH2F*) hL_xy_energy_nobeam[7]->Clone();
-   eff_ref->SetName("eff_noise_ref");
+   TH2F * eff_E_noise7_n[15];
+   TH2F * eff_E_noise_ref = (TH2F*) hL_xy_energy_nobeam[7]->Clone();
+   eff_E_ref->SetName("eff_E_noise_ref");
    
    for (int islab = 0; islab < 15; islab++){
-      eff_noise7_n[islab] = (TH2F*) hL_xy_energy_nobeam[islab]->Clone();
-      eff_noise7_n[islab]->SetName(TString::Format("eff_noise7_%i",islab));
-      eff_noise7_n[islab]->Divide(eff_noise_ref);
-      eff_noise7_n[islab]->Write();
+      eff_E_noise7_n[islab] = (TH2F*) hL_xy_energy_nobeam[islab]->Clone();
+      eff_E_noise7_n[islab]->SetName(TString::Format("eff_E_noise7_%i",islab));
+      eff_E_noise7_n[islab]->Divide(eff_E_noise_ref);
+      eff_E_noise7_n[islab]->Write();
+   }
+
+   gDirectory->cd("/efficiency");
+   gDirectory->mkdir("hit/beam");
+   gDirectory->mkdir("hit/nobeam");
+
+   gDirectory->cd("/efficiency/hit/beam");
+
+   TH2F * eff_hit7_n[15];
+   TH2F * eff_hit_ref = (TH2F*) hL_xy_hit_beam[7]->Clone();
+   eff_hit_ref->SetName("eff_hit_ref");
+   
+   for (int islab = 0; islab < 15; islab++){
+      eff_hit7_n[islab] = (TH2F*) hL_xy_hit_beam[islab]->Clone();
+      eff_hit7_n[islab]->SetName(TString::Format("eff_hit7_%i",islab));
+      eff_hit7_n[islab]->Divide(eff_hit_ref);
+      eff_hit7_n[islab]->Write();
+   }
+
+   gDirectory->cd("/efficiency/hit/nobeam");
+
+   TH2F * eff_hit_noise7_n[15];
+   TH2F * eff_hit_noise_ref = (TH2F*) hL_xy_hit_nobeam[7]->Clone();
+   eff_hit_noise_ref->SetName("eff_hit_noise_ref");
+   
+   for (int islab = 0; islab < 15; islab++){
+      eff_hit_noise7_n[islab] = (TH2F*) hL_xy_hit_nobeam[islab]->Clone();
+      eff_hit_noise7_n[islab]->SetName(TString::Format("eff_hit_noise7_%i",islab));
+      eff_hit_noise7_n[islab]->Divide(eff_hit_noise_ref);
+      eff_hit_noise7_n[islab]->Write();
    }
 
 }
