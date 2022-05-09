@@ -185,10 +185,6 @@ void TBEvent::Ana_Eff()
 
    } // end of event loop
 
-   // TH2F * eff_beam = (TH2F*) H.hL_xy_energy_beam[6]->Clone();
-   // eff_beam->Divide(H.hL_xy_energy_beam[7]);
-   // eff_beam->Write();
-
    H.writes(MyFile);
 
    cout << "Done.\n";

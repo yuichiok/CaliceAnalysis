@@ -138,5 +138,19 @@ void Hists::writes(TFile* file)
       eff7_n[islab]->Divide(eff_ref);
       eff7_n[islab]->Write();
    }
+   
+   TDirectory *DirEffNoise = file->mkdir("eff_nobeam");
+   DirEffNoise->cd();
+
+   TH2F * eff_noise7_n[15];
+   TH2F * eff_noise_ref = (TH2F*) hL_xy_energy_nobeam[7]->Clone();
+   eff_ref->SetName("eff_noise_ref");
+   
+   for (int islab = 0; islab < 15; islab++){
+      eff_noise7_n[islab] = (TH2F*) hL_xy_energy_nobeam[islab]->Clone();
+      eff_noise7_n[islab]->SetName(TString::Format("eff_noise7_%i",islab));
+      eff_noise7_n[islab]->Divide(eff_noise_ref);
+      eff_noise7_n[islab]->Write();
+   }
 
 }
