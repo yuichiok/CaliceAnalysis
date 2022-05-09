@@ -37,7 +37,7 @@ void TBEvent::Ana_SumE()
 
       float timeSec = CycleToSec(cycle);
       float sum_energy_beam      = 0;
-      float sum_energy_layer[15] = {0};
+      float sum_energy_slab[15] = {0};
 
       H.h_sum_energy->Fill(sum_energy);
 
@@ -54,7 +54,7 @@ void TBEvent::Ana_SumE()
 
             H.hL_xy_energy_beam[hit_slab[ihit]]->Fill(hit_x[ihit],hit_y[ihit],hit_energy[ihit]);
 
-            sum_energy_layer[hit_slab[ihit]] += hit_energy[ihit];
+            sum_energy_slab[hit_slab[ihit]] += hit_energy[ihit];
             sum_energy_beam += hit_energy[ihit];
          }
 
@@ -65,9 +65,9 @@ void TBEvent::Ana_SumE()
 
       H.h_sum_energy_beam->Fill(sum_energy_beam);
 
-      for (int ilayer = 0; ilayer < 15; ++ilayer)
+      for (int islab = 0; islab < 15; ++islab)
       {
-         H.h_sum_energy_layer->Fill(sum_energy_layer[ilayer],ilayer);
+         H.h_sum_energy_slab->Fill(sum_energy_slab[islab],islab);
       }
 
       // Playground
@@ -126,9 +126,9 @@ void TBEvent::Ana_Eff()
       float sum_energy_beam             = 0;
       float sum_energy_nobeam           = 0;
 
-      float sum_energy_layer[nslabs]        = {0};
-      float sum_energy_layer_beam[nslabs]   = {0};
-      float sum_energy_layer_nobeam[nslabs] = {0};
+      float sum_energy_slab[nslabs]        = {0};
+      float sum_energy_slab_beam[nslabs]   = {0};
+      float sum_energy_slab_nobeam[nslabs] = {0};
 
       for (int ihit=0; ihit<nhit_len; ihit++){
 
@@ -141,7 +141,7 @@ void TBEvent::Ana_Eff()
 
             H.hL_xy_energy_beam[hit_slab[ihit]]->Fill(hit_x[ihit],hit_y[ihit],hit_energy[ihit]);
             H.hL_xy_hit_beam[hit_slab[ihit]]->Fill(hit_x[ihit],hit_y[ihit]);
-            sum_energy_layer_beam[hit_slab[ihit]] += hit_energy[ihit];
+            sum_energy_slab_beam[hit_slab[ihit]] += hit_energy[ihit];
             sum_energy_beam += hit_energy[ihit];
 
          }else{ // OUT beam spot
@@ -150,7 +150,7 @@ void TBEvent::Ana_Eff()
 
             H.hL_xy_energy_nobeam[hit_slab[ihit]]->Fill(hit_x[ihit],hit_y[ihit],hit_energy[ihit]);
             H.hL_xy_hit_nobeam[hit_slab[ihit]]->Fill(hit_x[ihit],hit_y[ihit]);
-            sum_energy_layer_nobeam[hit_slab[ihit]] += hit_energy[ihit];
+            sum_energy_slab_nobeam[hit_slab[ihit]] += hit_energy[ihit];
             sum_energy_nobeam += hit_energy[ihit];
 
          }
@@ -158,7 +158,7 @@ void TBEvent::Ana_Eff()
          H.hL_xy_energy[hit_slab[ihit]]->Fill(hit_x[ihit],hit_y[ihit],hit_energy[ihit]);
          H.hL_xy_hit[hit_slab[ihit]]->Fill(hit_x[ihit],hit_y[ihit]);
          
-         sum_energy_layer[hit_slab[ihit]] += hit_energy[ihit];
+         sum_energy_slab[hit_slab[ihit]] += hit_energy[ihit];
 
       } // hit loop
 
@@ -175,9 +175,9 @@ void TBEvent::Ana_Eff()
 
       for (int islab = 0; islab < nslabs; ++islab)
       {
-         H.h_sum_energy_layer->Fill(sum_energy_layer[islab],islab);
-         H.h_sum_energy_layer_beam->Fill(sum_energy_layer_beam[islab],islab);
-         H.h_sum_energy_layer_nobeam->Fill(sum_energy_layer_nobeam[islab],islab);
+         H.h_sum_energy_slab->Fill(sum_energy_slab[islab],islab);
+         H.h_sum_energy_slab_beam->Fill(sum_energy_slab_beam[islab],islab);
+         H.h_sum_energy_slab_nobeam->Fill(sum_energy_slab_nobeam[islab],islab);
       }
 
 
