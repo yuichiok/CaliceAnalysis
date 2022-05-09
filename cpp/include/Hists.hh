@@ -41,6 +41,10 @@ public :
    std::array<TH2F*, nlayers> hL_xy_energy_beam;
    std::array<TH2F*, nlayers> hL_xy_energy_nobeam;
 
+   std::array<TH2F*, nlayers> hL_xy_hit;
+   std::array<TH2F*, nlayers> hL_xy_hit_beam;
+   std::array<TH2F*, nlayers> hL_xy_hit_nobeam;
+
 private :
    
    std::vector<TH1F*> _TH1Fvec;
@@ -86,9 +90,9 @@ void Hists::init()
       hL_xy_energy_beam[ilayer] = new TH2F(TString::Format("hL_xy_energy_beam_layer%s",layer.Data()),"; x;y",32,-90,90,32,-90,90);
       hL_xy_energy_nobeam[ilayer] = new TH2F(TString::Format("hL_xy_energy_nobeam_layer%s",layer.Data()),"; x;y",32,-90,90,32,-90,90);
 
-      hL_xy_energy[ilayer]->SetMinimum(0); 
-      hL_xy_energy_beam[ilayer]->SetMinimum(0);
-      hL_xy_energy_nobeam[ilayer]->SetMinimum(0);
+      hL_xy_hit[ilayer] = new TH2F(TString::Format("hL_xy_hit_layer%s",layer.Data()),"; x;y",32,-90,90,32,-90,90);
+      hL_xy_hit_beam[ilayer] = new TH2F(TString::Format("hL_xy_hit_beam_layer%s",layer.Data()),"; x;y",32,-90,90,32,-90,90);
+      hL_xy_hit_nobeam[ilayer] = new TH2F(TString::Format("hL_xy_hit_nobeam_layer%s",layer.Data()),"; x;y",32,-90,90,32,-90,90);
       
    }
 
@@ -100,6 +104,10 @@ void Hists::init()
    _TH2FvecL.push_back(hL_xy_energy);
    _TH2FvecL.push_back(hL_xy_energy_beam);
    _TH2FvecL.push_back(hL_xy_energy_nobeam);
+
+   _TH2FvecL.push_back(hL_xy_hit);
+   _TH2FvecL.push_back(hL_xy_hit_beam);
+   _TH2FvecL.push_back(hL_xy_hit_nobeam);
 
 }
 
