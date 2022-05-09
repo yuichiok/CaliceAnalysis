@@ -109,7 +109,6 @@ void Hists::writes(TFile* file)
    for(int h=0; h < _TH1Fvec.size(); h++) _TH1Fvec.at(h)->Write();
    for(int h=0; h < _TH2Fvec.size(); h++) _TH2Fvec.at(h)->Write();
 
-
    for (int ilayer = 0; ilayer < nlayers; ++ilayer)
    {
       cdhisto[ilayer]->cd();
@@ -117,6 +116,20 @@ void Hists::writes(TFile* file)
       for(int h=0; h < _TH1FvecL.size(); h++) _TH1FvecL.at(h)[ilayer]->Write();
       for(int h=0; h < _TH2FvecL.size(); h++) _TH2FvecL.at(h)[ilayer]->Write();
 
+   }
+
+   TDirectory *DirEff = file->mkdir("eff");
+   DirEff->cd();
+
+   TH2F * eff7_n[15];
+   TH2F * eff_ref = (TH2F*) hL_xy_energy_beam[7]->Clone();
+   eff_ref->SetName("eff_ref");
+   
+   for (int islab = 0; islab < 15; islab++){
+      eff7_n[islab] = (TH2F*) hL_xy_energy_beam[islab]->Clone();
+      eff7_n[islab]->SetName(TString::Format("eff7_%i",islab));
+      eff7_n[islab]->Divide(eff_ref);
+      eff7_n[islab]->Write();
    }
 
 }

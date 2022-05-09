@@ -13,6 +13,8 @@ using std::cout;
 using std::endl;
 
 const bool debug = false;
+const int nslabs = 15;
+const float beamX = 20.0, beamY = 15.0;
 
 void TBEvent::Ana_SumE()
 {
@@ -97,6 +99,7 @@ void TBEvent::Ana_Eff()
       if (ientry < 0) break;
       nb = fChain->GetEntry(jentry);   nbytes += nb;
 
+      // must have more than 6 slab hits and slab 7 inclusive
       bool slab7_check = std::find(std::begin(hit_slab), std::end(hit_slab), 7) != std::end(hit_slab);
       if( (nhit_slab < 6) || (!slab7_check) ) continue;
 
@@ -123,14 +126,14 @@ void TBEvent::Ana_Eff()
       float sum_energy_beam             = 0;
       float sum_energy_nobeam           = 0;
 
-      float sum_energy_layer[15]        = {0};
-      float sum_energy_layer_beam[15]   = {0};
-      float sum_energy_layer_nobeam[15] = {0};
+      float sum_energy_layer[nslabs]        = {0};
+      float sum_energy_layer_beam[nslabs]   = {0};
+      float sum_energy_layer_nobeam[nslabs] = {0};
 
       for (int ihit=0; ihit<nhit_len; ihit++){
 
-         float beam_spotX = (hit_x[ihit] + 20.0)*(hit_x[ihit] + 20.0);
-         float beam_spotY = (hit_y[ihit] + 15.0)*(hit_y[ihit] + 15.0);
+         float beam_spotX = (hit_x[ihit] + beamX)*(hit_x[ihit] + beamX);
+         float beam_spotY = (hit_y[ihit] + beamY)*(hit_y[ihit] + beamY);
 
          if( (beam_spotX + beam_spotY) < 28.0*28.0 ){ // IN beam spot
 
@@ -168,7 +171,7 @@ void TBEvent::Ana_Eff()
       H.h_sum_energy_beam->Fill(sum_energy_beam);
       H.h_sum_energy_nobeam->Fill(sum_energy_nobeam);
 
-      for (int islab = 0; islab < 15; ++islab)
+      for (int islab = 0; islab < nslabs; ++islab)
       {
          H.h_sum_energy_layer->Fill(sum_energy_layer[islab],islab);
          H.h_sum_energy_layer_beam->Fill(sum_energy_layer_beam[islab],islab);
@@ -181,13 +184,13 @@ void TBEvent::Ana_Eff()
 
    } // end of event loop
 
-   TH2F * eff_beam = (TH2F*) H.hL_xy_energy_beam[hit_slab[7]]->Clone();
-   eff_beam->Divide(H.hL_xy_energy_beam[hit_slab[8]]);
-   eff_beam->Write();
+   // TH2F * eff_beam = (TH2F*) H.hL_xy_energy_beam[6]->Clone();
+   // eff_beam->Divide(H.hL_xy_energy_beam[7]);
+   // eff_beam->Write();
 
    H.writes(MyFile);
 
-   cout << "loop over\n";
+   cout << "Done.\n";
 
 }
 
