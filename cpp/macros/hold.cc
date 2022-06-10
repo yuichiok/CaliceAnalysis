@@ -40,9 +40,10 @@ void hold()
 
 	file100->cd();
 
-	TList* tdf_obs = file100->GetListOfKeys();
+	TList* tdf_obs = file100->GetListOfKeys();	
+	TList* tdf_obs2 = file100->GetDirectory(tdf_obs->At(0)->GetName())->GetListOfKeys();
 
-	cout << tdf_obs->At(0)->GetName() << endl;
+	cout << tdf_obs2->At(0)->GetName() << endl;
 
 	// layer_0->cd();
 
