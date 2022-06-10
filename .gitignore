@@ -1,3 +1,5 @@
 *.root
 *.csv
 *.ods
+*.png
+.DS_Store
