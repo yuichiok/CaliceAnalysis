@@ -192,6 +192,44 @@ void TBEvent::Ana_Eff()
 
 }
 
+void TBEvent::Ana_Energy()
+{
+   if (fChain == 0) return;
+
+   Long64_t nentries = fChain->GetEntriesFast();
+
+   TH1F * h_sum_energy = new TH1F("h_sum_energy","h_sum_energy",100,0,1000);
+
+   TFile *MyFile = new TFile("rootfiles/energy.root","RECREATE");
+
+   Long64_t nbytes = 0, nb = 0;
+   for (Long64_t jentry=0; jentry<nentries;jentry++) {
+      Long64_t ientry = LoadTree(jentry);
+      if (ientry < 0) break;
+      nb = fChain->GetEntry(jentry);   nbytes += nb;
+
+      h_sum_energy->Fill(sum_energy);
+
+      // for (int ihit=0; ihit<nhit_len; ihit++){
+
+
+      // } // hit loop
+
+
+
+
+      // playground
+      Debug(debug,jentry);
+
+   } // end of event loop
+
+   MyFile->cd();
+   h_sum_energy->Write();
+
+   cout << "Done.\n";
+
+}
+
 float TBEvent::CycleToSec(int cyc=-1)
 {
    float aq_sec      = 0.001;

@@ -36,21 +36,21 @@ public :
    Int_t           nhit_len;
    Float_t         sum_energy;
    Float_t         sum_energy_lg;
-   Int_t           hit_slab[414];   //[nhit_len]
-   Int_t           hit_chip[414];   //[nhit_len]
-   Int_t           hit_chan[414];   //[nhit_len]
-   Int_t           hit_sca[414];   //[nhit_len]
-   Float_t         hit_x[414];   //[nhit_len]
-   Float_t         hit_y[414];   //[nhit_len]
-   Float_t         hit_z[414];   //[nhit_len]
-   Int_t           hit_adc_high[414];   //[nhit_len]
-   Int_t           hit_adc_low[414];   //[nhit_len]
-   Float_t         hit_energy[414];   //[nhit_len]
-   Float_t         hit_energy_lg[414];   //[nhit_len]
-   Int_t           hit_n_scas_filled[414];   //[nhit_len]
-   Int_t           hit_isHit[414];   //[nhit_len]
-   Int_t           hit_isMasked[414];   //[nhit_len]
-   Int_t           hit_isCommissioned[414];   //[nhit_len]
+   Int_t           hit_slab[2326];   //[nhit_len]
+   Int_t           hit_chip[2326];   //[nhit_len]
+   Int_t           hit_chan[2326];   //[nhit_len]
+   Int_t           hit_sca[2326];   //[nhit_len]
+   Float_t         hit_x[2326];   //[nhit_len]
+   Float_t         hit_y[2326];   //[nhit_len]
+   Float_t         hit_z[2326];   //[nhit_len]
+   Int_t           hit_adc_high[2326];   //[nhit_len]
+   Int_t           hit_adc_low[2326];   //[nhit_len]
+   Float_t         hit_energy[2326];   //[nhit_len]
+   Float_t         hit_energy_lg[2326];   //[nhit_len]
+   Int_t           hit_n_scas_filled[2326];   //[nhit_len]
+   Int_t           hit_isHit[2326];   //[nhit_len]
+   Int_t           hit_isMasked[2326];   //[nhit_len]
+   Int_t           hit_isCommissioned[2326];   //[nhit_len]
 
    // List of branches
    TBranch        *b_event;   //!
@@ -92,6 +92,7 @@ public :
    virtual void     Init(TTree *tree);
    virtual void     Ana_SumE();
    virtual void     Ana_Eff();
+   virtual void     Ana_Energy();
    virtual float    CycleToSec(int cyc);
    virtual void     Debug(bool debug, Long64_t entry);
    virtual Bool_t   Notify();
