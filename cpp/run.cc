@@ -13,7 +13,7 @@ int run(TString process="default",TString filein="default",TString fileout="defa
 	// filein = "../../download/3GeV_MIPscan_eudaq/3GeV_MIPscan_eudaq_run_050480_build.root";
 	// filein = "~/eos/project/s/siw-ecal/TB2022-03/beamData/buildfiles/20220504_3GeV_MIPscan_eudaq/3GeV_MIPscan_eudaq/3GeV_MIPscan_eudaq_run_050480_build.root";
 	
-	filein = "../data/build/raw_siwecal_90132/full_run.root";
+	filein = "../data/build/raw_siwecal_90131/full_run.root";
 
 	TBEvent TBEvent(filein);
 	// TBEvent.Ana_SumE();

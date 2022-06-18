@@ -198,33 +198,77 @@ void TBEvent::Ana_Energy()
 
    Long64_t nentries = fChain->GetEntriesFast();
 
-   TH1F * h_sum_energy = new TH1F("h_sum_energy","h_sum_energy",100,0,1000);
-
    TFile *MyFile = new TFile("rootfiles/energy.root","RECREATE");
+
+   TH1F * h_hit[4];
+   for(int ih=0;ih<4;ih++)
+   {
+      TString str = TString::Format("h_hit_c%i",ih);
+      h_hit[ih] = new TH1F(str,str,15,-0.5,14.5);
+   }
 
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
       Long64_t ientry = LoadTree(jentry);
       if (ientry < 0) break;
-      nb = fChain->GetEntry(jentry);   nbytes += nb;
+      nb = fChain->GetEntry(jentry);
+      nbytes += nb;
 
-      h_sum_energy->Fill(sum_energy);
+      int hs[10]  = {0};
+      int pass[4] = {0};
 
-      // for (int ihit=0; ihit<nhit_len; ihit++){
+      // peneturate slab 5-14?
+      for (int ihit = 0; ihit < nhit_len; ihit++)
+      {
+         if(hit_energy[ihit]<0.5) continue;
+         for (int itr = 0; itr < 10; itr++)
+         {
+            if (hit_slab[ihit]==itr){
+               if( (0 <= hit_chip[ihit]) && (hit_chip[ihit] <= 3) ){
+                  hs[itr] = 0;
+               }else if ( (4 <= hit_chip[ihit]) && (hit_chip[ihit] <= 7) ){
+                  hs[itr] = 1;
+               }else if ( (8 <= hit_chip[ihit]) && (hit_chip[ihit] <= 11) ){
+                  hs[itr] = 2;
+               }else if ( (12 <= hit_chip[ihit]) && (hit_chip[ihit] <= 15) ){
+                  hs[itr] = 3;
+               }
+            }
+         }
+      }
+      for(int itr = 0; itr < 10; itr++)
+      {
+         for (int i = 0; i < 4; i++)
+         {
+            if(hs[itr]==i) pass[i]++;
+         }
+      }
+      
+      // if penetrates
+
+      for(int i=0; i<4; i++){
+
+         if(pass[i]==10){
+
+            for (int ihit = 0; ihit < nhit_len; ihit++)
+            {
+               h_hit[i]->Fill(hit_slab[ihit]);
+            }
+
+         }else{
+            continue;
+         }
+
+      }
 
 
-      // } // hit loop
 
 
 
-
-      // playground
-      Debug(debug,jentry);
-
-   } // end of event loop
+   }
 
    MyFile->cd();
-   h_sum_energy->Write();
+   for(int ih=0; ih<4; ih++) h_hit[ih]->Write();
 
    cout << "Done.\n";
 
