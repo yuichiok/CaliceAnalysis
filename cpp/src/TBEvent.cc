@@ -198,14 +198,17 @@ void TBEvent::Ana_Energy()
 
    Long64_t nentries = fChain->GetEntriesFast();
 
-   TFile *MyFile = new TFile("rootfiles/energy.root","RECREATE");
+   // TFile *MyFile = new TFile("rootfiles/energy.root","RECREATE");
 
    TH1F * h_hit[4];
    for(int ih=0;ih<4;ih++)
    {
-      TString str = TString::Format("h_hit_c%i",ih);
-      h_hit[ih] = new TH1F(str,str,15,-0.5,14.5);
+      TString str0 = TString::Format("h_hit_c%i",ih);
+      TString str1 = str0 + TString::Format(";Layer;Entry");
+      h_hit[ih] = new TH1F(str0,str1,15,-0.5,14.5);
    }
+
+   TH1F * pass_stat = new TH1F("pass_stat","pass_stat",4,-0.5,3.5);
 
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
@@ -250,6 +253,8 @@ void TBEvent::Ana_Energy()
 
          if(pass[i]==10){
 
+            pass_stat->Fill(i);
+
             for (int ihit = 0; ihit < nhit_len; ihit++)
             {
                h_hit[i]->Fill(hit_slab[ihit]);
@@ -261,14 +266,21 @@ void TBEvent::Ana_Energy()
 
       }
 
-
-
-
-
    }
 
-   MyFile->cd();
-   for(int ih=0; ih<4; ih++) h_hit[ih]->Write();
+   // MyFile->cd();
+
+   // TCanvas *c0 = new TCanvas("c0","c0",700,700);
+   // c0->Divide(2,2);
+   // for(int ih=0; ih<4; ih++){ c0->cd(ih); h_hit[ih]->Draw("h"); }
+   // c0->Draw();
+   // c0->Write();
+
+   // TCanvas *c1 = new TCanvas("c1","c1",500,500);
+   // c1->cd();
+   // c1->SetLogy();   
+   // pass_stat->Draw("h");
+   // c1->Write();
 
    cout << "Done.\n";
 
