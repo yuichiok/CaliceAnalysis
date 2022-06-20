@@ -36,21 +36,21 @@ public :
    Int_t           nhit_len;
    Float_t         sum_energy;
    Float_t         sum_energy_lg;
-   Int_t           hit_slab[2326];   //[nhit_len]
-   Int_t           hit_chip[2326];   //[nhit_len]
-   Int_t           hit_chan[2326];   //[nhit_len]
-   Int_t           hit_sca[2326];   //[nhit_len]
-   Float_t         hit_x[2326];   //[nhit_len]
-   Float_t         hit_y[2326];   //[nhit_len]
-   Float_t         hit_z[2326];   //[nhit_len]
-   Int_t           hit_adc_high[2326];   //[nhit_len]
-   Int_t           hit_adc_low[2326];   //[nhit_len]
-   Float_t         hit_energy[2326];   //[nhit_len]
-   Float_t         hit_energy_lg[2326];   //[nhit_len]
-   Int_t           hit_n_scas_filled[2326];   //[nhit_len]
-   Int_t           hit_isHit[2326];   //[nhit_len]
-   Int_t           hit_isMasked[2326];   //[nhit_len]
-   Int_t           hit_isCommissioned[2326];   //[nhit_len]
+   Int_t           hit_slab[4763];   //[nhit_len]
+   Int_t           hit_chip[4763];   //[nhit_len]
+   Int_t           hit_chan[4763];   //[nhit_len]
+   Int_t           hit_sca[4763];   //[nhit_len]
+   Float_t         hit_x[4763];   //[nhit_len]
+   Float_t         hit_y[4763];   //[nhit_len]
+   Float_t         hit_z[4763];   //[nhit_len]
+   Int_t           hit_adc_high[4763];   //[nhit_len]
+   Int_t           hit_adc_low[4763];   //[nhit_len]
+   Float_t         hit_energy[4763];   //[nhit_len]
+   Float_t         hit_energy_lg[4763];   //[nhit_len]
+   Int_t           hit_n_scas_filled[4763];   //[nhit_len]
+   Int_t           hit_isHit[4763];   //[nhit_len]
+   Int_t           hit_isMasked[4763];   //[nhit_len]
+   Int_t           hit_isCommissioned[4763];   //[nhit_len]
 
    // List of branches
    TBranch        *b_event;   //!
