@@ -192,6 +192,113 @@ void TBEvent::Ana_Eff()
 
 }
 
+void TBEvent::Ana_Energy()
+{
+   if (fChain == 0) return;
+
+   Long64_t nentries = fChain->GetEntriesFast();
+
+   TFile *MyFile = new TFile("rootfiles/energy.root","RECREATE");
+
+   TH1F * h_hit_wall = new TH1F("h_hit_wall","h_hit_wall;Layer;Entry",15,-0.5,14.5);
+   TH1F * h_hit[4];
+   for(int ih=0;ih<4;ih++)
+   {
+      TString str0 = TString::Format("h_hit_w%i",ih);
+      TString str1 = str0 + TString::Format(";Layer;Entry");
+      h_hit[ih] = new TH1F(str0,str1,15,-0.5,14.5);
+   }
+
+   TH1F * pass_stat = new TH1F("pass_stat","pass_stat",4,-0.5,3.5);
+
+   Long64_t nbytes = 0, nb = 0;
+   for (int jentry=0; jentry<nentries;jentry++) {
+      Long64_t ientry = LoadTree(jentry);
+      if (ientry < 0) break;
+      nb = fChain->GetEntry(jentry);
+      nbytes += nb;
+
+      int hs[10];
+      for (int i = 0; i < 10; i++) hs[i] = -1;
+      int pass[4] = {0};
+
+      // peneturate slab 5-14?
+      for (int ihit = 0; ihit < nhit_len; ihit++)
+      {
+         if(hit_energy[ihit]<0.5) continue;
+         for (int itr = 0; itr < 10; itr++)
+         {
+            if (hit_slab[ihit]==itr){
+               if( (0 <= hit_chip[ihit]) && (hit_chip[ihit] <= 3) ){
+                  hs[itr] = 0;
+               }else if ( (4 <= hit_chip[ihit]) && (hit_chip[ihit] <= 7) ){
+                  hs[itr] = 1;
+               }else if ( (8 <= hit_chip[ihit]) && (hit_chip[ihit] <= 11) ){
+                  hs[itr] = 2;
+               }else if ( (12 <= hit_chip[ihit]) && (hit_chip[ihit] <= 15) ){
+                  hs[itr] = 3;
+               }
+            }
+         }
+      }
+      for(int itr = 0; itr < 10; itr++)
+      {
+         for (int i = 0; i < 4; i++)
+         {
+            if(hs[itr]==i) pass[i]++;
+         }
+      }
+      
+      // if penetrates
+
+      for(int i=0; i<4; i++){
+
+         if(pass[i]==10){
+
+            pass_stat->Fill(i);
+
+            for (int ihit = 0; ihit < nhit_len; ihit++)
+            {
+               h_hit_wall->Fill(hit_slab[ihit]);
+               h_hit[i]->Fill(hit_slab[ihit]);
+            }
+
+         }else{
+            continue;
+         }
+
+      }
+
+   }
+
+   MyFile->cd();
+
+   h_hit_wall->Write();
+   for(int ih=0; ih<4; ih++) h_hit[ih]->Write();
+
+   TCanvas *c0 = new TCanvas("c0","c0",700,700);
+   c0->Divide(2,2);
+   c0->cd(1);
+   h_hit[1]->Draw("h");
+   c0->cd(2);
+   h_hit[0]->Draw("h");
+   c0->cd(3);
+   h_hit[3]->Draw("h");
+   c0->cd(4);
+   h_hit[2]->Draw("h");
+
+   c0->Write();
+
+   TCanvas *c1 = new TCanvas("c1","c1",500,500);
+   c1->cd();
+   c1->SetLogy();   
+   pass_stat->Draw("h");
+   c1->Write();
+
+   cout << "Done.\n";
+
+}
+
 float TBEvent::CycleToSec(int cyc=-1)
 {
    float aq_sec      = 0.001;

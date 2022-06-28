@@ -40,10 +40,18 @@ void hold()
 
 	file100->cd();
 
-	TList* tdf_obs = file100->GetListOfKeys();	
-	TList* tdf_obs2 = file100->GetDirectory(tdf_obs->At(0)->GetName())->GetListOfKeys();
+	TList* tdf_obs  = file100->GetListOfKeys();	
+	TList* tdf_obs2 = file100->GetDirectory(tdf_obs->At(1)->GetName())->GetListOfKeys();
 
-	cout << tdf_obs2->At(0)->GetName() << endl;
+	TObject* tobj = tdf_obs2->FindObject("mip_high_layer1_chip0");
+
+	TH1F* h = (TH1F*)tdf_obs2->GetObject("mip_high_layer1_chip0");
+
+	// TH1F* h = (TH1F*)tobj->Get();
+
+	// TH1F* h = (TH1F*)tdf_obs2->Read("mip_high_layer1_chip0");
+
+	// h->DrawNormalized();
 
 	// layer_0->cd();
 
