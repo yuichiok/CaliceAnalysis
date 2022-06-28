@@ -23,9 +23,7 @@ void run(TString process="default",TString filein="default",TString fileout="def
 
 	ROOT::Math::MinimizerOptions::SetDefaultMaxFunctionCalls( 200 );
 
-	cout << "tes" <<endl;
-
-	// gSystem->Exit(0);
+	gSystem->Exit(0);
 
 	// return 0;
 

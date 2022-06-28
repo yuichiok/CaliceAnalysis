@@ -198,12 +198,13 @@ void TBEvent::Ana_Energy()
 
    Long64_t nentries = fChain->GetEntriesFast();
 
-   // TFile *MyFile = new TFile("rootfiles/energy.root","RECREATE");
+   TFile *MyFile = new TFile("rootfiles/energy.root","RECREATE");
 
+   TH1F * h_hit_wall = new TH1F("h_hit_wall","h_hit_wall;Layer;Entry",15,-0.5,14.5);
    TH1F * h_hit[4];
    for(int ih=0;ih<4;ih++)
    {
-      TString str0 = TString::Format("h_hit_c%i",ih);
+      TString str0 = TString::Format("h_hit_w%i",ih);
       TString str1 = str0 + TString::Format(";Layer;Entry");
       h_hit[ih] = new TH1F(str0,str1,15,-0.5,14.5);
    }
@@ -211,13 +212,14 @@ void TBEvent::Ana_Energy()
    TH1F * pass_stat = new TH1F("pass_stat","pass_stat",4,-0.5,3.5);
 
    Long64_t nbytes = 0, nb = 0;
-   for (Long64_t jentry=0; jentry<nentries;jentry++) {
+   for (int jentry=0; jentry<nentries;jentry++) {
       Long64_t ientry = LoadTree(jentry);
       if (ientry < 0) break;
       nb = fChain->GetEntry(jentry);
       nbytes += nb;
 
-      int hs[10]  = {0};
+      int hs[10];
+      for (int i = 0; i < 10; i++) hs[i] = -1;
       int pass[4] = {0};
 
       // peneturate slab 5-14?
@@ -257,6 +259,7 @@ void TBEvent::Ana_Energy()
 
             for (int ihit = 0; ihit < nhit_len; ihit++)
             {
+               h_hit_wall->Fill(hit_slab[ihit]);
                h_hit[i]->Fill(hit_slab[ihit]);
             }
 
@@ -268,19 +271,29 @@ void TBEvent::Ana_Energy()
 
    }
 
-   // MyFile->cd();
+   MyFile->cd();
 
-   // TCanvas *c0 = new TCanvas("c0","c0",700,700);
-   // c0->Divide(2,2);
-   // for(int ih=0; ih<4; ih++){ c0->cd(ih); h_hit[ih]->Draw("h"); }
-   // c0->Draw();
-   // c0->Write();
+   h_hit_wall->Write();
+   for(int ih=0; ih<4; ih++) h_hit[ih]->Write();
 
-   // TCanvas *c1 = new TCanvas("c1","c1",500,500);
-   // c1->cd();
-   // c1->SetLogy();   
-   // pass_stat->Draw("h");
-   // c1->Write();
+   TCanvas *c0 = new TCanvas("c0","c0",700,700);
+   c0->Divide(2,2);
+   c0->cd(1);
+   h_hit[1]->Draw("h");
+   c0->cd(2);
+   h_hit[0]->Draw("h");
+   c0->cd(3);
+   h_hit[3]->Draw("h");
+   c0->cd(4);
+   h_hit[2]->Draw("h");
+
+   c0->Write();
+
+   TCanvas *c1 = new TCanvas("c1","c1",500,500);
+   c1->cd();
+   c1->SetLogy();   
+   pass_stat->Draw("h");
+   c1->Write();
 
    cout << "Done.\n";
 

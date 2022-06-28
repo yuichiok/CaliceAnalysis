@@ -3,7 +3,7 @@
 
 int MakeClass(){
 
-  TString filename = "../../data/build/raw_siwecal_90132/full_run.root";
+  TString filename = "../../data/full_run2.root";
   TFile *file = new TFile(filename);
 
   TString treename = "ecal";

@@ -2,5 +2,6 @@
 *.csv
 *.ods
 *.png
+myclass/EventControl.*
 data/
 .DS_Store
