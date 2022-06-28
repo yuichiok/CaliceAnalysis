@@ -3,10 +3,10 @@
 
 int MakeClass(){
 
-  TString filename = "~/Work/TBData/rootfiles/3GeVMIPscan_run_050043_merged.root";
+  TString filename = "/home/calice/TB2022-06/SiWECAL-TB-monitoring/data/eudaq_run_090121/full_run.root";
   TFile *file = new TFile(filename);
 
-  TString treename = "siwecaldecoded";
+  TString treename = "ecal";
   TTree* tree = (TTree*)file->Get( treename ) ;
 
   file->ls();
