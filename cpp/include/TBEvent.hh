@@ -90,9 +90,10 @@ public :
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
    virtual void     Init(TTree *tree);
-   virtual void     Ana_SumE();
-   virtual void     Ana_Eff();
-   virtual void     Ana_Energy();
+   virtual void     ana_SumE();
+   virtual void     ana_Eff();
+   virtual void     ana_Energy();
+   virtual void     ana_adc_bcid();
    virtual float    CycleToSec(int cyc);
    virtual void     Debug(bool debug, Long64_t entry);
    virtual Bool_t   Notify();
