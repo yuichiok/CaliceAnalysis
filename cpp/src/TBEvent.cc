@@ -305,9 +305,15 @@ void TBEvent::ana_adc_bcid()
 
    Long64_t nentries = fChain->GetEntriesFast();
 
-   TFile *MyFile = new TFile("rootfiles/adc_bcid.root","RECREATE");
+   TFile *MyFile = new TFile("rootfiles/adc_bcid_run_90405.root","RECREATE");
 
-   // TH1F * h_hit_wall = new TH1F("h_hit_wall","h_hit_wall;Layer;Entry",15,-0.5,14.5);
+   TH2F * h_adc_bcid_filter = new TH2F("h_adc_bcid_filter","Layer*20+Chip vs. bcid vs. adc_high (filtered);true_bcid;Layer*20+Chip",2530,0,10.4E7,300,-0.5,299.5);
+   TH2F * h_adc_bcid_noise = new TH2F("h_adc_bcid_noise","Layer*20+Chip vs. bcid vs. adc_high (filtered);true_bcid;Layer*20+Chip",2530,0,10.4E7,300,-0.5,299.5);
+   TH2F * h_adc_bcid_nofilter = new TH2F("h_adc_bcid_nofilter","Layer*20+Chip vs. bcid vs. adc_high (no filter);true_bcid;Layer*20+Chip",2530,0,10.4E7,300,-0.5,299.5);
+
+   int offset = 0;
+   int last_bcid = -1;
+   int true_bcid = 0;
 
    Long64_t nbytes = 0, nb = 0;
    for (int jentry=0; jentry<nentries;jentry++) {
@@ -316,62 +322,26 @@ void TBEvent::ana_adc_bcid()
       nb = fChain->GetEntry(jentry);
       nbytes += nb;
 
-      int hs[10];
-      for (int i = 0; i < 10; i++) hs[i] = -1;
-      int pass[4] = {0};
+      if(bcid < last_bcid){
+         offset=offset+4096;
+      }
+      true_bcid=bcid+offset;
+      last_bcid=bcid;      
 
-      // peneturate slab 5-14?
       for (int ihit = 0; ihit < nhit_len; ihit++)
       {
-         if(hit_energy[ihit]<0.5) continue;
-         for (int itr = 0; itr < 10; itr++)
-         {
-            if (hit_slab[ihit]==itr){
-               if( (0 <= hit_chip[ihit]) && (hit_chip[ihit] <= 3) ){
-                  hs[itr] = 0;
-               }else if ( (4 <= hit_chip[ihit]) && (hit_chip[ihit] <= 7) ){
-                  hs[itr] = 1;
-               }else if ( (8 <= hit_chip[ihit]) && (hit_chip[ihit] <= 11) ){
-                  hs[itr] = 2;
-               }else if ( (12 <= hit_chip[ihit]) && (hit_chip[ihit] <= 15) ){
-                  hs[itr] = 3;
-               }
-            }
-         }
-      }
-      for(int itr = 0; itr < 10; itr++)
-      {
-         for (int i = 0; i < 4; i++)
-         {
-            if(hs[itr]==i) pass[i]++;
-         }
-      }
-      
-      // if penetrates
-
-      for(int i=0; i<4; i++){
-
-         if(pass[i]==10){
-
-            pass_stat->Fill(i);
-
-            for (int ihit = 0; ihit < nhit_len; ihit++)
-            {
-               h_hit_wall->Fill(hit_slab[ihit]);
-               h_hit[i]->Fill(hit_slab[ihit]);
-            }
-
-         }else{
-            continue;
-         }
+         if(hit_energy[ihit]>1.0) h_adc_bcid_filter->Fill(true_bcid,hit_slab[ihit]*20+hit_chip[ihit],hit_adc_high[ihit]);
+         if(hit_energy[ihit]<1.0) h_adc_bcid_noise->Fill(true_bcid,hit_slab[ihit]*20+hit_chip[ihit],hit_adc_high[ihit]);
+         h_adc_bcid_nofilter->Fill(true_bcid,hit_slab[ihit]*20+hit_chip[ihit],hit_adc_high[ihit]);
 
       }
 
    }
 
    MyFile->cd();
-
-
+   h_adc_bcid_filter->Write();
+   h_adc_bcid_noise->Write();
+   h_adc_bcid_nofilter->Write();
 
    cout << "Done.\n";
 
