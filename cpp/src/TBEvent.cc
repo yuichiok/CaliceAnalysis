@@ -305,7 +305,7 @@ void TBEvent::ana_adc_bcid()
 
    Long64_t nentries = fChain->GetEntriesFast();
 
-   TFile *MyFile = new TFile("rootfiles/adc_bcid_run_90405.root","RECREATE");
+   TFile *MyFile = new TFile("rootfiles/adc_bcid_run_90352.root","RECREATE");
 
    TH2F * h_adc_bcid_filter = new TH2F("h_adc_bcid_filter","Layer*20+Chip vs. bcid vs. adc_high (filtered);true_bcid;Layer*20+Chip",2530,0,10.4E7,300,-0.5,299.5);
    TH2F * h_adc_bcid_noise = new TH2F("h_adc_bcid_noise","Layer*20+Chip vs. bcid vs. adc_high (filtered);true_bcid;Layer*20+Chip",2530,0,10.4E7,300,-0.5,299.5);
