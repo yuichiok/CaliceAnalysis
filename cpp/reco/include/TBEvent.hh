@@ -94,6 +94,7 @@ public :
    virtual void     ana_Eff();
    virtual void     ana_Energy();
    virtual void     ana_adc_bcid();
+   virtual void     ana_quality();
    virtual float    CycleToSec(int cyc);
    virtual void     Debug(bool debug, Long64_t entry);
    virtual Bool_t   Notify();

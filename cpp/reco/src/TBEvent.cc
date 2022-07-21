@@ -347,6 +347,53 @@ void TBEvent::ana_adc_bcid()
 
 }
 
+void TBEvent::ana_quality()
+{
+   if (fChain == 0) return;
+
+   Long64_t nentries = fChain->GetEntriesFast();
+
+   TFile *MyFile = new TFile("rootfiles/run_90320.quality.root","RECREATE");
+
+   TH1F * h_sum_energy = new TH1F("h_sum_energy","; sum_energy; Entries",500,0,5000);
+   TH1F * h_hit_slab   = new TH1F("h_hit_slab","; hit_slab; Entries",15,-0.5,14.5);
+
+   int offset = 0;
+   int last_bcid = -1;
+   int true_bcid = 0;
+
+   Long64_t nbytes = 0, nb = 0;
+   for (int jentry=0; jentry<nentries;jentry++) {
+      Long64_t ientry = LoadTree(jentry);
+      if (ientry < 0) break;
+      nb = fChain->GetEntry(jentry);
+      nbytes += nb;
+
+      if(bcid < last_bcid){
+         offset=offset+4096;
+      }
+      true_bcid=bcid+offset;
+      last_bcid=bcid;
+
+      if(nhit_slab < 13) continue;
+
+      h_sum_energy->Fill(sum_energy);
+
+      for (int ihit = 0; ihit < nhit_len; ihit++)
+      {
+         h_hit_slab->Fill(hit_slab[ihit]);
+      }
+
+   }
+
+   MyFile->cd();
+   h_sum_energy->Write();
+   h_hit_slab->Write();
+
+   cout << "Done.\n";
+
+}
+
 float TBEvent::CycleToSec(int cyc=-1)
 {
    float aq_sec      = 0.001;
