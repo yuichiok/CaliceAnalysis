@@ -402,7 +402,7 @@ void TBEvent::ana_quality()
       for (int ihit = 0; ihit < nhit_len; ihit++)
       {
          // if(hit_adc_high[ihit]<400) continue;
-         if(hit_sca[ihit]>0) continue;
+         // if(hit_sca[ihit]>0) continue;
 
          h_hit_slab->Fill(hit_slab[ihit]);
          h_hit_energy->Fill(hit_energy[ihit]);
@@ -415,7 +415,7 @@ void TBEvent::ana_quality()
          if(hit_slab[ihit]==7){
             for (int isca = 0; isca < nscas; isca++)
             {
-               h_hit_slab_energy_sca[isca]->Fill(hit_energy[ihit]);
+               if (hit_sca[ihit]==isca) h_hit_slab_energy_sca[isca]->Fill(hit_energy[ihit]);
             }
          }
          
