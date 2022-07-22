@@ -6,6 +6,7 @@
 #include <algorithm> // for std::find
 #include <iterator> // for std::begin, std::end
 #include <string>
+#include <map>
 
 #include "../include/TBEvent.hh"
 #include "../include/Hists.hh"
@@ -15,6 +16,7 @@ using std::endl;
 
 const bool debug = false;
 const int nslabs = 15;
+const int nscas = 15;
 const float beamX = 20.0, beamY = 15.0;
 
 void TBEvent::ana_SumE()
@@ -366,6 +368,13 @@ void TBEvent::ana_quality()
       TString hname = "h_hit_slab_energy" + to_string(islab);
       h_hit_slab_energy[islab] = new TH1F(hname,hname,120,-20,100);
    }
+   
+   TH1F * h_hit_slab_energy_sca[nscas];
+   for (int isca = 0; isca < nscas; isca++)
+   {
+      TString hname = "h_hit_slab_energy_sca" + to_string(isca);
+      h_hit_slab_energy_sca[isca] = new TH1F(hname,hname,120,-20,100);
+   }
 
    TH1F * h_hit_slab   = new TH1F("h_hit_slab","; hit_slab; Entries",nslabs,-0.5,14.5);
 
@@ -392,12 +401,22 @@ void TBEvent::ana_quality()
 
       for (int ihit = 0; ihit < nhit_len; ihit++)
       {
+         // if(hit_adc_high[ihit]<400) continue;
+         if(hit_sca[ihit]>0) continue;
+
          h_hit_slab->Fill(hit_slab[ihit]);
          h_hit_energy->Fill(hit_energy[ihit]);
 
          for (int islab = 0; islab < nslabs; islab++)
          {
             if (hit_slab[ihit]==islab) h_hit_slab_energy[islab]->Fill(hit_energy[ihit]);
+         }
+
+         if(hit_slab[ihit]==7){
+            for (int isca = 0; isca < nscas; isca++)
+            {
+               h_hit_slab_energy_sca[isca]->Fill(hit_energy[ihit]);
+            }
          }
          
       }
@@ -411,13 +430,21 @@ void TBEvent::ana_quality()
       c0->cd(islab+1);
       h_hit_slab_energy[islab]->Draw("h");
    }
-   
+
+   TCanvas * c1 = new TCanvas("c1","c1",700,700);
+   c1->Divide(4,4);
+   for (int isca = 0; isca < nscas; isca++)
+   {
+      c1->cd(isca+1);
+      h_hit_slab_energy_sca[isca]->Draw("h");
+   }
 
 
    MyFile->cd();
    h_sum_energy->Write();
    h_hit_energy->Write();
    c0->Write();
+   c1->Write();
    h_hit_slab->Write();
 
    cout << "Done.\n";
