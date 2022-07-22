@@ -358,7 +358,7 @@ void TBEvent::ana_quality()
 
    Long64_t nentries = fChain->GetEntriesFast();
 
-   TFile *MyFile = new TFile("rootfiles/run_90367.e.80GeV.quality.root","RECREATE");
+   // TFile *MyFile = new TFile("rootfiles/run_90320.e.10GeV.quality.root","RECREATE");
 
    TH1F * h_sum_energy = new TH1F("h_sum_energy","; sum_energy; Entries",500,0,1E4);
    TH1F * h_hit_energy = new TH1F("h_hit_energy","; hit_energy; Entries",120,-20,100);
@@ -369,11 +369,11 @@ void TBEvent::ana_quality()
       h_hit_slab_energy[islab] = new TH1F(hname,hname,120,-20,100);
    }
    
-   TH1F * h_hit_slab_energy_sca[nscas];
+   TH1F * h_hit_slab7_energy_sca[nscas];
    for (int isca = 0; isca < nscas; isca++)
    {
-      TString hname = "h_hit_slab_energy_sca" + to_string(isca);
-      h_hit_slab_energy_sca[isca] = new TH1F(hname,hname,120,-20,100);
+      TString hname = "h_hit_slab7_energy_sca" + to_string(isca);
+      h_hit_slab7_energy_sca[isca] = new TH1F(hname,hname,120,-20,100);
    }
 
    TH1F * h_hit_slab   = new TH1F("h_hit_slab","; hit_slab; Entries",nslabs,-0.5,14.5);
@@ -415,7 +415,7 @@ void TBEvent::ana_quality()
          if(hit_slab[ihit]==7){
             for (int isca = 0; isca < nscas; isca++)
             {
-               if (hit_sca[ihit]==isca) h_hit_slab_energy_sca[isca]->Fill(hit_energy[ihit]);
+               if (hit_sca[ihit]==isca) h_hit_slab7_energy_sca[isca]->Fill(hit_energy[ihit]);
             }
          }
          
@@ -436,11 +436,11 @@ void TBEvent::ana_quality()
    for (int isca = 0; isca < nscas; isca++)
    {
       c1->cd(isca+1);
-      h_hit_slab_energy_sca[isca]->Draw("h");
+      h_hit_slab7_energy_sca[isca]->Draw("h");
    }
 
 
-   MyFile->cd();
+   OutFile->cd();
    h_sum_energy->Write();
    h_hit_energy->Write();
    c0->Write();

@@ -83,7 +83,7 @@ public :
    TBranch        *b_hit_isMasked;   //!
    TBranch        *b_hit_isCommissioned;   //!
 
-   TBEvent(TString tree_s);
+   TBEvent(TString filein_s, TString fileout_s);
    TBEvent(TList *f=0);
    virtual ~TBEvent();
    virtual Int_t    Cut(Long64_t entry);
@@ -99,18 +99,20 @@ public :
    virtual void     Debug(bool debug, Long64_t entry);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
+   TFile *OutFile;
 };
 
 #endif
 
 #ifdef TBEvent_cxx
 
-TBEvent::TBEvent(TString tree_s) : fChain(0) 
+TBEvent::TBEvent(TString filein_s,TString fileout_s) : fChain(0) 
 {
-   TFile *f = new TFile(tree_s);
+   TFile *f = new TFile(filein_s);
    TTree *tree = (TTree*)f->Get("ecal");
    //  tree->Print();
    Init(tree);
+   OutFile = new TFile(fileout_s,"RECREATE");
 }
 
 TBEvent::TBEvent(TList *f) : fChain(0) 
@@ -127,6 +129,7 @@ TBEvent::TBEvent(TList *f) : fChain(0)
       f->GetObject("ecal",tree);
       Init(tree);
    }
+   OutFile = new TFile("rootfiles/run_90320.e.10GeV.quality.root","RECREATE");
 }
 
 TBEvent::~TBEvent()
