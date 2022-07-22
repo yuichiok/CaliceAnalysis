@@ -5,6 +5,7 @@
 
 #include <algorithm> // for std::find
 #include <iterator> // for std::begin, std::end
+#include <string>
 
 #include "../include/TBEvent.hh"
 #include "../include/Hists.hh"
@@ -349,14 +350,24 @@ void TBEvent::ana_adc_bcid()
 
 void TBEvent::ana_quality()
 {
+   gStyle->SetOptStat(0);
+
    if (fChain == 0) return;
 
    Long64_t nentries = fChain->GetEntriesFast();
 
-   TFile *MyFile = new TFile("rootfiles/run_90320.quality.root","RECREATE");
+   TFile *MyFile = new TFile("rootfiles/run_90367.e.80GeV.quality.root","RECREATE");
 
-   TH1F * h_sum_energy = new TH1F("h_sum_energy","; sum_energy; Entries",500,0,5000);
-   TH1F * h_hit_slab   = new TH1F("h_hit_slab","; hit_slab; Entries",15,-0.5,14.5);
+   TH1F * h_sum_energy = new TH1F("h_sum_energy","; sum_energy; Entries",500,0,1E4);
+   TH1F * h_hit_energy = new TH1F("h_hit_energy","; hit_energy; Entries",120,-20,100);
+   TH1F * h_hit_slab_energy[nslabs];
+   for (int islab = 0; islab < nslabs; islab++)
+   {
+      TString hname = "h_hit_slab_energy" + to_string(islab);
+      h_hit_slab_energy[islab] = new TH1F(hname,hname,120,-20,100);
+   }
+
+   TH1F * h_hit_slab   = new TH1F("h_hit_slab","; hit_slab; Entries",nslabs,-0.5,14.5);
 
    int offset = 0;
    int last_bcid = -1;
@@ -382,12 +393,31 @@ void TBEvent::ana_quality()
       for (int ihit = 0; ihit < nhit_len; ihit++)
       {
          h_hit_slab->Fill(hit_slab[ihit]);
+         h_hit_energy->Fill(hit_energy[ihit]);
+
+         for (int islab = 0; islab < nslabs; islab++)
+         {
+            if (hit_slab[ihit]==islab) h_hit_slab_energy[islab]->Fill(hit_energy[ihit]);
+         }
+         
       }
 
    }
 
+   TCanvas * c0 = new TCanvas("c0","c0",700,700);
+   c0->Divide(4,4);
+   for (int islab = 0; islab < nslabs; islab++)
+   {
+      c0->cd(islab+1);
+      h_hit_slab_energy[islab]->Draw("h");
+   }
+   
+
+
    MyFile->cd();
    h_sum_energy->Write();
+   h_hit_energy->Write();
+   c0->Write();
    h_hit_slab->Write();
 
    cout << "Done.\n";

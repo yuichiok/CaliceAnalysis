@@ -4,10 +4,12 @@
 
 #include "src/TBEvent.cc"
 
-void run(TString process="default",TString filein="default",TString fileout="default"){
+void run(TString particle = "e", Int_t set_ene = 10){
 
+	TString filein = "default";
 	// filein = "../data/full_run_90268.root";
-	filein = "../../data/raw_siwecal_90320/full_run.root";
+	// filein = "../../data/raw_siwecal_90320/full_run.root";
+	filein = "../../data/raw_siwecal_90367/full_run.root";
 
 	TBEvent TBEvent(filein);
 	// TBEvent.ana_SumE();
