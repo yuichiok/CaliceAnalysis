@@ -16,7 +16,7 @@ void run(int set_ene = 10, string particle = "e"){
 	};
 
 	TString filein = "default";
-	string fileinpath = "../../data/raw_siwecal_90";
+	string fileinpath = "../../data/reco/raw_siwecal_90";
 	filein = fileinpath + run_list[name] + "/full_run.root";
 
 	TString fileout = "default";
