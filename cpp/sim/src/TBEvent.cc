@@ -19,339 +19,6 @@ const int nslabs = 15;
 const int nscas = 15;
 const float beamX = 20.0, beamY = 15.0;
 
-/*
-void TBEvent::ana_SumE()
-{
-   if (fChain == 0) return;
-
-   Long64_t nentries = fChain->GetEntriesFast();
-
-   Hists H;
-   H.init();
-
-   TFile *MyFile = new TFile("rootfiles/output.root","RECREATE");
-
-   Long64_t nbytes = 0, nb = 0;
-   for (Long64_t jentry=0; jentry<nentries;jentry++) {
-      Long64_t ientry = LoadTree(jentry);
-      if (ientry < 0) break;
-      nb = fChain->GetEntry(jentry);   nbytes += nb;
-
-      // if (Cut(ientry) < 0) continue;
-
-      float timeSec = CycleToSec(cycle);
-      float sum_energy_beam      = 0;
-      float sum_energy_slab[15] = {0};
-
-      H.h_sum_energy->Fill(sum_energy);
-
-      for (int ihit = 0; ihit < nhit_len; ++ihit)
-      {
-
-         float beam_spotX = (hit_x->at(ihit) + 15.0)*(hit_x->at(ihit) + 15.0);
-         float beam_spotY = (hit_y->at(ihit) + 15.0)*(hit_y->at(ihit) + 15.0);
-         // if(hit_chan->at(ihit)==63){
-         // if( -50.0 < hit_x->at(ihit) && hit_x->at(ihit) < -23.0 && -50.0 < hit_y->at(ihit) && hit_y->at(ihit) < -23.0 ){
-         if( (beam_spotX + beam_spotY) < 28.0*28.0 ){
-            H.hL_hg_beam[hit_slab->at(ihit)]->Fill(hit_adc_high->at(ihit));
-            H.hL_energy_beam[hit_slab->at(ihit)]->Fill(hit_energy->at(ihit));
-
-            H.hL_xy_energy_beam[hit_slab->at(ihit)]->Fill(hit_x->at(ihit),hit_y->at(ihit),hit_energy->at(ihit));
-
-            sum_energy_slab[hit_slab->at(ihit)] += hit_energy->at(ihit);
-            sum_energy_beam += hit_energy->at(ihit);
-         }
-
-         H.hL_hitrate[hit_slab->at(ihit)]->Fill(timeSec);
-         H.hL_xy_energy[hit_slab->at(ihit)]->Fill(hit_x->at(ihit),hit_y->at(ihit),hit_energy->at(ihit));
-
-      }
-
-      H.h_sum_energy_beam->Fill(sum_energy_beam);
-
-      for (int islab = 0; islab < 15; ++islab)
-      {
-         H.h_sum_energy_slab->Fill(sum_energy_slab[islab],islab);
-      }
-
-      // Playground
-      Debug(debug,jentry);
-
-   } // end of loop
-
-
-   H.writes(MyFile);
-
-   cout << "loop over\n";
-
-}
-
-void TBEvent::ana_Eff()
-{
-   if (fChain == 0) return;
-
-   Long64_t nentries = fChain->GetEntriesFast();
-
-   Hists H;
-   H.init();
-
-   TFile *MyFile = new TFile("rootfiles/output2.root","RECREATE");
-
-   Long64_t nbytes = 0, nb = 0;
-   for (Long64_t jentry=0; jentry<nentries;jentry++) {
-      Long64_t ientry = LoadTree(jentry);
-      if (ientry < 0) break;
-      nb = fChain->GetEntry(jentry);   nbytes += nb;
-
-      // must have more than 6 slab hits and slab 7 inclusive
-      bool slab7_check = std::find(std::begin(hit_slab), std::end(hit_slab), 7) != std::end(hit_slab);
-      if( (nhit_slab < 6) || (!slab7_check) ) continue;
-
-      bool not_conseq = false;
-      int  cslab = -1;
-
-      // conseq check
-      for (int ihit=0; ihit<nhit_len; ihit++){
-         if(ihit==0){
-            cslab = hit_slab->at(ihit);
-         }else if( !(hit_slab->at(ihit)==cslab) && !(hit_slab->at(ihit)==(cslab+1)) ){
-            not_conseq = true;
-            break;
-         }else{
-            cslab = hit_slab->at(ihit);
-         }
-      }
-
-      if (not_conseq) continue;
-
-      bool beamcheck = false;
-      bool nobeamcheck = false;
-
-      float sum_energy_beam             = 0;
-      float sum_energy_nobeam           = 0;
-
-      float sum_energy_slab[nslabs]        = {0};
-      float sum_energy_slab_beam[nslabs]   = {0};
-      float sum_energy_slab_nobeam[nslabs] = {0};
-
-      for (int ihit=0; ihit<nhit_len; ihit++){
-
-         float beam_spotX = (hit_x->at(ihit) + beamX)*(hit_x->at(ihit) + beamX);
-         float beam_spotY = (hit_y->at(ihit) + beamY)*(hit_y->at(ihit) + beamY);
-
-         if( (beam_spotX + beam_spotY) < 28.0*28.0 ){ // IN beam spot
-
-            beamcheck = true;
-
-            H.hL_xy_energy_beam[hit_slab->at(ihit)]->Fill(hit_x->at(ihit),hit_y->at(ihit),hit_energy->at(ihit));
-            H.hL_xy_hit_beam[hit_slab->at(ihit)]->Fill(hit_x->at(ihit),hit_y->at(ihit));
-            sum_energy_slab_beam[hit_slab->at(ihit)] += hit_energy->at(ihit);
-            sum_energy_beam += hit_energy->at(ihit);
-
-         }else{ // OUT beam spot
-
-            nobeamcheck = true;
-
-            H.hL_xy_energy_nobeam[hit_slab->at(ihit)]->Fill(hit_x->at(ihit),hit_y->at(ihit),hit_energy->at(ihit));
-            H.hL_xy_hit_nobeam[hit_slab->at(ihit)]->Fill(hit_x->at(ihit),hit_y->at(ihit));
-            sum_energy_slab_nobeam[hit_slab->at(ihit)] += hit_energy->at(ihit);
-            sum_energy_nobeam += hit_energy->at(ihit);
-
-         }
-
-         H.hL_xy_energy[hit_slab->at(ihit)]->Fill(hit_x->at(ihit),hit_y->at(ihit),hit_energy->at(ihit));
-         H.hL_xy_hit[hit_slab->at(ihit)]->Fill(hit_x->at(ihit),hit_y->at(ihit));
-         
-         sum_energy_slab[hit_slab->at(ihit)] += hit_energy->at(ihit);
-
-      } // hit loop
-
-      if(!beamcheck){
-         sum_energy_beam = -1;
-      }
-      if(!nobeamcheck){
-         sum_energy_nobeam = -1;
-      }
-
-      H.h_sum_energy->Fill(sum_energy);
-      H.h_sum_energy_beam->Fill(sum_energy_beam);
-      H.h_sum_energy_nobeam->Fill(sum_energy_nobeam);
-
-      for (int islab = 0; islab < nslabs; ++islab)
-      {
-         H.h_sum_energy_slab->Fill(sum_energy_slab[islab],islab);
-         H.h_sum_energy_slab_beam->Fill(sum_energy_slab_beam[islab],islab);
-         H.h_sum_energy_slab_nobeam->Fill(sum_energy_slab_nobeam[islab],islab);
-      }
-
-
-      // playground
-      Debug(debug,jentry);
-
-   } // end of event loop
-
-   H.writes(MyFile);
-
-   cout << "Done.\n";
-
-}
-
-void TBEvent::ana_Energy()
-{
-   if (fChain == 0) return;
-
-   Long64_t nentries = fChain->GetEntriesFast();
-
-   TFile *MyFile = new TFile("rootfiles/energy.root","RECREATE");
-
-   TH1F * h_hit_wall = new TH1F("h_hit_wall","h_hit_wall;Layer;Entry",15,-0.5,14.5);
-   TH1F * h_hit[4];
-   for(int ih=0;ih<4;ih++)
-   {
-      TString str0 = TString::Format("h_hit_w%i",ih);
-      TString str1 = str0 + TString::Format(";Layer;Entry");
-      h_hit[ih] = new TH1F(str0,str1,15,-0.5,14.5);
-   }
-
-   TH1F * pass_stat = new TH1F("pass_stat","pass_stat",4,-0.5,3.5);
-
-   Long64_t nbytes = 0, nb = 0;
-   for (int jentry=0; jentry<nentries;jentry++) {
-      Long64_t ientry = LoadTree(jentry);
-      if (ientry < 0) break;
-      nb = fChain->GetEntry(jentry);
-      nbytes += nb;
-
-      int hs[10];
-      for (int i = 0; i < 10; i++) hs[i] = -1;
-      int pass[4] = {0};
-
-      // peneturate slab 5-14?
-      for (int ihit = 0; ihit < nhit_len; ihit++)
-      {
-         if(hit_energy->at(ihit)<0.5) continue;
-         for (int itr = 0; itr < 10; itr++)
-         {
-            if (hit_slab->at(ihit)==itr){
-               if( (0 <= hit_chip->at(ihit)) && (hit_chip->at(ihit) <= 3) ){
-                  hs[itr] = 0;
-               }else if ( (4 <= hit_chip->at(ihit)) && (hit_chip->at(ihit) <= 7) ){
-                  hs[itr] = 1;
-               }else if ( (8 <= hit_chip->at(ihit)) && (hit_chip->at(ihit) <= 11) ){
-                  hs[itr] = 2;
-               }else if ( (12 <= hit_chip->at(ihit)) && (hit_chip->at(ihit) <= 15) ){
-                  hs[itr] = 3;
-               }
-            }
-         }
-      }
-      for(int itr = 0; itr < 10; itr++)
-      {
-         for (int i = 0; i < 4; i++)
-         {
-            if(hs[itr]==i) pass[i]++;
-         }
-      }
-      
-      // if penetrates
-
-      for(int i=0; i<4; i++){
-
-         if(pass[i]==10){
-
-            pass_stat->Fill(i);
-
-            for (int ihit = 0; ihit < nhit_len; ihit++)
-            {
-               h_hit_wall->Fill(hit_slab->at(ihit));
-               h_hit[i]->Fill(hit_slab->at(ihit));
-            }
-
-         }else{
-            continue;
-         }
-
-      }
-
-   }
-
-   MyFile->cd();
-
-   h_hit_wall->Write();
-   for(int ih=0; ih<4; ih++) h_hit[ih]->Write();
-
-   TCanvas *c0 = new TCanvas("c0","c0",700,700);
-   c0->Divide(2,2);
-   c0->cd(1);
-   h_hit[1]->Draw("h");
-   c0->cd(2);
-   h_hit[0]->Draw("h");
-   c0->cd(3);
-   h_hit[3]->Draw("h");
-   c0->cd(4);
-   h_hit[2]->Draw("h");
-
-   c0->Write();
-
-   TCanvas *c1 = new TCanvas("c1","c1",500,500);
-   c1->cd();
-   c1->SetLogy();   
-   pass_stat->Draw("h");
-   c1->Write();
-
-   cout << "Done.\n";
-
-}
-
-void TBEvent::ana_adc_bcid()
-{
-   if (fChain == 0) return;
-
-   Long64_t nentries = fChain->GetEntriesFast();
-
-   TFile *MyFile = new TFile("rootfiles/adc_bcid_run_90352.root","RECREATE");
-
-   TH2F * h_adc_bcid_filter = new TH2F("h_adc_bcid_filter","Layer*20+Chip vs. bcid vs. adc_high (filtered);true_bcid;Layer*20+Chip",2530,0,10.4E7,300,-0.5,299.5);
-   TH2F * h_adc_bcid_noise = new TH2F("h_adc_bcid_noise","Layer*20+Chip vs. bcid vs. adc_high (filtered);true_bcid;Layer*20+Chip",2530,0,10.4E7,300,-0.5,299.5);
-   TH2F * h_adc_bcid_nofilter = new TH2F("h_adc_bcid_nofilter","Layer*20+Chip vs. bcid vs. adc_high (no filter);true_bcid;Layer*20+Chip",2530,0,10.4E7,300,-0.5,299.5);
-
-   int offset = 0;
-   int last_bcid = -1;
-   int true_bcid = 0;
-
-   Long64_t nbytes = 0, nb = 0;
-   for (int jentry=0; jentry<nentries;jentry++) {
-      Long64_t ientry = LoadTree(jentry);
-      if (ientry < 0) break;
-      nb = fChain->GetEntry(jentry);
-      nbytes += nb;
-
-      if(bcid < last_bcid){
-         offset=offset+4096;
-      }
-      true_bcid=bcid+offset;
-      last_bcid=bcid;      
-
-      for (int ihit = 0; ihit < nhit_len; ihit++)
-      {
-         if(hit_energy->at(ihit)>1.0) h_adc_bcid_filter->Fill(true_bcid,hit_slab->at(ihit)*20+hit_chip->at(ihit),hit_adc_high->at(ihit));
-         if(hit_energy->at(ihit)<1.0) h_adc_bcid_noise->Fill(true_bcid,hit_slab->at(ihit)*20+hit_chip->at(ihit),hit_adc_high->at(ihit));
-         h_adc_bcid_nofilter->Fill(true_bcid,hit_slab->at(ihit)*20+hit_chip->at(ihit),hit_adc_high->at(ihit));
-
-      }
-
-   }
-
-   MyFile->cd();
-   h_adc_bcid_filter->Write();
-   h_adc_bcid_noise->Write();
-   h_adc_bcid_nofilter->Write();
-
-   cout << "Done.\n";
-
-}
-*/
-
 void TBEvent::ana_quality()
 {
    gStyle->SetOptStat(0);
@@ -359,8 +26,9 @@ void TBEvent::ana_quality()
    if (fChain == 0) return;
 
    Long64_t nentries = fChain->GetEntriesFast();
-   // TFile *MyFile = new TFile("rootfiles/run_90320.e.10GeV.quality.root","RECREATE");
 
+   TList* hList = new TList();
+   TList* hList_energy = new TList();
    TH1F * h_sum_energy = new TH1F("h_sum_energy","; sum_energy; Entries",500,0,1E4);
    TH1F * h_hit_energy = new TH1F("h_hit_energy","; hit_energy; Entries",120,-20,100);
    TH1F * h_hit_slab_energy[nslabs];
@@ -369,15 +37,13 @@ void TBEvent::ana_quality()
       TString hname = "h_hit_slab_energy" + to_string(islab);
       h_hit_slab_energy[islab] = new TH1F(hname,hname,120,-20,100);
    }
-   
-   TH1F * h_hit_slab7_energy_sca[nscas];
-   for (int isca = 0; isca < nscas; isca++)
-   {
-      TString hname = "h_hit_slab7_energy_sca" + to_string(isca);
-      h_hit_slab7_energy_sca[isca] = new TH1F(hname,hname,120,-20,100);
-   }
 
    TH1F * h_hit_slab   = new TH1F("h_hit_slab","; hit_slab; Entries",nslabs,-0.5,14.5);
+
+   hList->Add(h_sum_energy);
+   hList->Add(h_hit_energy);
+   for(int ih=0;ih<nslabs;ih++) hList_energy->Add(h_hit_slab_energy[ih]);
+   hList->Add(h_hit_slab);
 
    Long64_t nbytes = 0, nb = 0;
    for (int jentry=0; jentry<nentries;jentry++) {
@@ -404,41 +70,27 @@ void TBEvent::ana_quality()
          {
             if (hit_slab->at(ihit)==islab) h_hit_slab_energy[islab]->Fill(hit_energy->at(ihit));
          }
-
-         if(hit_slab->at(ihit)==7){
-            for (int isca = 0; isca < nscas; isca++)
-            {
-               if (hit_sca->at(ihit)==isca) h_hit_slab7_energy_sca[isca]->Fill(hit_energy->at(ihit));
-            }
-         }
          
       }
 
    }
 
-   TCanvas * c0 = new TCanvas("c0","c0",700,700);
-   c0->Divide(4,4);
+   TCanvas * c_hit_slab_energy = new TCanvas("c_hit_slab_energy","c_hit_slab_energy",700,700);
+   c_hit_slab_energy->Divide(4,4);
    for (int islab = 0; islab < nslabs; islab++)
    {
-      c0->cd(islab+1);
+      c_hit_slab_energy->cd(islab+1);
       h_hit_slab_energy[islab]->Draw("h");
    }
 
-   TCanvas * c1 = new TCanvas("c1","c1",700,700);
-   c1->Divide(4,4);
-   for (int isca = 0; isca < nscas; isca++)
-   {
-      c1->cd(isca+1);
-      h_hit_slab7_energy_sca[isca]->Draw("h");
-   }
-
-
    OutFile->cd();
-   h_sum_energy->Write();
-   h_hit_energy->Write();
-   c0->Write();
-   c1->Write();
-   h_hit_slab->Write();
+   hList->Write();
+   
+   TDirectory * d_ene = OutFile->mkdir("hit_slab_energy");
+   d_ene->cd();
+   c_hit_slab_energy->Write();
+   hList_energy->Write();
+
 
    cout << "Done.\n";
 
