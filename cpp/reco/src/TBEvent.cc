@@ -360,6 +360,9 @@ void TBEvent::ana_quality()
 
    // TFile *MyFile = new TFile("rootfiles/run_90320.e.10GeV.quality.root","RECREATE");
 
+   TList* hList = new TList();
+   TList* hList_energy = new TList();
+   TList* hList_energy_sca = new TList();
    TH1F * h_sum_energy = new TH1F("h_sum_energy","; sum_energy; Entries",500,0,1E4);
    TH1F * h_hit_energy = new TH1F("h_hit_energy","; hit_energy; Entries",120,-20,100);
    TH1F * h_hit_slab_energy[nslabs];
@@ -377,6 +380,12 @@ void TBEvent::ana_quality()
    }
 
    TH1F * h_hit_slab   = new TH1F("h_hit_slab","; hit_slab; Entries",nslabs,-0.5,14.5);
+
+   hList->Add(h_sum_energy);
+   hList->Add(h_hit_energy);
+   for(int ih=0;ih<nslabs;ih++) hList_energy->Add(h_hit_slab_energy[ih]);
+   for(int isca=0;isca<nscas;isca++) hList_energy_sca->Add(h_hit_slab7_energy_sca[isca]);
+   hList->Add(h_hit_slab);
 
    int offset = 0;
    int last_bcid = -1;
@@ -423,29 +432,37 @@ void TBEvent::ana_quality()
 
    }
 
-   TCanvas * c0 = new TCanvas("c0","c0",700,700);
-   c0->Divide(4,4);
+   TCanvas * c_hit_slab_energy = new TCanvas("c_hit_slab_energy","c_hit_slab_energy",700,700);
+   c_hit_slab_energy->Divide(4,4);
    for (int islab = 0; islab < nslabs; islab++)
    {
-      c0->cd(islab+1);
+      c_hit_slab_energy->cd(islab+1);
       h_hit_slab_energy[islab]->Draw("h");
    }
 
-   TCanvas * c1 = new TCanvas("c1","c1",700,700);
-   c1->Divide(4,4);
+   TCanvas * c_hit_slab7_energy_sca = new TCanvas("c_hit_slab7_energy_sca","c_hit_slab7_energy_sca",700,700);
+   c_hit_slab7_energy_sca->Divide(4,4);
    for (int isca = 0; isca < nscas; isca++)
    {
-      c1->cd(isca+1);
+      c_hit_slab7_energy_sca->cd(isca+1);
       h_hit_slab7_energy_sca[isca]->Draw("h");
    }
 
 
    OutFile->cd();
-   h_sum_energy->Write();
-   h_hit_energy->Write();
-   c0->Write();
-   c1->Write();
-   h_hit_slab->Write();
+   hList->Write();
+   
+   TDirectory * d_ene = OutFile->mkdir("hit_slab_energy");
+   d_ene->cd();
+   c_hit_slab_energy->Write();
+   hList_energy->Write();
+   OutFile->cd();
+
+   TDirectory * d_ene_sca = OutFile->mkdir("hit_slab_energy_sca");
+   d_ene_sca->cd();
+   c_hit_slab7_energy_sca->Write();
+   hList_energy_sca->Write();
+   OutFile->cd();
 
    cout << "Done.\n";
 
