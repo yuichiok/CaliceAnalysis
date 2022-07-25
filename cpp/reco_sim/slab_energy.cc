@@ -23,20 +23,31 @@ void SetStyle()
 	gStyle->SetTitleY(0.9); 
 }
 
-void slab_energy(float energy = 10)
+void slab_energy(int set_ene = 10, string particle = "e")
 {
+	string name = particle + "." + to_string(set_ene);
 
-	TString filename = "../data/full_run_90268.root";
+	std::map<std::string, std::string> run_list {
+		{"e.10", "320"},
+		{"e.20", "378"},
+		{"e.40", "375"},
+		{"e.60", "372"},
+		{"e.80", "367"},
+		{"e.100", "365"},
+		{"e.150", "355"},
+	};
 
-	TFile * file = TFile::Open(filename);
+	TString reco_file = "../reco/rootfiles/run_90" + run_list[name] + "." + name + "GeV.quality.root";
+	TString sim_file  = "../sim/rootfiles/ECAL.sim." + name + "GeV.quality.root";
+
+	cout << "reco file: " << reco_file << endl;
+	cout << " sim file: " << sim_file << endl;
+
+	TFile * f_reco = TFile::Open(reco_file);
+	TFile * f_sim = TFile::Open(sim_file);
 	TGaxis::SetMaxDigits(3);
-	TTree * ecal = (TTree*) file->Get( "ecal" ) ;
 
-	TCanvas * c1 = new TCanvas("c1", "converted",500,500);
 
-	TH1F * h_adc_bcid = new TH1F("h_nhits","nhits",30,0,30);
-
-	float nhits = siwecaldecoded->Draw("nhits >> h_nhits","gain_hit_high[0][12][0][63]==0");
 
 
 }

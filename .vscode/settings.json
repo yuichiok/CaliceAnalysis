@@ -82,7 +82,8 @@
         "stack": "cpp",
         "thread": "cpp",
         "variant": "cpp",
-        "stop_token": "cpp"
+        "stop_token": "cpp",
+        "filesystem": "cpp"
     },
     "C_Cpp.default.compilerPath": "/home/okugawa/miniconda3/envs/myenv/bin/root",
     "C_Cpp.default.includePath": [
