@@ -23,6 +23,17 @@ void SetStyle()
 	gStyle->SetTitleY(0.9); 
 }
 
+void legend(TH1F *rh,TH1F *sh)
+{
+	TLegend *leg0 = new TLegend(0.6,0.85,0.75,0.65,"","brNDC");
+	leg0->SetFillStyle(0);
+	leg0->SetBorderSize(0);
+	leg0->SetTextSize(0.04);
+	leg0->AddEntry(rh,"Reco");
+	leg0->AddEntry(sh,"Sim");
+	leg0->Draw("same");	
+}
+
 void readfiles(string name, TFile *f_rs[])
 {
 	std::map<std::string, std::string> run_list {
@@ -62,7 +73,6 @@ void slab_energy(int set_ene, TFile *f_rs[])
 	rh_sum_energy->GetYaxis()->SetRangeUser(0,0.15);
 	sh_sum_energy->GetYaxis()->SetRangeUser(0,0.15);
 
-	TCanvas *c1 = new TCanvas("c1","c1",700,700);
 	rh_sum_energy->SetLineColor(kBlue+1);
 	sh_sum_energy->SetLineColor(kBlack);
 
@@ -71,6 +81,37 @@ void slab_energy(int set_ene, TFile *f_rs[])
 	sh_sum_energy->Draw("h");
 	rh_sum_energy->Draw("hsame");
 
+	if(set_ene==10) legend(rh_sum_energy,sh_sum_energy);
+
+}
+
+void nhit_slab(int set_ene, TFile *f_rs[])
+{
+	TH1F * rh_nhit_slab;
+	TH1F * sh_nhit_slab;
+
+	rh_nhit_slab = (TH1F*)f_rs[0]->Get("h_hit_slab");
+	sh_nhit_slab = (TH1F*)f_rs[1]->Get("h_hit_slab");
+
+	rh_nhit_slab->Scale(1/rh_nhit_slab->GetEntries());
+	sh_nhit_slab->Scale(1/sh_nhit_slab->GetEntries());
+
+	rh_nhit_slab->GetXaxis()->SetRangeUser(0,1.5E4);
+	sh_nhit_slab->GetXaxis()->SetRangeUser(0,1.5E4);
+
+	rh_nhit_slab->GetYaxis()->SetRangeUser(0,0.23);
+	sh_nhit_slab->GetYaxis()->SetRangeUser(0,0.23);
+
+	rh_nhit_slab->SetLineColor(kBlue+1);
+	sh_nhit_slab->SetLineColor(kBlack);
+
+	TString title = "nhit_slab " + to_string(set_ene) + "GeV (reco & sim)";
+	rh_nhit_slab->SetTitle(title);
+	rh_nhit_slab->Draw("h");
+	sh_nhit_slab->Draw("hsame");
+
+	if(set_ene==10) legend(rh_nhit_slab,sh_nhit_slab);
+
 }
 
 void reco_sim_analysis(string particle = "e")
@@ -78,15 +119,19 @@ void reco_sim_analysis(string particle = "e")
 	TFile *MyFile = new TFile("rootfiles/reco_sim_analysis.root","RECREATE");
 	TCanvas *c_sum_energy = new TCanvas("c_sum_energy","c_sum_energy",700,700);
 	c_sum_energy->Divide(3,3);
+	TCanvas *c_nhit_slab = new TCanvas("c_nhit_slab","c_nhit_slab",700,700);
+	c_nhit_slab->Divide(3,3);
 
 	const int nene = 7;
 	int l_energy[nene] = {10, 20, 40, 60, 80, 100, 150};
 	for (int ie=0; ie<nene; ie++){
 		TFile *f_rs[2];
-		// TFile *f_sim;
 		string name = particle + "." + to_string(l_energy[ie]);
 		readfiles(name,f_rs);
+		c_sum_energy->cd(ie+1);
 		slab_energy(l_energy[ie],f_rs);
+		c_nhit_slab->cd(ie+1);
+		nhit_slab(l_energy[ie],f_rs);
 	}
 
 }
