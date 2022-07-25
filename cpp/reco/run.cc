@@ -12,7 +12,12 @@ void run(int set_ene = 10, string particle = "e"){
 
 	std::map<std::string, std::string> run_list {
 		{"e.10", "320"},
+		{"e.20", "378"},
+		{"e.40", "375"},
+		{"e.60", "372"},
 		{"e.80", "367"},
+		{"e.100", "365"},
+		{"e.150", "355"},
 	};
 
 	TString filein = "default";
