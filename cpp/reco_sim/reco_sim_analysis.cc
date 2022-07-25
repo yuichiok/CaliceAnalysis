@@ -23,10 +23,8 @@ void SetStyle()
 	gStyle->SetTitleY(0.9); 
 }
 
-void slab_energy(int set_ene = 10, string particle = "e")
+void readfiles(string name, TFile *f_rs[])
 {
-	string name = particle + "." + to_string(set_ene);
-
 	std::map<std::string, std::string> run_list {
 		{"e.10", "320"},
 		{"e.20", "378"},
@@ -43,15 +41,17 @@ void slab_energy(int set_ene = 10, string particle = "e")
 	cout << "reco file: " << reco_file << endl;
 	cout << " sim file: " << sim_file << endl;
 
-	TFile * f_reco = TFile::Open(reco_file);
-	TFile * f_sim = TFile::Open(sim_file);
-	TGaxis::SetMaxDigits(3);
+	f_rs[0] = TFile::Open(reco_file);
+	f_rs[1] = TFile::Open(sim_file);
+}
 
+void slab_energy(int set_ene, TFile *f_rs[])
+{
 	TH1F * rh_sum_energy;
 	TH1F * sh_sum_energy;
 
-	rh_sum_energy = (TH1F*)f_reco->Get("h_sum_energy");
-	sh_sum_energy = (TH1F*)f_sim->Get("h_sum_energy");
+	rh_sum_energy = (TH1F*)f_rs[0]->Get("h_sum_energy");
+	sh_sum_energy = (TH1F*)f_rs[1]->Get("h_sum_energy");
 
 	rh_sum_energy->Scale(1/rh_sum_energy->GetEntries());
 	sh_sum_energy->Scale(1/sh_sum_energy->GetEntries());
@@ -73,14 +73,20 @@ void slab_energy(int set_ene = 10, string particle = "e")
 
 }
 
-void reco_sim_analysis()
+void reco_sim_analysis(string particle = "e")
 {
-	// const int nene = 7;
-	// int l_energy[nene] = {10, 20, 40, 60, 80, 100, 150};
-	// for (int ie=0; ie<nene; ie++){
-	// 	slab_energy(l_energy[ie]);
-	// }
-	slab_energy(10);
+	TFile *MyFile = new TFile("rootfiles/reco_sim_analysis.root","RECREATE");
+	TCanvas *c_sum_energy = new TCanvas("c_sum_energy","c_sum_energy",700,700);
+	c_sum_energy->Divide(3,3);
 
+	const int nene = 7;
+	int l_energy[nene] = {10, 20, 40, 60, 80, 100, 150};
+	for (int ie=0; ie<nene; ie++){
+		TFile *f_rs[2];
+		// TFile *f_sim;
+		string name = particle + "." + to_string(l_energy[ie]);
+		readfiles(name,f_rs);
+		slab_energy(l_energy[ie],f_rs);
+	}
 
 }
