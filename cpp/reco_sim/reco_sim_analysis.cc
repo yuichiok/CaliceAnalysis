@@ -134,4 +134,9 @@ void reco_sim_analysis(string particle = "e")
 		nhit_slab(l_energy[ie],f_rs);
 	}
 
+
+	MyFile->cd();
+	c_sum_energy->Write();
+	c_nhit_slab->Write();
+
 }
