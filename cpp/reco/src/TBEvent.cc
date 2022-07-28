@@ -480,8 +480,10 @@ void TBEvent::ana_radius()
 
    TList* hList = new TList();
    TH3F * h_3d_charge_map = new TH3F("h_3d_charge_map",";z;x;y",15,0,15,16,-90,0,16,-90,0);
+   TH3F * h_3d_beam_cm    = new TH3F("h_3d_beam_cm",";z;x;y",15,0,15,16,-90,0,16,-90,0);
 
    hList->Add(h_3d_charge_map);
+   hList->Add(h_3d_beam_cm);
 
    int offset = 0;
    int last_bcid = -1;
@@ -502,12 +504,39 @@ void TBEvent::ana_radius()
 
       if(nhit_slab < 13) continue;
 
+      float Xcm[nslabs] = {0};
+      float Ycm[nslabs] = {0};
+      float Wsum[nslabs] = {0};
+
       for (int ihit = 0; ihit < nhit_len; ihit++)
       {
          h_3d_charge_map->Fill(hit_slab[ihit],hit_x[ihit],hit_y[ihit],hit_energy[ihit]);
-      }
+         
+         for (int islab = 0; islab < nslabs; islab++)
+         {
+            if (hit_slab[ihit]==islab)
+            {
+               Xcm[islab]  += hit_x[ihit] * hit_energy[ihit];
+               Ycm[islab]  += hit_y[ihit] * hit_energy[ihit];
+               Wsum[islab] += hit_energy[ihit];
+            }
 
-   }
+         } // match slab
+
+      } // hit loop
+
+      for (int islab = 0; islab < nslabs; islab++)
+      {
+         Xcm[islab] = Xcm[islab] / Wsum[islab];
+         Ycm[islab] = Ycm[islab] / Wsum[islab];
+      
+         h_3d_beam_cm->Fill(islab,Xcm[islab],Ycm[islab]);
+
+      } // match slab
+      
+
+
+   } // event loop
 
    OutFile->cd();
    hList->Write();
