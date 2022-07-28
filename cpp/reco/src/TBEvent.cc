@@ -476,37 +476,17 @@ void TBEvent::ana_radius()
 
    Long64_t nentries = fChain->GetEntriesFast();
 
+   OutFile = new TFile(OutFileName + "GeV.MR.root","RECREATE");
+
    TList* hList = new TList();
-   TList* hList_energy = new TList();
-   TList* hList_energy_sca = new TList();
-   TH1F * h_sum_energy = new TH1F("h_sum_energy","; sum_energy; Entries",500,0,1.5E4);
-   TH1F * h_hit_energy = new TH1F("h_hit_energy","; hit_energy; Entries",120,-20,100);
-   TH1F * h_hit_slab_energy[nslabs];
-   for (int islab = 0; islab < nslabs; islab++)
-   {
-      TString hname = "h_hit_slab_energy" + to_string(islab);
-      h_hit_slab_energy[islab] = new TH1F(hname,hname,120,-20,100);
-   }
-   
-   TH1F * h_hit_slab7_energy_sca[nscas];
-   for (int isca = 0; isca < nscas; isca++)
-   {
-      TString hname = "h_hit_slab7_energy_sca" + to_string(isca);
-      h_hit_slab7_energy_sca[isca] = new TH1F(hname,hname,120,-20,100);
-   }
+   TH3F * h_3d_charge_map = new TH3F("h_3d_charge_map",";x;y;z",32,-90,90,32,-90,90,15,0,15);
 
-   TH1F * h_hit_slab   = new TH1F("h_hit_slab","; hit_slab; Entries",nslabs,-0.5,14.5);
-
-   hList->Add(h_sum_energy);
-   hList->Add(h_hit_energy);
-   for(int ih=0;ih<nslabs;ih++) hList_energy->Add(h_hit_slab_energy[ih]);
-   for(int isca=0;isca<nscas;isca++) hList_energy_sca->Add(h_hit_slab7_energy_sca[isca]);
-   hList->Add(h_hit_slab);
+   hList->Add(h_3d_charge_map);
 
    int offset = 0;
    int last_bcid = -1;
    int true_bcid = 0;
-
+/*
    Long64_t nbytes = 0, nb = 0;
    for (int jentry=0; jentry<nentries;jentry++) {
       Long64_t ientry = LoadTree(jentry);
@@ -522,13 +502,8 @@ void TBEvent::ana_radius()
 
       if(nhit_slab < 13) continue;
 
-      h_sum_energy->Fill(sum_energy);
-
       for (int ihit = 0; ihit < nhit_len; ihit++)
       {
-         // if(hit_adc_high[ihit]<400) continue;
-         // if(hit_sca[ihit]>0) continue;
-
          h_hit_slab->Fill(hit_slab[ihit]);
          h_hit_energy->Fill(hit_energy[ihit]);
 
@@ -580,6 +555,7 @@ void TBEvent::ana_radius()
    hList_energy_sca->Write();
    OutFile->cd();
 
+*/
    cout << "Done.\n";
 
 }

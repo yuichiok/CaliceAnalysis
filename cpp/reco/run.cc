@@ -26,18 +26,19 @@ void run(int set_ene = 10, string particle = "e"){
 
 	TString fileout = "default";
 	string fileoutpath = "rootfiles/";
-	fileout = fileoutpath + "run_90" + run_list[name] + "." + name + "GeV.quality.root";
+	fileout = fileoutpath + "run_90" + run_list[name] + "." + name;
 
 	cout << "Input: " << filein << endl; 
+	cout << "Output: " << fileout << "*" << endl; 
 
 	TBEvent TBEvent(filein,fileout);
 	// TBEvent.ana_SumE();
 	// TBEvent.ana_Eff();
 	// TBEvent.ana_Energy();
 	// TBEvent.ana_adc_bcid();
-	TBEvent.ana_quality();
+	// TBEvent.ana_quality();
+	TBEvent.ana_radius();
 
-	cout << "Output: " << fileout << endl; 
 	ROOT::Math::MinimizerOptions::SetDefaultMaxFunctionCalls( 200 );
 
 	gSystem->Exit(0);

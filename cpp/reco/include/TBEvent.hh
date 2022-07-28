@@ -101,6 +101,7 @@ public :
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
    TFile *OutFile;
+   TString OutFileName;
 };
 
 #endif
@@ -113,7 +114,8 @@ TBEvent::TBEvent(TString filein_s,TString fileout_s) : fChain(0)
    TTree *tree = (TTree*)f->Get("ecal");
    //  tree->Print();
    Init(tree);
-   OutFile = new TFile(fileout_s,"RECREATE");
+   // OutFile = new TFile(fileout_s,"RECREATE");
+   OutFileName = fileout_s;
 }
 
 TBEvent::TBEvent(TList *f) : fChain(0) 
