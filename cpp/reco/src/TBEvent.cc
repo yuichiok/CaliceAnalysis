@@ -479,14 +479,14 @@ void TBEvent::ana_radius()
    OutFile = new TFile(OutFileName + "GeV.MR.root","RECREATE");
 
    TList* hList = new TList();
-   TH3F * h_3d_charge_map = new TH3F("h_3d_charge_map",";x;y;z",32,-90,90,32,-90,90,15,0,15);
+   TH3F * h_3d_charge_map = new TH3F("h_3d_charge_map",";z;x;y",15,0,15,16,-90,0,16,-90,0);
 
    hList->Add(h_3d_charge_map);
 
    int offset = 0;
    int last_bcid = -1;
    int true_bcid = 0;
-/*
+
    Long64_t nbytes = 0, nb = 0;
    for (int jentry=0; jentry<nentries;jentry++) {
       Long64_t ientry = LoadTree(jentry);
@@ -504,58 +504,14 @@ void TBEvent::ana_radius()
 
       for (int ihit = 0; ihit < nhit_len; ihit++)
       {
-         h_hit_slab->Fill(hit_slab[ihit]);
-         h_hit_energy->Fill(hit_energy[ihit]);
-
-         for (int islab = 0; islab < nslabs; islab++)
-         {
-            if (hit_slab[ihit]==islab) h_hit_slab_energy[islab]->Fill(hit_energy[ihit]);
-         }
-
-         if(hit_slab[ihit]==7){
-            for (int isca = 0; isca < nscas; isca++)
-            {
-               if (hit_sca[ihit]==isca) h_hit_slab7_energy_sca[isca]->Fill(hit_energy[ihit]);
-            }
-         }
-         
+         h_3d_charge_map->Fill(hit_slab[ihit],hit_x[ihit],hit_y[ihit],hit_energy[ihit]);
       }
 
    }
 
-   TCanvas * c_hit_slab_energy = new TCanvas("c_hit_slab_energy","c_hit_slab_energy",700,700);
-   c_hit_slab_energy->Divide(4,4);
-   for (int islab = 0; islab < nslabs; islab++)
-   {
-      c_hit_slab_energy->cd(islab+1);
-      h_hit_slab_energy[islab]->Draw("h");
-   }
-
-   TCanvas * c_hit_slab7_energy_sca = new TCanvas("c_hit_slab7_energy_sca","c_hit_slab7_energy_sca",700,700);
-   c_hit_slab7_energy_sca->Divide(4,4);
-   for (int isca = 0; isca < nscas; isca++)
-   {
-      c_hit_slab7_energy_sca->cd(isca+1);
-      h_hit_slab7_energy_sca[isca]->Draw("h");
-   }
-
-
    OutFile->cd();
    hList->Write();
-   
-   TDirectory * d_ene = OutFile->mkdir("hit_slab_energy");
-   d_ene->cd();
-   c_hit_slab_energy->Write();
-   hList_energy->Write();
-   OutFile->cd();
 
-   TDirectory * d_ene_sca = OutFile->mkdir("hit_slab_energy_sca");
-   d_ene_sca->cd();
-   c_hit_slab7_energy_sca->Write();
-   hList_energy_sca->Write();
-   OutFile->cd();
-
-*/
    cout << "Done.\n";
 
 }
