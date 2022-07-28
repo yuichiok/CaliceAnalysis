@@ -468,6 +468,122 @@ void TBEvent::ana_quality()
 
 }
 
+void TBEvent::ana_radius()
+{
+   gStyle->SetOptStat(0);
+
+   if (fChain == 0) return;
+
+   Long64_t nentries = fChain->GetEntriesFast();
+
+   TList* hList = new TList();
+   TList* hList_energy = new TList();
+   TList* hList_energy_sca = new TList();
+   TH1F * h_sum_energy = new TH1F("h_sum_energy","; sum_energy; Entries",500,0,1.5E4);
+   TH1F * h_hit_energy = new TH1F("h_hit_energy","; hit_energy; Entries",120,-20,100);
+   TH1F * h_hit_slab_energy[nslabs];
+   for (int islab = 0; islab < nslabs; islab++)
+   {
+      TString hname = "h_hit_slab_energy" + to_string(islab);
+      h_hit_slab_energy[islab] = new TH1F(hname,hname,120,-20,100);
+   }
+   
+   TH1F * h_hit_slab7_energy_sca[nscas];
+   for (int isca = 0; isca < nscas; isca++)
+   {
+      TString hname = "h_hit_slab7_energy_sca" + to_string(isca);
+      h_hit_slab7_energy_sca[isca] = new TH1F(hname,hname,120,-20,100);
+   }
+
+   TH1F * h_hit_slab   = new TH1F("h_hit_slab","; hit_slab; Entries",nslabs,-0.5,14.5);
+
+   hList->Add(h_sum_energy);
+   hList->Add(h_hit_energy);
+   for(int ih=0;ih<nslabs;ih++) hList_energy->Add(h_hit_slab_energy[ih]);
+   for(int isca=0;isca<nscas;isca++) hList_energy_sca->Add(h_hit_slab7_energy_sca[isca]);
+   hList->Add(h_hit_slab);
+
+   int offset = 0;
+   int last_bcid = -1;
+   int true_bcid = 0;
+
+   Long64_t nbytes = 0, nb = 0;
+   for (int jentry=0; jentry<nentries;jentry++) {
+      Long64_t ientry = LoadTree(jentry);
+      if (ientry < 0) break;
+      nb = fChain->GetEntry(jentry);
+      nbytes += nb;
+
+      if(bcid < last_bcid){
+         offset=offset+4096;
+      }
+      true_bcid=bcid+offset;
+      last_bcid=bcid;
+
+      if(nhit_slab < 13) continue;
+
+      h_sum_energy->Fill(sum_energy);
+
+      for (int ihit = 0; ihit < nhit_len; ihit++)
+      {
+         // if(hit_adc_high[ihit]<400) continue;
+         // if(hit_sca[ihit]>0) continue;
+
+         h_hit_slab->Fill(hit_slab[ihit]);
+         h_hit_energy->Fill(hit_energy[ihit]);
+
+         for (int islab = 0; islab < nslabs; islab++)
+         {
+            if (hit_slab[ihit]==islab) h_hit_slab_energy[islab]->Fill(hit_energy[ihit]);
+         }
+
+         if(hit_slab[ihit]==7){
+            for (int isca = 0; isca < nscas; isca++)
+            {
+               if (hit_sca[ihit]==isca) h_hit_slab7_energy_sca[isca]->Fill(hit_energy[ihit]);
+            }
+         }
+         
+      }
+
+   }
+
+   TCanvas * c_hit_slab_energy = new TCanvas("c_hit_slab_energy","c_hit_slab_energy",700,700);
+   c_hit_slab_energy->Divide(4,4);
+   for (int islab = 0; islab < nslabs; islab++)
+   {
+      c_hit_slab_energy->cd(islab+1);
+      h_hit_slab_energy[islab]->Draw("h");
+   }
+
+   TCanvas * c_hit_slab7_energy_sca = new TCanvas("c_hit_slab7_energy_sca","c_hit_slab7_energy_sca",700,700);
+   c_hit_slab7_energy_sca->Divide(4,4);
+   for (int isca = 0; isca < nscas; isca++)
+   {
+      c_hit_slab7_energy_sca->cd(isca+1);
+      h_hit_slab7_energy_sca[isca]->Draw("h");
+   }
+
+
+   OutFile->cd();
+   hList->Write();
+   
+   TDirectory * d_ene = OutFile->mkdir("hit_slab_energy");
+   d_ene->cd();
+   c_hit_slab_energy->Write();
+   hList_energy->Write();
+   OutFile->cd();
+
+   TDirectory * d_ene_sca = OutFile->mkdir("hit_slab_energy_sca");
+   d_ene_sca->cd();
+   c_hit_slab7_energy_sca->Write();
+   hList_energy_sca->Write();
+   OutFile->cd();
+
+   cout << "Done.\n";
+
+}
+
 float TBEvent::CycleToSec(int cyc=-1)
 {
    float aq_sec      = 0.001;

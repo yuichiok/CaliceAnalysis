@@ -36,21 +36,21 @@ public :
    Int_t           nhit_len;
    Float_t         sum_energy;
    Float_t         sum_energy_lg;
-   Int_t           hit_slab[4763];   //[nhit_len]
-   Int_t           hit_chip[4763];   //[nhit_len]
-   Int_t           hit_chan[4763];   //[nhit_len]
-   Int_t           hit_sca[4763];   //[nhit_len]
-   Float_t         hit_x[4763];   //[nhit_len]
-   Float_t         hit_y[4763];   //[nhit_len]
-   Float_t         hit_z[4763];   //[nhit_len]
-   Int_t           hit_adc_high[4763];   //[nhit_len]
-   Int_t           hit_adc_low[4763];   //[nhit_len]
-   Float_t         hit_energy[4763];   //[nhit_len]
-   Float_t         hit_energy_lg[4763];   //[nhit_len]
-   Int_t           hit_n_scas_filled[4763];   //[nhit_len]
-   Int_t           hit_isHit[4763];   //[nhit_len]
-   Int_t           hit_isMasked[4763];   //[nhit_len]
-   Int_t           hit_isCommissioned[4763];   //[nhit_len]
+   Int_t           hit_slab[9999];   //[nhit_len]
+   Int_t           hit_chip[9999];   //[nhit_len]
+   Int_t           hit_chan[9999];   //[nhit_len]
+   Int_t           hit_sca[9999];   //[nhit_len]
+   Float_t         hit_x[9999];   //[nhit_len]
+   Float_t         hit_y[9999];   //[nhit_len]
+   Float_t         hit_z[9999];   //[nhit_len]
+   Int_t           hit_adc_high[9999];   //[nhit_len]
+   Int_t           hit_adc_low[9999];   //[nhit_len]
+   Float_t         hit_energy[9999];   //[nhit_len]
+   Float_t         hit_energy_lg[9999];   //[nhit_len]
+   Int_t           hit_n_scas_filled[9999];   //[nhit_len]
+   Int_t           hit_isHit[9999];   //[nhit_len]
+   Int_t           hit_isMasked[9999];   //[nhit_len]
+   Int_t           hit_isCommissioned[9999];   //[nhit_len]
 
    // List of branches
    TBranch        *b_event;   //!
@@ -95,6 +95,7 @@ public :
    virtual void     ana_Energy();
    virtual void     ana_adc_bcid();
    virtual void     ana_quality();
+   virtual void     ana_radius();
    virtual float    CycleToSec(int cyc);
    virtual void     Debug(bool debug, Long64_t entry);
    virtual Bool_t   Notify();
