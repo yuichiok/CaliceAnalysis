@@ -2,6 +2,7 @@
 *.csv
 *.ods
 *.png
+.vscode/
 myclass/EventControl.*
 data/
 .DS_Store
