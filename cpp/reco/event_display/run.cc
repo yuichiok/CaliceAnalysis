@@ -31,6 +31,6 @@ void run(int set_ene = 10, string particle = "e"){
 
 	ROOT::Math::MinimizerOptions::SetDefaultMaxFunctionCalls( 200 );
 
-	gSystem->Exit(0);
+	// gSystem->Exit(0);
 
 }

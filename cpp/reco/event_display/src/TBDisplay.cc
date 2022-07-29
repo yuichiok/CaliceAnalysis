@@ -25,71 +25,49 @@ void TBDisplay::Display()
    if (fChain == 0) return;
 
    Long64_t nentries = fChain->GetEntriesFast();
-
-   OutFile = new TFile(OutFileName + "GeV.MR.root","RECREATE");
-
-   TList* hList = new TList();
-   TH3F * h_3d_charge_map = new TH3F("h_3d_charge_map",";z;x;y",15,0,15,16,-90,0,16,-90,0);
-   TH3F * h_3d_beam_cm    = new TH3F("h_3d_beam_cm",";z;x;y",15,0,15,16,-90,0,16,-90,0);
-
-   hList->Add(h_3d_charge_map);
-   hList->Add(h_3d_beam_cm);
-
-   int offset = 0;
-   int last_bcid = -1;
-   int true_bcid = 0;
+   OutFile = new TFile("test.root","RECREATE");
 
    Long64_t nbytes = 0, nb = 0;
-   for (int jentry=0; jentry<nentries;jentry++) {
-      Long64_t ientry = LoadTree(jentry);
-      if (ientry < 0) break;
-      nb = fChain->GetEntry(jentry);
-      nbytes += nb;
+   int ievent = 0;
+   int cnt_event = 0;
 
-      if(bcid < last_bcid){
-         offset=offset+4096;
-      }
-      true_bcid=bcid+offset;
-      last_bcid=bcid;
 
-      if(nhit_slab < 13) continue;
+   TCanvas * c = new TCanvas("c","c",800,800);
 
-      float Xcm[nslabs] = {0};
-      float Ycm[nslabs] = {0};
-      float Wsum[nslabs] = {0};
+   while( cin >> ievent ){
 
-      for (int ihit = 0; ihit < nhit_len; ihit++)
-      {
-         h_3d_charge_map->Fill(hit_slab[ihit],hit_x[ihit],hit_y[ihit],hit_energy[ihit]);
-         
-         for (int islab = 0; islab < nslabs; islab++)
-         {
-            if (hit_slab[ihit]==islab)
+      TH3F * h_display    = new TH3F("h_display",";z;x;y",285,0.0,285.0,32,-90.0,90.0,32,-90.0,90.0);
+
+      for (int jentry=0; jentry<nentries;jentry++) {
+
+         Long64_t ientry = LoadTree(jentry);
+         if (ientry < 0) break;
+         nb = fChain->GetEntry(jentry);
+         nbytes += nb;
+
+         if(nhit_slab < 13) continue;
+         cnt_event++;
+
+         if(cnt_event==ievent){
+            for (int ihit = 0; ihit < nhit_len; ihit++)
             {
-               Xcm[islab]  += hit_x[ihit] * hit_energy[ihit];
-               Ycm[islab]  += hit_y[ihit] * hit_energy[ihit];
-               Wsum[islab] += hit_energy[ihit];
-            }
+               h_display->Fill(hit_z[ihit],hit_x[ihit],hit_y[ihit],hit_energy[ihit]);
 
-         } // match slab
+            } // hit loop
+            break;
+         }
 
-      } // hit loop
+      }
 
-      for (int islab = 0; islab < nslabs; islab++)
-      {
-         Xcm[islab] = Xcm[islab] / Wsum[islab];
-         Ycm[islab] = Ycm[islab] / Wsum[islab];
-      
-         h_3d_beam_cm->Fill(islab,Xcm[islab],Ycm[islab]);
-
-      } // match slab
-      
+      h_display->Draw("lego");
+      c->Draw();
+      c->Modified();
+      c->Update();
+      gSystem->ProcessEvents();
+      delete h_display;
 
 
-   } // event loop
-
-   OutFile->cd();
-   hList->Write();
+   };
 
    cout << "Done.\n";
 
