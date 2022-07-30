@@ -46,7 +46,7 @@ void readfiles(string name, TFile *f_rs[])
 		{"e.150", "355"},
 	};
 
-	TString reco_file = "../reco/rootfiles/run_90" + run_list[name] + "." + name + "GeV.quality.root";
+	TString reco_file = "../reco/rootfiles/quality/run_90" + run_list[name] + "." + name + "GeV.quality.root";
 	TString sim_file  = "../sim/rootfiles/ECAL.sim." + name + "GeV.quality.root";
 
 	cout << "reco file: " << reco_file << endl;

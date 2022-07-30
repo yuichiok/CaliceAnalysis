@@ -36,8 +36,8 @@ void run(int set_ene = 10, string particle = "e"){
 	// TBEvent.ana_Eff();
 	// TBEvent.ana_Energy();
 	// TBEvent.ana_adc_bcid();
-	// TBEvent.ana_quality();
-	TBEvent.ana_radius();
+	TBEvent.ana_quality();
+	// TBEvent.ana_radius();
 
 	ROOT::Math::MinimizerOptions::SetDefaultMaxFunctionCalls( 200 );
 
