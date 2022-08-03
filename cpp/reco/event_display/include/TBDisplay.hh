@@ -96,6 +96,7 @@ public :
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
    TFile *OutFile;
+   TString InFileName;
    TString OutFileName;
 };
 
@@ -105,7 +106,8 @@ public :
 
 TBDisplay::TBDisplay(TString filein_s) : fChain(0) 
 {
-   TFile *f = new TFile(filein_s);
+   InFileName = filein_s;
+   TFile *f = new TFile(InFileName);
    TTree *tree = (TTree*)f->Get("ecal");
    Init(tree);
 }
