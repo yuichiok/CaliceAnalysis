@@ -52,7 +52,7 @@ void run(int set_ene = 10, string particle = "e"){
 
 	gEve->AddEvent(new TEveEventManager("Event", "SiWECAL VSD Event"));
 
-	gDisplay->GotoEvent(0);
+	gDisplay->GotoEvent(1);
 
 	gEve->Redraw3D(kTRUE); // Reset camera after the first event has been shown.
 

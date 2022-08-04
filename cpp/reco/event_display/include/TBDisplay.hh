@@ -98,8 +98,10 @@ public :
 
    virtual Bool_t   GotoEvent(Int_t ev);
    virtual void     LoadHits(TEvePointSet*& ps);
-   TEvePointSet  *fHits;
 
+   TEvePointSet  *fHits;
+   TEventList *evlist;
+   TCut coin = "nhit_slab >= 13";
 
    TFile *OutFile;
    TString InFileName;
@@ -117,6 +119,12 @@ TBDisplay::TBDisplay(TString filein_s) : fChain(0)
    InFileName = filein_s;
    TFile *f = new TFile(InFileName);
    TTree *tree = (TTree*)f->Get("ecal");
+   fChain = tree;
+
+   tree->Draw( ">>evlist", coin);
+   evlist = (TEventList*)gDirectory->Get("evlist");
+   tree->SetEventList(evlist);
+
    Init(tree);
 }
 
@@ -139,6 +147,16 @@ TBDisplay::~TBDisplay()
    if (!fChain) return;
    delete fChain->GetCurrentFile();
 }
+
+// TBDisplay::Select(TTree* tree)
+// {
+//    TEventList *evlist = new TEventList( "elist", "Coincidence Selection" ) ;
+//    tree->Draw( ">>evlist", "nhit_slab >= 13");
+
+//    TTree * newtree;
+//    newtree->SetEventList(evlist);
+//    return newtree;
+// }
 
 Int_t TBDisplay::GetEntry(Long64_t entry)
 {
@@ -171,7 +189,7 @@ void TBDisplay::Init(TTree *tree)
 
    // Set branch addresses and branch pointers
    if (!tree) return;
-   fChain = tree;
+   // fChain = tree;
    fCurrent = -1;
    fChain->SetMakeClass(1);
 

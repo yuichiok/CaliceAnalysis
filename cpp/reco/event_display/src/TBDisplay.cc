@@ -11,6 +11,7 @@
 #include <TEveTrack.h>
 #include <TEveTrackPropagator.h>
 #include <TEveGeoShape.h>
+#include <TEventList.h>
 
 #include <TGTab.h>
 #include <TGButton.h>
@@ -79,20 +80,31 @@ Bool_t TBDisplay::GotoEvent(Int_t ev)
    Long64_t nb = 0;
    if (fChain == 0) return kFALSE;
 
-   Long64_t nentries = fChain->GetEntriesFast();
+   // Long64_t nentries = fChain->GetEntriesFast();
+   Long64_t nentries = fChain->GetEntries(coin);
+
    if (ev < 0 || ev >= nentries)
    {
       Warning("GotoEvent", "Invalid event id %d.", ev);
       return kFALSE;
    }
 
-   Long64_t ientry = LoadTree(ev);
-   
-   nb = fChain->GetEntry(ev);
+   gEve->GetViewers()->DeleteAnnotations();
+   gEve->GetCurrentEvent()->DestroyElements();
+
+
+   Long64_t ientry = LoadTree( evlist->GetEntry(ev) );
+   if (ientry == 0) return kFALSE;
+
+   nb = fChain->GetEntry(evlist->GetEntry(ev));
+
+
+
 
    // Load event data into visualization structures.
 
    LoadHits(fHits);
+   // LoadHitArray(fHitsArray);
 
    // Fill projected views.
 
@@ -111,19 +123,39 @@ Bool_t TBDisplay::GotoEvent(Int_t ev)
 
 void TBDisplay::LoadHits(TEvePointSet*& ps)
 {
-   if (ps == 0) {
-      ps = new TEvePointSet("Hit");
-      ps->SetMainColor(kRed);
-      ps->SetMarkerSize(0.5);
-      ps->SetMarkerStyle(2);
-      ps->IncDenyDestroy();
-   } else {
-      ps->Reset();
-   }
+   // if (ps == 0) {
+   //    ps = new TEvePointSet("Hit");
+   //    ps->SetMainColor(kRed);
+   //    ps->SetMarkerSize(0.5);
+   //    ps->SetMarkerStyle(2);
+   //    ps->IncDenyDestroy();
+   // } else {
+   //    ps->Reset();
+   // }
 
-   TEvePointSelector ss(fChain, ps, "hit_x:hit_y:hit_z");
-   ss.Select();
-   ps->SetTitle("Adc count?");
+   ps = new TEvePointSet("Hit");
+   ps->SetOwnIds(kTRUE);
+   ps->SetMainColor(kRed);
+   ps->SetMarkerSize(0.5);
+   ps->SetMarkerStyle(2);
+   ps->IncDenyDestroy();
+
+   ps->SetNextPoint(10,10,10);
+   ps->SetPointId(new TNamed(Form("Point %d", 0), ""));
+   ps->SetNextPoint(15,15,15);
+   ps->SetPointId(new TNamed(Form("Point %d", 1), ""));
+   // if (!gRandom) gRandom = new TRandom(0);
+   // TRandom& r= *gRandom;
+   // Float_t s = 100;
+   // for(Int_t i = 0; i<10; i++)
+   // {
+   //    ps->SetNextPoint(r.Uniform(-s,s), r.Uniform(-s,s), r.Uniform(-s,s));
+   //    ps->SetPointId(new TNamed(Form("Point %d", i), ""));
+   // }
+
+   // TEvePointSelector ss(fChain, ps, "hit_x:hit_y:hit_z");
+   // ss.Select("nhit_slab >= 13");
+   // ps->SetTitle("Adc count?");
 
    gEve->AddElement(ps);
 }
