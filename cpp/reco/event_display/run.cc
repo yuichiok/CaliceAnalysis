@@ -3,6 +3,7 @@
 #include "TApplication.h"
 
 #include "src/TBDisplay.cc"
+// #include "MultiView.C"
 
 void run(int set_ene = 10, string particle = "e"){
 
@@ -26,8 +27,36 @@ void run(int set_ene = 10, string particle = "e"){
 
 	cout << "Input: " << filein << endl; 
 
-	TBDisplay TBDisplay(filein);
-	TBDisplay.Display();
+	TBDisplay *gDisplay = new TBDisplay(filein);
+
+	TFile::SetCacheFileDir(".");
+
+	TEveManager::Create();
+
+	TEveGeoShape *SiWECAL = new TEveGeoShape;
+	SiWECAL->SetShape(new TGeoBBox(1.760000000e+01, 1.760000000e+01, 2.850000000e+01)); // dx, dy, dz
+	SiWECAL->SetNSegments(100); // number of vertices
+	SiWECAL->SetMainColor(kGreen);
+	SiWECAL->SetMainAlpha(0.2);
+	SiWECAL->RefMainTrans().SetPos(0, 0, 0); // set position
+	gEve->AddGlobalElement(SiWECAL);
+
+	gStyle->SetOptStat(0);
+
+	gEve->GetViewers()->SwitchColorSet();
+	gEve->GetDefaultGLViewer()->SetStyle(TGLRnrCtx::kOutline);
+
+	gEve->GetBrowser()->GetTabRight()->SetTab(1);
+
+	make_gui();
+
+	gEve->AddEvent(new TEveEventManager("Event", "SiWECAL VSD Event"));
+
+	gDisplay->GotoEvent(0);
+
+	gEve->Redraw3D(kTRUE); // Reset camera after the first event has been shown.
+
+	// gDisplay->Display();
 
 	ROOT::Math::MinimizerOptions::SetDefaultMaxFunctionCalls( 200 );
 

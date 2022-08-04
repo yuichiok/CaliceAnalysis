@@ -95,9 +95,17 @@ public :
    virtual void     Debug(bool debug, Long64_t entry);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
+
+   virtual Bool_t   GotoEvent(Int_t ev);
+   virtual void     LoadHits(TEvePointSet*& ps);
+   TEvePointSet  *fHits;
+
+
    TFile *OutFile;
    TString InFileName;
    TString OutFileName;
+
+   ClassDef(TBDisplay, 0);
 };
 
 #endif
