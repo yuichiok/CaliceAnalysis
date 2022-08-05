@@ -5,4 +5,5 @@
 .vscode/
 myclass/EventControl.*
 data/
+tools/tutorial
 .DS_Store
