@@ -39,42 +39,6 @@ const int nslabs = 15;
 const int nscas = 15;
 const float beamX = 20.0, beamY = 15.0;
 
-
-//______________________________________________________________________________
-void make_gui()
-{
-   // Create minimal GUI for event navigation.
-
-   auto browser = gEve->GetBrowser();
-   browser->StartEmbedding(TRootBrowser::kLeft);
-
-   auto frmMain = new TGMainFrame(gClient->GetRoot(), 1000, 600);
-   frmMain->SetWindowName("XX GUI");
-   frmMain->SetCleanup(kDeepCleanup);
-
-   auto hf = new TGHorizontalFrame(frmMain);
-   {
-      TString icondir(TString::Format("%s/icons/", gSystem->Getenv("ROOTSYS")));
-      TGPictureButton* b = 0;
-
-      // b = new TGPictureButton(hf, gClient->GetPicture(icondir+"GoBack.gif"));
-      // hf->AddFrame(b);
-      // b->Connect("Clicked()", "TVSDReader", gVSDReader, "PrevEvent()");
-
-      // b = new TGPictureButton(hf, gClient->GetPicture(icondir+"GoForward.gif"));
-      // hf->AddFrame(b);
-      // b->Connect("Clicked()", "TVSDReader", gVSDReader, "NextEvent()");
-   }
-   frmMain->AddFrame(hf);
-
-   frmMain->MapSubwindows();
-   frmMain->Resize();
-   frmMain->MapWindow();
-
-   browser->StopEmbedding();
-   browser->SetTabTitle("Event Control", 0);
-}
-
 Bool_t TBDisplay::GotoEvent(Int_t ev)
 {
    Long64_t nb = 0;
@@ -93,6 +57,9 @@ Bool_t TBDisplay::GotoEvent(Int_t ev)
    gEve->GetCurrentEvent()->DestroyElements();
 
 
+   TH2F *ecalHist2 = new TH2F("ecalHist2","ECAL",32,-90,90,32,-90,90);
+   TH3F *ecalHist3 = new TH3F("ecalHist3","ECAL",32,-90,90,32,-90,90,210,0,210);
+
    Long64_t ientry = LoadTree( evlist->GetEntry(ev) );
    if (ientry == 0) return kFALSE;
 
@@ -101,12 +68,81 @@ Bool_t TBDisplay::GotoEvent(Int_t ev)
    // Load event data into visualization structures.
 
    for (int ihit=0; ihit<nhit_len; ihit++){
-      LoadHits(fHits,ihit);
+      // LoadHits(fHits,ihit);
+      // if(hit_slab[ihit]==3) ecalHist2->Fill(hit_x[ihit],hit_y[ihit],hit_adc_high[ihit]);
+      ecalHist3->Fill(hit_x[ihit],hit_y[ihit],hit_z[ihit],hit_adc_high[ihit]);
    }
+
+   auto data = new TEvePlot3D("EvePlot - TH3F");
+   // ecalHist3->SetFillColor(2);
+   data->SetPlot(ecalHist3, "glcolz");
+   gEve->AddElement(data);
+
+   // auto data = new TEveCaloDataHist();
+   // data->AddHistogram(ecalHist2);
+   // data->RefSliceInfo(0).Setup("ECAL", 0.3, kBlue);
+   // data->IncDenyDestroy();
+   // gEve->AddToListTree(data, kFALSE);
+
+   // auto lego = MakeCaloLego(data, 0);
 
    gEve->Redraw3D(kFALSE, kTRUE);
 
    return kTRUE;
+}
+
+TEveCaloLego* TBDisplay::MakeCaloLego(TEveCaloData* data, TEveWindowSlot* slot)
+{
+   // Eta-phi lego view.
+
+   TEveViewer* v;
+   TEveScene* s;
+   if (slot) {
+      MakeViewerScene(slot, v, s);
+   } else {
+      v = gEve->GetDefaultViewer();
+      s = gEve->GetEventScene();
+   }
+   v->SetElementName("Viewer - Lego");
+   s->SetElementName("Scene - Lego");
+
+   auto lego = new TEveCaloLego(data);
+   s->AddElement(lego);
+
+   // By the default lego extends is (1x1x1). Resize it to put in 'natural'
+   // coordinates, so that y extend in 2*Pi and set height of lego two times
+   //  smaller than y extend to have better view in 3D perspective.
+   // lego->InitMainTrans();
+   // lego->RefMainTrans().SetScale(TMath::TwoPi(), TMath::TwoPi(), TMath::Pi());
+
+   // draws scales and axis on borders of window
+   // auto glv = v->GetGLViewer();
+   // TEveCaloLegoOverlay* overlay = new TEveCaloLegoOverlay();
+   // glv->AddOverlayElement(overlay);
+   // overlay->SetCaloLego(lego);
+
+   // set event handler to move from perspective to orthographic view.
+/*
+   glv->SetCurrentCamera(TGLViewer::kCameraOrthoXOY);
+   glv->SetEventHandler
+      (new TEveLegoEventHandler(glv->GetGLWidget(), glv, lego));
+   gEve->AddToListTree(lego, kTRUE);
+*/
+
+   return lego;
+}
+
+//______________________________________________________________________________
+void TBDisplay::MakeViewerScene(TEveWindowSlot* slot, TEveViewer*& v, TEveScene*& s)
+{
+   // Create a scene and a viewer in the given slot.
+
+   v = new TEveViewer("Viewer");
+   v->SpawnGLViewer(gEve->GetEditor());
+   slot->ReplaceWindow(v);
+   gEve->GetViewers()->AddElement(v);
+   s = gEve->SpawnNewScene("Scene");
+   v->AddScene(s);
 }
 
 void TBDisplay::LoadHits(TEvePointSet*& ps, int i)

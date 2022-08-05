@@ -97,6 +97,8 @@ public :
    virtual void     Show(Long64_t entry = -1);
 
    virtual Bool_t   GotoEvent(Int_t ev);
+   virtual TEveCaloLego* MakeCaloLego(TEveCaloData* data, TEveWindowSlot* slot);
+   virtual void MakeViewerScene(TEveWindowSlot* slot, TEveViewer*& v, TEveScene*& s);
    virtual void     LoadHits(TEvePointSet*& ps,int i);
 
    TEvePointSet  *fHits;
