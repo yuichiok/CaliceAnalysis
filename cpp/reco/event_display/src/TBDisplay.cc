@@ -98,30 +98,18 @@ Bool_t TBDisplay::GotoEvent(Int_t ev)
 
    nb = fChain->GetEntry(evlist->GetEntry(ev));
 
-
-
-
    // Load event data into visualization structures.
 
-   LoadHits(fHits);
-   // LoadHitArray(fHitsArray);
-
-   // Fill projected views.
-
-   // auto top = gEve->GetCurrentEvent();
-
-   // gMultiView->DestroyEventRPhi();
-   // gMultiView->ImportEventRPhi(top);
-
-   // gMultiView->DestroyEventRhoZ();
-   // gMultiView->ImportEventRhoZ(top);
+   for (int ihit=0; ihit<nhit_len; ihit++){
+      LoadHits(fHits,ihit);
+   }
 
    gEve->Redraw3D(kFALSE, kTRUE);
 
    return kTRUE;
 }
 
-void TBDisplay::LoadHits(TEvePointSet*& ps)
+void TBDisplay::LoadHits(TEvePointSet*& ps, int i)
 {
    // if (ps == 0) {
    //    ps = new TEvePointSet("Hit");
@@ -136,22 +124,12 @@ void TBDisplay::LoadHits(TEvePointSet*& ps)
    ps = new TEvePointSet("Hit");
    ps->SetOwnIds(kTRUE);
    ps->SetMainColor(kRed);
-   ps->SetMarkerSize(0.5);
-   ps->SetMarkerStyle(2);
+   ps->SetMarkerSize(2.5);
+   ps->SetMarkerStyle(54);
    ps->IncDenyDestroy();
 
-   ps->SetNextPoint(10,10,10);
-   ps->SetPointId(new TNamed(Form("Point %d", 0), ""));
-   ps->SetNextPoint(15,15,15);
-   ps->SetPointId(new TNamed(Form("Point %d", 1), ""));
-   // if (!gRandom) gRandom = new TRandom(0);
-   // TRandom& r= *gRandom;
-   // Float_t s = 100;
-   // for(Int_t i = 0; i<10; i++)
-   // {
-   //    ps->SetNextPoint(r.Uniform(-s,s), r.Uniform(-s,s), r.Uniform(-s,s));
-   //    ps->SetPointId(new TNamed(Form("Point %d", i), ""));
-   // }
+   ps->SetNextPoint(hit_x[i],hit_y[i],hit_z[i]);
+   ps->SetPointId(new TNamed(Form("Point %d", i), ""));
 
    // TEvePointSelector ss(fChain, ps, "hit_x:hit_y:hit_z");
    // ss.Select("nhit_slab >= 13");

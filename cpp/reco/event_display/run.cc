@@ -34,7 +34,7 @@ void run(int set_ene = 10, string particle = "e"){
 	TEveManager::Create();
 
 	TEveGeoShape *SiWECAL = new TEveGeoShape;
-	SiWECAL->SetShape(new TGeoBBox(1.760000000e+01, 1.760000000e+01, 2.850000000e+01)); // dx, dy, dz
+	SiWECAL->SetShape(new TGeoBBox(1.760000000e+02, 1.760000000e+02, 2.850000000e+02)); // dx, dy, dz
 	SiWECAL->SetNSegments(100); // number of vertices
 	SiWECAL->SetMainColor(kGreen);
 	SiWECAL->SetMainAlpha(0.2);

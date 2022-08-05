@@ -97,7 +97,7 @@ public :
    virtual void     Show(Long64_t entry = -1);
 
    virtual Bool_t   GotoEvent(Int_t ev);
-   virtual void     LoadHits(TEvePointSet*& ps);
+   virtual void     LoadHits(TEvePointSet*& ps,int i);
 
    TEvePointSet  *fHits;
    TEventList *evlist;
