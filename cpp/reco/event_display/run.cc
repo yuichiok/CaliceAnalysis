@@ -5,6 +5,8 @@
 #include "src/TBDisplay.cc"
 // #include "MultiView.C"
 
+void make_gui();
+
 void run(int set_ene = 10, string particle = "e"){
 
 	// TString name = particle + TString(to_string(set_ene));
@@ -33,13 +35,13 @@ void run(int set_ene = 10, string particle = "e"){
 
 	TEveManager::Create();
 
-	TEveGeoShape *SiWECAL = new TEveGeoShape;
-	SiWECAL->SetShape(new TGeoBBox(1.760000000e+02, 1.760000000e+02, 2.850000000e+02)); // dx, dy, dz
-	SiWECAL->SetNSegments(100); // number of vertices
-	SiWECAL->SetMainColor(kGreen);
-	SiWECAL->SetMainAlpha(0.2);
-	SiWECAL->RefMainTrans().SetPos(0, 0, 0); // set position
-	gEve->AddGlobalElement(SiWECAL);
+	// TEveGeoShape *SiWECAL = new TEveGeoShape;
+	// SiWECAL->SetShape(new TGeoBBox(1.760000000e+02, 1.760000000e+02, 2.850000000e+02)); // dx, dy, dz
+	// SiWECAL->SetNSegments(100); // number of vertices
+	// SiWECAL->SetMainColor(kGreen);
+	// SiWECAL->SetMainAlpha(0.2);
+	// SiWECAL->RefMainTrans().SetPos(0, 0, 0); // set position
+	// gEve->AddGlobalElement(SiWECAL);
 
 	gStyle->SetOptStat(0);
 
@@ -62,4 +64,39 @@ void run(int set_ene = 10, string particle = "e"){
 
 	// gSystem->Exit(0);
 
+}
+
+//______________________________________________________________________________
+void make_gui()
+{
+   // Create minimal GUI for event navigation.
+
+   auto browser = gEve->GetBrowser();
+   browser->StartEmbedding(TRootBrowser::kLeft);
+
+   auto frmMain = new TGMainFrame(gClient->GetRoot(), 1000, 600);
+   frmMain->SetWindowName("XX GUI");
+   frmMain->SetCleanup(kDeepCleanup);
+
+   auto hf = new TGHorizontalFrame(frmMain);
+   {
+      TString icondir(TString::Format("%s/icons/", gSystem->Getenv("ROOTSYS")));
+      TGPictureButton* b = 0;
+
+      // b = new TGPictureButton(hf, gClient->GetPicture(icondir+"GoBack.gif"));
+      // hf->AddFrame(b);
+      // b->Connect("Clicked()", "TVSDReader", gVSDReader, "PrevEvent()");
+
+      // b = new TGPictureButton(hf, gClient->GetPicture(icondir+"GoForward.gif"));
+      // hf->AddFrame(b);
+      // b->Connect("Clicked()", "TVSDReader", gVSDReader, "NextEvent()");
+   }
+   frmMain->AddFrame(hf);
+
+   frmMain->MapSubwindows();
+   frmMain->Resize();
+   frmMain->MapWindow();
+
+   browser->StopEmbedding();
+   browser->SetTabTitle("Event Control", 0);
 }
