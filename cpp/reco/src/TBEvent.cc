@@ -481,9 +481,11 @@ void TBEvent::ana_radius()
 
    TList* hList = new TList();
    TH3F * h_3d_charge_map = new TH3F("h_3d_charge_map",";z;x;y",15,0,15,16,-90,0,16,-90,0);
+   TH3F * h_3d_charge_map_dist = new TH3F("h_3d_charge_map_dist",";z;x;y",210,0,210,16,-90,0,16,-90,0);
    TH3F * h_3d_beam_cm    = new TH3F("h_3d_beam_cm",";z;x;y",15,0,15,16,-90,0,16,-90,0);
 
    hList->Add(h_3d_charge_map);
+   hList->Add(h_3d_charge_map_dist);
    hList->Add(h_3d_beam_cm);
 
    int offset = 0;
@@ -512,6 +514,7 @@ void TBEvent::ana_radius()
       for (int ihit = 0; ihit < nhit_len; ihit++)
       {
          h_3d_charge_map->Fill(hit_slab[ihit],hit_x[ihit],hit_y[ihit],hit_energy[ihit]);
+         h_3d_charge_map_dist->Fill(hit_z[ihit],hit_x[ihit],hit_y[ihit],hit_energy[ihit]);
          
          for (int islab = 0; islab < nslabs; islab++)
          {
