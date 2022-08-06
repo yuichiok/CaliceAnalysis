@@ -39,13 +39,24 @@ const int nslabs = 15;
 const int nscas = 15;
 const float beamX = 20.0, beamY = 15.0;
 
+
+void TBDisplay::Next()
+{
+   GotoEvent(fCurEv + 1);
+}
+
+void TBDisplay::Prev()
+{
+   GotoEvent(fCurEv - 1);
+}
+
 Bool_t TBDisplay::GotoEvent(Int_t ev)
 {
    Long64_t nb = 0;
    if (fChain == 0) return kFALSE;
 
    // Long64_t nentries = fChain->GetEntriesFast();
-   Long64_t nentries = fChain->GetEntries(coin);
+   Int_t nentries = fMaxEv;
 
    if (ev < 0 || ev >= nentries)
    {
@@ -56,9 +67,7 @@ Bool_t TBDisplay::GotoEvent(Int_t ev)
    gEve->GetViewers()->DeleteAnnotations();
    gEve->GetCurrentEvent()->DestroyElements();
 
-
-   TH2F *ecalHist2 = new TH2F("ecalHist2","ECAL",32,-90,90,32,-90,90);
-   TH3F *ecalHist3 = new TH3F("ecalHist3","ECAL",32,-90,90,32,-90,90,210,0,210);
+   fCurEv = ev;
 
    Long64_t ientry = LoadTree( evlist->GetEntry(ev) );
    if (ientry == 0) return kFALSE;
@@ -68,15 +77,15 @@ Bool_t TBDisplay::GotoEvent(Int_t ev)
    // Load event data into visualization structures.
 
    for (int ihit=0; ihit<nhit_len; ihit++){
-      // LoadHits(fHits,ihit);
+      LoadHits(fHits,ihit);
       // if(hit_slab[ihit]==3) ecalHist2->Fill(hit_x[ihit],hit_y[ihit],hit_adc_high[ihit]);
-      ecalHist3->Fill(hit_x[ihit],hit_y[ihit],hit_z[ihit],hit_adc_high[ihit]);
+      // ecalHist3->Fill(hit_x[ihit],hit_y[ihit],hit_z[ihit],hit_adc_high[ihit]);
    }
 
-   auto data = new TEvePlot3D("EvePlot - TH3F");
+   // auto data = new TEvePlot3D("EvePlot - TH3F");
    // ecalHist3->SetFillColor(2);
-   data->SetPlot(ecalHist3, "glcolz");
-   gEve->AddElement(data);
+   // data->SetPlot(ecalHist3, "box2");
+   // gEve->AddElement(data);
 
    // auto data = new TEveCaloDataHist();
    // data->AddHistogram(ecalHist2);
@@ -159,12 +168,14 @@ void TBDisplay::LoadHits(TEvePointSet*& ps, int i)
 
    ps = new TEvePointSet("Hit");
    ps->SetOwnIds(kTRUE);
-   ps->SetMainColor(kRed);
-   ps->SetMarkerSize(2.5);
+   // ps->SetMainColor(kRed);
+   ps->SetMarkerSize(5);
    ps->SetMarkerStyle(54);
    ps->IncDenyDestroy();
 
    ps->SetNextPoint(hit_x[i],hit_y[i],hit_z[i]);
+   ps->SetMainColor(TColor::GetColorPalette
+                    (hit_adc_high[i]));
    ps->SetPointId(new TNamed(Form("Point %d", i), ""));
 
    // TEvePointSelector ss(fChain, ps, "hit_x:hit_y:hit_z");

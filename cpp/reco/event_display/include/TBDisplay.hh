@@ -96,6 +96,8 @@ public :
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
 
+   virtual void     Next();
+   virtual void     Prev();
    virtual Bool_t   GotoEvent(Int_t ev);
    virtual TEveCaloLego* MakeCaloLego(TEveCaloData* data, TEveWindowSlot* slot);
    virtual void MakeViewerScene(TEveWindowSlot* slot, TEveViewer*& v, TEveScene*& s);
@@ -103,6 +105,7 @@ public :
 
    TEvePointSet  *fHits;
    TEventList *evlist;
+   Int_t fMaxEv, fCurEv;
    TCut coin = "nhit_slab >= 13";
 
    TFile *OutFile;
@@ -116,7 +119,7 @@ public :
 
 #ifdef TBDisplay_cxx
 
-TBDisplay::TBDisplay(TString filein_s) : fChain(0) 
+TBDisplay::TBDisplay(TString filein_s) : fChain(0), fMaxEv(-1), fCurEv(-1)
 {
    InFileName = filein_s;
    TFile *f = new TFile(InFileName);
@@ -126,6 +129,8 @@ TBDisplay::TBDisplay(TString filein_s) : fChain(0)
    tree->Draw( ">>evlist", coin);
    evlist = (TEventList*)gDirectory->Get("evlist");
    tree->SetEventList(evlist);
+   
+   fMaxEv = fChain->GetEntries(coin);
 
    Init(tree);
 }

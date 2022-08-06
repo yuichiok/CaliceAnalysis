@@ -5,6 +5,8 @@
 #include "src/TBDisplay.cc"
 // #include "MultiView.C"
 
+TBDisplay *gDisplay = 0;
+
 void make_gui();
 
 void run(int set_ene = 10, string particle = "e"){
@@ -29,7 +31,8 @@ void run(int set_ene = 10, string particle = "e"){
 
 	cout << "Input: " << filein << endl; 
 
-	TBDisplay *gDisplay = new TBDisplay(filein);
+	// TBDisplay *gDisplay = new TBDisplay(filein);
+	gDisplay = new TBDisplay(filein);
 
 	TFile::SetCacheFileDir(".");
 
@@ -80,16 +83,16 @@ void make_gui()
 
    auto hf = new TGHorizontalFrame(frmMain);
    {
-      TString icondir(TString::Format("%s/icons/", gSystem->Getenv("ROOTSYS")));
+      TString icondir("./icons/");
       TGPictureButton* b = 0;
 
-      // b = new TGPictureButton(hf, gClient->GetPicture(icondir+"GoBack.gif"));
-      // hf->AddFrame(b);
-      // b->Connect("Clicked()", "TVSDReader", gVSDReader, "PrevEvent()");
+      b = new TGPictureButton(hf, gClient->GetPicture(icondir+"GoBack.gif"));
+      hf->AddFrame(b);
+      b->Connect("Clicked()", "TBDisplay", gDisplay, "Prev()");
 
-      // b = new TGPictureButton(hf, gClient->GetPicture(icondir+"GoForward.gif"));
-      // hf->AddFrame(b);
-      // b->Connect("Clicked()", "TVSDReader", gVSDReader, "NextEvent()");
+      b = new TGPictureButton(hf, gClient->GetPicture(icondir+"GoForward.gif"));
+      hf->AddFrame(b);
+      b->Connect("Clicked()", "TBDisplay", gDisplay, "Next()");
    }
    frmMain->AddFrame(hf);
 
