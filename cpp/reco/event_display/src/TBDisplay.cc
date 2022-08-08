@@ -1,4 +1,6 @@
 #define TBDisplay_cxx
+#define Fit3D_cxx
+
 #include <TH2.h>
 #include <TStyle.h>
 #include <TCanvas.h>
@@ -27,6 +29,7 @@
 #include <map>
 
 #include "../include/TBDisplay.hh"
+#include "../include/Fit3D.hh"
 
 #include "../MultiView.C"
 MultiView* gMultiView = 0;
@@ -39,6 +42,15 @@ const int nslabs = 15;
 const int nscas = 15;
 const float beamX = 20.0, beamY = 15.0;
 
+// define the parametric line equation
+void line(double t, const double *p, double &x, double &y, double &z) {
+   // a parametric line is define from 6 parameters but 4 are independent
+   // x0,y0,z0,z1,y1,z1 which are the coordinates of two points on the line
+   // can choose z0 = 0 if line not parallel to x-y plane and z1 = 1;
+   x = p[0] + p[1]*t;
+   y = p[2] + p[3]*t;
+   z = t;
+}
 
 void TBDisplay::Next()
 {
@@ -48,6 +60,12 @@ void TBDisplay::Next()
 void TBDisplay::Prev()
 {
    GotoEvent(fCurEv - 1);
+}
+
+void TBDisplay::DropEvent()
+{
+   gEve->GetViewers()->DeleteAnnotations();
+   gEve->GetCurrentEvent()->DestroyElements();
 }
 
 Bool_t TBDisplay::GotoEvent(Int_t ev)
@@ -63,9 +81,9 @@ Bool_t TBDisplay::GotoEvent(Int_t ev)
       return kFALSE;
    }
 
-   gEve->GetViewers()->DeleteAnnotations();
-   gEve->GetCurrentEvent()->DestroyElements();
+   DropEvent();
 
+   TGraph2D *gr = new TGraph2D();
    fCurEv = ev;
 
    Long64_t ientry = LoadTree( evlist->GetEntry(ev) );
@@ -73,14 +91,70 @@ Bool_t TBDisplay::GotoEvent(Int_t ev)
 
    nb = fChain->GetEntry(evlist->GetEntry(ev));
 
-   // Load event data into visualization structures.
+   float Xcm[nslabs] = {0};
+   float Ycm[nslabs] = {0};
+   float Zcm[nslabs] = {0};
+   float Wsum[nslabs] = {0};
 
+   // Load event data into visualization structures.
    for (int ihit=0; ihit<nhit_len; ihit++){
+      
       LoadHits(fHits,ihit);
-      // if(hit_slab[ihit]==3) ecalHist2->Fill(hit_x[ihit],hit_y[ihit],hit_adc_high[ihit]);
-      // ecalHist3->Fill(hit_x[ihit],hit_y[ihit],hit_z[ihit],hit_adc_high[ihit]);
+
+      for (int islab = 0; islab < nslabs; islab++)
+      {
+         if (hit_slab[ihit]==islab)
+         {
+            // Xcm[islab]  += hit_x[ihit] * hit_energy[ihit];
+            // Ycm[islab]  += hit_y[ihit] * hit_energy[ihit];
+            Xcm[islab]  += hit_x[ihit] * hit_adc_high[ihit];
+            Ycm[islab]  += hit_y[ihit] * hit_adc_high[ihit];
+            Zcm[islab]  =  hit_z[ihit];
+            Wsum[islab] += hit_adc_high[ihit];
+         }
+
+      } // match slab
+
+   } // hit loop
+
+   int N = 0;
+   for (int islab = 0; islab < nslabs; islab++)
+   {
+      if(Xcm[islab]==0 || Ycm[islab]==0) continue;
+
+      Xcm[islab] = Xcm[islab] / Wsum[islab];
+      Ycm[islab] = Ycm[islab] / Wsum[islab];
+
+      gr->SetPoint(N,Xcm[islab],Ycm[islab],Zcm[islab]);
+      N++;
+
+   } // match slab
+
+   ROOT::Fit::Fitter  fitter;
+
+   // make the functor objet
+   Fit3D sdist(gr);
+   ROOT::Math::Functor fcn(sdist,4);
+   // set the function and the initial parameter values
+   double pStart[4] = {1,1,1,1};
+   fitter.SetFCN(fcn,pStart);
+   // set step sizes different than default ones (0.3 times parameter values)
+   for (int i = 0; i < 4; ++i) fitter.Config().ParSettings(i).SetStepSize(0.01);
+ 
+   bool ok = fitter.FitFCN();
+   if (!ok) {
+      Error("line3Dfit","Line3D Fit failed");
+      return false;
    }
 
+   const ROOT::Fit::FitResult & result = fitter.Result();
+ 
+   std::cout << "Total final distance square " << result.MinFcnValue() << std::endl;
+   result.Print(std::cout);
+ 
+   gr->Draw("p0");
+
+   // color scale
    for (int i = 0; i < 10; i++)
    {
       TEvePointSet* ps = new TEvePointSet("Hit");
@@ -181,12 +255,13 @@ void TBDisplay::LoadHits(TEvePointSet*& ps, int i)
    ps->IncDenyDestroy();
 
    ps->SetNextPoint(hit_x[i],hit_y[i],hit_z[i]);
-   // ps->SetMarketColor(TColor::GetColorPalette
-   //                  (hit_adc_high[i]));
    ps->SetMainColor(TColor::GetColorPalette
                     (hit_adc_high[i]));
+   // ps->SetMainColor(TColor::GetColorPalette
+   //                  (hit_energy[i]));
    ps->SetPointId(new TNamed(Form("Point %d", i), ""));
    ps->SetTitle(TString::Format("hit_adc_high=%i", hit_adc_high[i]));
+   // ps->SetTitle(TString::Format("hit_energy=%f", hit_energy[i]));
 
    gEve->AddElement(ps);
 }

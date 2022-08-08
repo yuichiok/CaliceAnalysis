@@ -98,9 +98,10 @@ public :
 
    virtual void     Next();
    virtual void     Prev();
+   virtual void     DropEvent();
    virtual Bool_t   GotoEvent(Int_t ev);
    virtual TEveCaloLego* MakeCaloLego(TEveCaloData* data, TEveWindowSlot* slot);
-   virtual void MakeViewerScene(TEveWindowSlot* slot, TEveViewer*& v, TEveScene*& s);
+   virtual void     MakeViewerScene(TEveWindowSlot* slot, TEveViewer*& v, TEveScene*& s);
    virtual void     LoadHits(TEvePointSet*& ps,int i);
 
    TEvePointSet  *fHits;
