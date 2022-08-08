@@ -48,8 +48,11 @@ void run(int set_ene = 10, string particle = "e"){
 
 	gStyle->SetOptStat(0);
 
-	gEve->GetViewers()->SwitchColorSet();
-	gEve->GetDefaultGLViewer()->SetStyle(TGLRnrCtx::kOutline);
+	// gEve->GetViewers()->SwitchColorSet();
+
+	TGLViewer *tglv = gEve->GetDefaultGLViewer();
+	tglv->SetGuideState(TGLUtil::kAxesEdge, kTRUE, kFALSE, 0);
+	tglv->SetStyle(TGLRnrCtx::kOutline);
 
 	gEve->GetBrowser()->GetTabRight()->SetTab(1);
 
@@ -57,7 +60,7 @@ void run(int set_ene = 10, string particle = "e"){
 
 	gEve->AddEvent(new TEveEventManager("Event", "SiWECAL VSD Event"));
 
-	gDisplay->GotoEvent(1);
+	gDisplay->GotoEvent(0);
 
 	gEve->Redraw3D(kTRUE); // Reset camera after the first event has been shown.
 
