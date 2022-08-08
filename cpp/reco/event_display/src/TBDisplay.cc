@@ -55,7 +55,6 @@ Bool_t TBDisplay::GotoEvent(Int_t ev)
    Long64_t nb = 0;
    if (fChain == 0) return kFALSE;
 
-   // Long64_t nentries = fChain->GetEntriesFast();
    Int_t nentries = fMaxEv;
 
    if (ev < 0 || ev >= nentries)
@@ -81,6 +80,25 @@ Bool_t TBDisplay::GotoEvent(Int_t ev)
       // if(hit_slab[ihit]==3) ecalHist2->Fill(hit_x[ihit],hit_y[ihit],hit_adc_high[ihit]);
       // ecalHist3->Fill(hit_x[ihit],hit_y[ihit],hit_z[ihit],hit_adc_high[ihit]);
    }
+
+   for (int i = 0; i < 10; i++)
+   {
+      TEvePointSet* ps = new TEvePointSet("Hit");
+      ps->SetOwnIds(kTRUE);
+      ps->SetMarkerSize(5);
+      ps->SetMarkerStyle(54);
+      ps->IncDenyDestroy();
+
+      ps->SetNextPoint(-95,-95,i * 10);
+      ps->SetMainColor(TColor::GetColorPalette
+                     (i*50.0));
+      ps->SetPointId(new TNamed(Form("Point %d", nhit_len + i), ""));
+      ps->SetTitle(TString::Format("Palette=%f", (float)i * 50.0));
+
+      gEve->AddElement(ps);
+
+   }
+   
 
    // auto data = new TEvePlot3D("EvePlot - TH3F");
    // ecalHist3->SetFillColor(2);
@@ -156,31 +174,19 @@ void TBDisplay::MakeViewerScene(TEveWindowSlot* slot, TEveViewer*& v, TEveScene*
 
 void TBDisplay::LoadHits(TEvePointSet*& ps, int i)
 {
-   // if (ps == 0) {
-   //    ps = new TEvePointSet("Hit");
-   //    ps->SetMainColor(kRed);
-   //    ps->SetMarkerSize(0.5);
-   //    ps->SetMarkerStyle(2);
-   //    ps->IncDenyDestroy();
-   // } else {
-   //    ps->Reset();
-   // }
-
    ps = new TEvePointSet("Hit");
    ps->SetOwnIds(kTRUE);
-   // ps->SetMainColor(kRed);
    ps->SetMarkerSize(5);
    ps->SetMarkerStyle(54);
    ps->IncDenyDestroy();
 
    ps->SetNextPoint(hit_x[i],hit_y[i],hit_z[i]);
+   // ps->SetMarketColor(TColor::GetColorPalette
+   //                  (hit_adc_high[i]));
    ps->SetMainColor(TColor::GetColorPalette
                     (hit_adc_high[i]));
    ps->SetPointId(new TNamed(Form("Point %d", i), ""));
-
-   // TEvePointSelector ss(fChain, ps, "hit_x:hit_y:hit_z");
-   // ss.Select("nhit_slab >= 13");
-   // ps->SetTitle("Adc count?");
+   ps->SetTitle(TString::Format("hit_adc_high=%i", hit_adc_high[i]));
 
    gEve->AddElement(ps);
 }
@@ -190,46 +196,6 @@ void TBDisplay::Display()
    Long64_t nbytes = 0, nb = 0;
    int ievent = 0;
    int cnt_event = 0;
-
-   // TCanvas * c = new TCanvas("c","c",800,800);
-
-
-/*
-   while( cin >> ievent ){
-
-      TH3F * h_display    = new TH3F("h_display",";z;x;y",285,0.0,285.0,32,-90.0,90.0,32,-90.0,90.0);
-
-      for (int jentry=0; jentry<nentries;jentry++) {
-
-         Long64_t ientry = LoadTree(jentry);
-         if (ientry < 0) break;
-         nb = fChain->GetEntry(jentry);
-         nbytes += nb;
-
-         if(nhit_slab < 13) continue;
-         cnt_event++;
-
-         if(cnt_event==ievent){
-            for (int ihit = 0; ihit < nhit_len; ihit++)
-            {
-               h_display->Fill(hit_z[ihit],hit_x[ihit],hit_y[ihit],hit_energy[ihit]);
-
-            } // hit loop
-            break;
-         }
-
-      }
-
-      h_display->Draw("lego");
-      c->Draw();
-      c->Modified();
-      c->Update();
-      gSystem->ProcessEvents();
-      delete h_display;
-
-
-   };
-*/
 
    cout << "Done.\n";
 
