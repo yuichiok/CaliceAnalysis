@@ -93,6 +93,10 @@ void make_gui()
       hf->AddFrame(b);
       b->Connect("Clicked()", "TBDisplay", gDisplay, "Prev()");
 
+      b = new TGPictureButton(hf, gClient->GetPicture(icondir+"info.gif"));
+      hf->AddFrame(b);
+      b->Connect("Clicked()", "TBDisplay", gDisplay, "GoTo()");
+
       b = new TGPictureButton(hf, gClient->GetPicture(icondir+"GoForward.gif"));
       hf->AddFrame(b);
       b->Connect("Clicked()", "TBDisplay", gDisplay, "Next()");

@@ -98,6 +98,7 @@ public :
 
    virtual void     Next();
    virtual void     Prev();
+   virtual void     GoTo();
    virtual void     DropEvent();
    virtual Bool_t   GotoEvent(Int_t ev);
    virtual TEveCaloLego* MakeCaloLego(TEveCaloData* data, TEveWindowSlot* slot);

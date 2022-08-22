@@ -62,6 +62,19 @@ void TBDisplay::Prev()
    GotoEvent(fCurEv - 1);
 }
 
+void TBDisplay::GoTo() {
+
+	int goto_eventNum;
+	cout << "Go To: ";
+	cin >> goto_eventNum;
+	cout << endl;
+
+   cout << "Going to " << goto_eventNum << "..." << endl;
+
+   GotoEvent(goto_eventNum);
+
+}
+
 void TBDisplay::DropEvent()
 {
    gEve->GetViewers()->DeleteAnnotations();
@@ -159,7 +172,7 @@ Bool_t TBDisplay::GotoEvent(Int_t ev)
    {
       TEvePointSet* ps = new TEvePointSet("Hit");
       ps->SetOwnIds(kTRUE);
-      ps->SetMarkerSize(5);
+      ps->SetMarkerSize(3.5);
       ps->SetMarkerStyle(54);
       ps->IncDenyDestroy();
 
@@ -250,7 +263,7 @@ void TBDisplay::LoadHits(TEvePointSet*& ps, int i)
 {
    ps = new TEvePointSet("Hit");
    ps->SetOwnIds(kTRUE);
-   ps->SetMarkerSize(5);
+   ps->SetMarkerSize(3.5);
    ps->SetMarkerStyle(54);
    ps->IncDenyDestroy();
 
