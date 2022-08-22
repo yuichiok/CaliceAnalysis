@@ -480,13 +480,14 @@ void TBEvent::ana_radius()
    OutFile = new TFile(OutFileName + "GeV.MR.root","RECREATE");
 
    TList* hList = new TList();
-   TH3F * h_3d_charge_map = new TH3F("h_3d_charge_map",";z;x;y",15,0,15,16,-90,0,16,-90,0);
+   TH3F * h_3d_charge_map      = new TH3F("h_3d_charge_map",";z;x;y",15,0,15,16,-90,0,16,-90,0);
    TH3F * h_3d_charge_map_dist = new TH3F("h_3d_charge_map_dist",";z;x;y",210,0,210,16,-90,0,16,-90,0);
-   TH3F * h_3d_beam_cm    = new TH3F("h_3d_beam_cm",";z;x;y",15,0,15,16,-90,0,16,-90,0);
-
+   TH3F * h_3d_beam_cm         = new TH3F("h_3d_beam_cm",";z;x;y",15,0,15,16,-90,0,16,-90,0);
+   TH1F * h_sum_energy         = new TH1F("h_sum_energy","; sum_energy; Entries",500,0,1.5E4);
    hList->Add(h_3d_charge_map);
    hList->Add(h_3d_charge_map_dist);
    hList->Add(h_3d_beam_cm);
+   hList->Add(h_sum_energy);
 
    int offset = 0;
    int last_bcid = -1;
@@ -507,6 +508,11 @@ void TBEvent::ana_radius()
 
       if(nhit_slab < 13) continue;
 
+      TH2F * h_xy_energy[nslabs];
+      for ( int islab=0; islab < nslabs; islab++ ){
+         h_xy_energy[islab]  = new TH2F(TString::Format("h_xy_energy_%i",islab),"; x;y",32,-90,90,32,-90,90);
+      }
+
       float Xcm[nslabs] = {0};
       float Ycm[nslabs] = {0};
       float Wsum[nslabs] = {0};
@@ -520,6 +526,8 @@ void TBEvent::ana_radius()
          {
             if (hit_slab[ihit]==islab)
             {
+               h_xy_energy[islab]->Fill(hit_x[ihit],hit_y[ihit],hit_energy[ihit]);
+
                Xcm[islab]  += hit_x[ihit] * hit_energy[ihit];
                Ycm[islab]  += hit_y[ihit] * hit_energy[ihit];
                Wsum[islab] += hit_energy[ihit];
@@ -529,6 +537,7 @@ void TBEvent::ana_radius()
 
       } // hit loop
 
+      float Etot = 0;
       for (int islab = 0; islab < nslabs; islab++)
       {
          Xcm[islab] = Xcm[islab] / Wsum[islab];
@@ -536,9 +545,35 @@ void TBEvent::ana_radius()
       
          h_3d_beam_cm->Fill(islab,Xcm[islab],Ycm[islab]);
 
+         Etot += h_xy_energy[islab]->Integral();
+
       } // match slab
       
 
+      // Shower axis set to entrance point of the beam
+      float orgX = Xcm[0];
+      float orgY = Ycm[0];      
+      
+      float En   = 0;
+      float Eeff = 0;
+      float MR     = 20.0;
+      float MRstep = 2.0;
+      for (int ihit = 0; ihit < nhit_len; ihit++)
+      {
+         float beam_spotX = (hit_x[ihit] - orgX)*(hit_x[ihit] - orgX);
+         float beam_spotY = (hit_y[ihit] - orgY)*(hit_y[ihit] - orgY);
+
+         if( (beam_spotX + beam_spotY) < MR*MR ){
+            En += hit_energy[ihit];
+         }
+
+      } // hit loop
+
+      Eeff = En / Etot;
+
+      if(0.7 < Eeff) h_sum_energy->Fill(En); 
+
+      for (int islab=0; islab < nslabs; islab++) delete h_xy_energy[islab];
 
    } // event loop
 
