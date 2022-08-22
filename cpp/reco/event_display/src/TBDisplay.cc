@@ -69,8 +69,6 @@ void TBDisplay::GoTo() {
 	cin >> goto_eventNum;
 	cout << endl;
 
-   cout << "Going to " << goto_eventNum << "..." << endl;
-
    GotoEvent(goto_eventNum);
 
 }
@@ -95,6 +93,10 @@ Bool_t TBDisplay::GotoEvent(Int_t ev)
    }
 
    DropEvent();
+
+   cout << endl;
+   cout << "Going to " << ev << "..." << endl;
+   cout << endl;
 
    TGraph2D *gr = new TGraph2D();
    fCurEv = ev;
@@ -273,7 +275,9 @@ void TBDisplay::LoadHits(TEvePointSet*& ps, int i)
    // ps->SetMainColor(TColor::GetColorPalette
    //                  (hit_energy[i]));
    ps->SetPointId(new TNamed(Form("Point %d", i), ""));
-   ps->SetTitle(TString::Format("hit_adc_high=%i", hit_adc_high[i]));
+   ps->SetTitle(TString::Format("hit_adc_high=%i\n hit_energy=%f",
+                                 hit_adc_high[i],
+                                 hit_energy[i]));
    // ps->SetTitle(TString::Format("hit_energy=%f", hit_energy[i]));
 
    gEve->AddElement(ps);
