@@ -272,12 +272,15 @@ void TBDisplay::LoadHits(TEvePointSet*& ps, int i)
    ps->SetNextPoint(hit_x[i],hit_y[i],hit_z[i]);
    ps->SetMainColor(TColor::GetColorPalette
                     (hit_adc_high[i]));
+   if(hit_adc_high[i] < hit_energy[i]) ps->SetMainColor(kRed);
+   // if(hit_energy[i] > 700) ps->SetMainColor(kRed);
    // ps->SetMainColor(TColor::GetColorPalette
    //                  (hit_energy[i]));
    ps->SetPointId(new TNamed(Form("Point %d", i), ""));
-   ps->SetTitle(TString::Format("hit_adc_high=%i\n hit_energy=%f",
+   ps->SetTitle(TString::Format("hit_adc_high=%i\n hit_energy=%f\n (%i,%i,%i,%i)",
                                  hit_adc_high[i],
-                                 hit_energy[i]));
+                                 hit_energy[i],
+                                 hit_slab[i], hit_chip[i], hit_chan[i], hit_sca[i]));
    // ps->SetTitle(TString::Format("hit_energy=%f", hit_energy[i]));
 
    gEve->AddElement(ps);
