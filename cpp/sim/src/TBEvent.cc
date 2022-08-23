@@ -30,7 +30,7 @@ void TBEvent::ana_quality()
    TList* hList = new TList();
    TList* hList_energy = new TList();
    TH1F * h_sum_energy = new TH1F("h_sum_energy","; sum_energy; Entries",500,0,1.5E4);
-   TH1F * h_hit_energy = new TH1F("h_hit_energy","; hit_energy; Entries",120,-20,100);
+   TH1F * h_hit_energy = new TH1F("h_hit_energy","; hit_energy; Entries",500,0,1000);
    TH1F * h_hit_slab_energy[nslabs];
    for (int islab = 0; islab < nslabs; islab++)
    {
@@ -72,6 +72,7 @@ void TBEvent::ana_quality()
          }
          
       }
+      // break;
 
    }
 

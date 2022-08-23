@@ -485,9 +485,15 @@ void TBEvent::ana_radius()
    TH3F * h_3d_beam_cm         = new TH3F("h_3d_beam_cm",";z;x;y",15,0,15,16,-90,0,16,-90,0);
    TH1F * h_sum_energy         = new TH1F("h_sum_energy","; sum_energy; Entries",500,0,1.5E4);
    TH1F * h_hit_energy         = new TH1F("h_hit_energy","; hit_energy; Entries",500,0,1000);
+
    TH1F * h_hit_LowEnergy      = new TH1F("h_hit_LowEnergy","; hit_energy (sumE < 1000); Entries",500,0,1000);
    TH1F * h_hit_MidEnergy      = new TH1F("h_hit_MidEnergy","; hit_energy (1000 < sumE < 2000); Entries",500,0,1000);
    TH1F * h_hit_HighEnergy     = new TH1F("h_hit_HighEnergy","; hit_energy (2000 < sumE); Entries",500,0,1000);
+
+   TH1F * h_LowHitLen      = new TH1F("h_LowHitLen","; nhit_len (sumE < 1000); Entries",300,0,300);
+   TH1F * h_MidHitLen      = new TH1F("h_MidHitLen","; nhit_len (1000 < sumE < 2000); Entries",300,0,300);
+   TH1F * h_HighHitLen     = new TH1F("h_HighHitLen","; nhit_len (2000 < sumE); Entries",300,0,300);
+
    hList->Add(h_3d_charge_map);
    hList->Add(h_3d_charge_map_dist);
    hList->Add(h_3d_beam_cm);
@@ -496,6 +502,10 @@ void TBEvent::ana_radius()
    hList->Add(h_hit_LowEnergy);
    hList->Add(h_hit_MidEnergy);
    hList->Add(h_hit_HighEnergy);
+   hList->Add(h_LowHitLen);
+   hList->Add(h_MidHitLen);
+   hList->Add(h_HighHitLen);
+
 
    int offset = 0;
    int last_bcid = -1;
@@ -515,6 +525,7 @@ void TBEvent::ana_radius()
       last_bcid=bcid;
 
       if(nhit_slab < 13) continue;
+      // if(sum_energy > 1000) continue;
 
       TH2F * h_xy_energy[nslabs];
       for ( int islab=0; islab < nslabs; islab++ ){
@@ -572,7 +583,7 @@ void TBEvent::ana_radius()
       
       float En   = 0;
       float Eeff = 0;
-      float MR     = 20.0;
+      float MR     = 40.0;
       float MRstep = 2.0;
       for (int ihit = 0; ihit < nhit_len; ihit++)
       {
@@ -587,9 +598,24 @@ void TBEvent::ana_radius()
 
       Eeff = En / Etot;
 
-      h_sum_energy->Fill(Etot100); 
+      h_sum_energy->Fill(sum_energy); 
+
+      if(Etot < 1000){
+         h_LowHitLen->Fill(nhit_len);
+      }else if (1000 < Etot && Etot < 2000){
+         h_MidHitLen->Fill(nhit_len);
+      }else{
+         // cout << jentry << endl;
+         h_HighHitLen->Fill(nhit_len);
+      }
+
+      bool isHighHit = false;
+
       for (int ihit = 0; ihit < nhit_len; ihit++)
       {
+         // if(hit_energy[ihit]>700) isHighHit = true;
+         if(hit_adc_high[ihit] < hit_energy[ihit]) isHighHit = true;
+
          if(Etot < 1000){
             h_hit_LowEnergy->Fill(hit_energy[ihit]);
          }else if (1000 < Etot && Etot < 2000){
@@ -599,7 +625,10 @@ void TBEvent::ana_radius()
          }
       }
 
+      // if(isHighHit) cout << jentry << endl;
+
       for (int islab=0; islab < nslabs; islab++) delete h_xy_energy[islab];
+      // break;
 
    } // event loop
 
