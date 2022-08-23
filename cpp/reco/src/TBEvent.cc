@@ -485,13 +485,17 @@ void TBEvent::ana_radius()
    TH3F * h_3d_beam_cm         = new TH3F("h_3d_beam_cm",";z;x;y",15,0,15,16,-90,0,16,-90,0);
    TH1F * h_sum_energy         = new TH1F("h_sum_energy","; sum_energy; Entries",500,0,1.5E4);
    TH1F * h_hit_energy         = new TH1F("h_hit_energy","; hit_energy; Entries",500,0,1000);
-   TH1F * h_hit1000_energy         = new TH1F("h_hit1000_energy","; hit_energy<1000; Entries",500,0,1000);
+   TH1F * h_hit_LowEnergy      = new TH1F("h_hit_LowEnergy","; hit_energy (sumE < 1000); Entries",500,0,1000);
+   TH1F * h_hit_MidEnergy      = new TH1F("h_hit_MidEnergy","; hit_energy (1000 < sumE < 2000); Entries",500,0,1000);
+   TH1F * h_hit_HighEnergy     = new TH1F("h_hit_HighEnergy","; hit_energy (2000 < sumE); Entries",500,0,1000);
    hList->Add(h_3d_charge_map);
    hList->Add(h_3d_charge_map_dist);
    hList->Add(h_3d_beam_cm);
    hList->Add(h_sum_energy);
    hList->Add(h_hit_energy);
-   hList->Add(h_hit1000_energy);
+   hList->Add(h_hit_LowEnergy);
+   hList->Add(h_hit_MidEnergy);
+   hList->Add(h_hit_HighEnergy);
 
    int offset = 0;
    int last_bcid = -1;
@@ -584,12 +588,14 @@ void TBEvent::ana_radius()
       Eeff = En / Etot;
 
       h_sum_energy->Fill(Etot100); 
-      // if(Etot < 1000) cout << jentry << endl;
-      if(Etot < 1000){
-      // if(1000 < Etot && Etot < 2000){
       for (int ihit = 0; ihit < nhit_len; ihit++)
-         {
-            h_hit1000_energy->Fill(hit_energy[ihit]);
+      {
+         if(Etot < 1000){
+            h_hit_LowEnergy->Fill(hit_energy[ihit]);
+         }else if (1000 < Etot && Etot < 2000){
+            h_hit_MidEnergy->Fill(hit_energy[ihit]);
+         }else{
+            h_hit_HighEnergy->Fill(hit_energy[ihit]);
          }
       }
 
