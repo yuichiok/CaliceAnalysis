@@ -145,6 +145,7 @@ Bool_t TBDisplay::GotoEvent(Int_t ev)
 
    } // match slab
 
+   /*
    ROOT::Fit::Fitter  fitter;
 
    // make the functor objet
@@ -168,8 +169,10 @@ Bool_t TBDisplay::GotoEvent(Int_t ev)
    result.Print(std::cout);
  
    gr->Draw("p0");
+   */
 
    // color scale
+   /*
    for (int i = 0; i < 10; i++)
    {
       TEvePointSet* ps = new TEvePointSet("Hit");
@@ -187,6 +190,7 @@ Bool_t TBDisplay::GotoEvent(Int_t ev)
       gEve->AddElement(ps);
 
    }
+   */
    
 
    // auto data = new TEvePlot3D("EvePlot - TH3F");
@@ -277,9 +281,11 @@ void TBDisplay::LoadHits(TEvePointSet*& ps, int i)
    // ps->SetMainColor(TColor::GetColorPalette
    //                  (hit_energy[i]));
    ps->SetPointId(new TNamed(Form("Point %d", i), ""));
-   ps->SetTitle(TString::Format("hit_adc_high=%i\n hit_energy=%f\n (%i,%i,%i,%i)",
+   ps->SetTitle(TString::Format("hit_adc_high=%i\n hit_energy=%f\n hit_isCommissioned=%i\n hit_isHit=%i\n (%i,%i,%i,%i)",
                                  hit_adc_high[i],
                                  hit_energy[i],
+                                 hit_isCommissioned[i],
+                                 hit_isHit[i],
                                  hit_slab[i], hit_chip[i], hit_chan[i], hit_sca[i]));
    // ps->SetTitle(TString::Format("hit_energy=%f", hit_energy[i]));
 

@@ -484,6 +484,7 @@ void TBEvent::ana_radius()
    TH3F * h_3d_charge_map_dist = new TH3F("h_3d_charge_map_dist",";z;x;y",210,0,210,16,-90,0,16,-90,0);
    TH3F * h_3d_beam_cm         = new TH3F("h_3d_beam_cm",";z;x;y",15,0,15,16,-90,0,16,-90,0);
    TH1F * h_sum_energy         = new TH1F("h_sum_energy","; sum_energy; Entries",500,0,1.5E4);
+   TH1F * h_sum_energy_isC_isH = new TH1F("h_sum_energy_isC_isH","; h_sum_energy_isC_isH; Entries",500,0,1.5E4);
    TH1F * h_hit_energy         = new TH1F("h_hit_energy","; hit_energy; Entries",500,0,1000);
 
    TH1F * h_hit_LowEnergy      = new TH1F("h_hit_LowEnergy","; hit_energy (sumE < 1000); Entries",500,0,1000);
@@ -498,6 +499,7 @@ void TBEvent::ana_radius()
    hList->Add(h_3d_charge_map_dist);
    hList->Add(h_3d_beam_cm);
    hList->Add(h_sum_energy);
+   hList->Add(h_sum_energy_isC_isH);
    hList->Add(h_hit_energy);
    hList->Add(h_hit_LowEnergy);
    hList->Add(h_hit_MidEnergy);
@@ -537,6 +539,7 @@ void TBEvent::ana_radius()
       float Wsum[nslabs] = {0};
 
       float Etot100 = 0;
+      float EisCisH = 0;
       for (int ihit = 0; ihit < nhit_len; ihit++)
       {
          h_3d_charge_map->Fill(hit_slab[ihit],hit_x[ihit],hit_y[ihit],hit_energy[ihit]);
@@ -562,7 +565,13 @@ void TBEvent::ana_radius()
 
          } // match slab
 
+         if(hit_isHit[ihit] && hit_isCommissioned[ihit]){
+            EisCisH += hit_energy[ihit];
+         }
+
       } // hit loop
+
+      h_sum_energy_isC_isH->Fill(EisCisH);
 
       float Etot = 0;
       for (int islab = 0; islab < nslabs; islab++)
