@@ -34,8 +34,11 @@ void legend(TH1F *rh,TH1F *sh)
 	leg0->Draw("same");	
 }
 
-void readfiles(string name, TFile *f_rs[])
+void readfiles(string particle, int energy, TFile *f_rs[])
 {
+	string reco_name = particle + "." + to_string(energy);
+	string sim_name  = particle + "-." + to_string(energy);
+
 	std::map<std::string, std::string> run_list {
 		{"e.10", "320"},
 		{"e.20", "378"},
@@ -46,8 +49,8 @@ void readfiles(string name, TFile *f_rs[])
 		{"e.150", "355"},
 	};
 
-	TString reco_file = "../reco/rootfiles/quality/run_90" + run_list[name] + "." + name + "GeV.quality.root";
-	TString sim_file  = "../sim/rootfiles/ECAL.sim." + name + "GeV.quality.root";
+	TString reco_file = "../reco/rootfiles/quality/run_90" + run_list[reco_name] + "." + reco_name + "GeV.quality.root";
+	TString sim_file  = "../sim/rootfiles/ECAL.sim." + sim_name + "GeV.quality.root";
 
 	cout << "reco file: " << reco_file << endl;
 	cout << " sim file: " << sim_file << endl;
@@ -126,8 +129,8 @@ void reco_sim_analysis(string particle = "e")
 	int l_energy[nene] = {10, 20, 40, 60, 80, 100, 150};
 	for (int ie=0; ie<nene; ie++){
 		TFile *f_rs[2];
-		string name = particle + "." + to_string(l_energy[ie]);
-		readfiles(name,f_rs);
+		// string name = particle + "." + to_string(l_energy[ie]);
+		readfiles(particle,l_energy[ie],f_rs);
 		c_sum_energy->cd(ie+1);
 		slab_energy(l_energy[ie],f_rs);
 		c_nhit_slab->cd(ie+1);
