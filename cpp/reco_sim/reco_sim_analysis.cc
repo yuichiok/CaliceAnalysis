@@ -39,21 +39,28 @@ void readfiles(string particle, int energy, TFile *f_rs[])
 	string reco_name = particle + "." + to_string(energy);
 	string sim_name  = particle + "-." + to_string(energy);
 
-	std::map<std::string, std::string> run_list {
-		{"e.10", "320"},
-		{"e.20", "378"},
-		{"e.40", "375"},
-		{"e.60", "372"},
-		{"e.80", "367"},
-		{"e.100", "365"},
-		{"e.150", "355"},
+	std::map<int, std::string> run_list {
+		{10, "90320"},
+		{20, "90378"},
+		{40, "90375"},
+		{60, "90372"},
+		{80, "90367"},
+		{100,"90365"},
+		{150,"90355"},
 	};
 
-	TString reco_file = "../reco/rootfiles/quality/run_90" + run_list[reco_name] + "." + reco_name + "GeV.quality.root";
-	TString sim_file  = "../sim/rootfiles/ECAL.sim." + sim_name + "GeV.quality.root";
+	TString reco_path	= "../reco/rootfiles/quality/";
+	TString sim_path	= "../sim/rootfiles/";
+	TString reco_name	= "raw_siwecal_" + run_list[energy];
+	TString sim_name  = "ECAL_QGSP_BERT_conf6"
+	
+	TString common_name = "_" + particle + "_" + to_string(energy) + ".0GeV_quality.root";
+
+	TString reco_file = reco_path + reco_name + common_name;
+	TString sim_file  = sim_path  + sim_name  + common_name;
 
 	cout << "reco file: " << reco_file << endl;
-	cout << " sim file: " << sim_file << endl;
+	cout << " sim file: " << sim_file  << endl;
 
 	f_rs[0] = TFile::Open(reco_file);
 	f_rs[1] = TFile::Open(sim_file);
