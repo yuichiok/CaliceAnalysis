@@ -50,7 +50,7 @@ void readfiles(string particle, int energy, TFile *f_rs[])
 	TString reco_path	= "../reco/rootfiles/quality/";
 	TString sim_path	= "../sim/rootfiles/quality/" ;
 	TString reco_name	= "raw_siwecal_" + run_list[energy];
-	TString sim_name  = "ECAL_QGSP_BERT_conf6"
+	TString sim_name  = "ECAL_QGSP_BERT_conf6";
 	
 	TString common_name = "_" + particle + "_" + to_string(energy) + ".0GeV_quality.root";
 
@@ -122,7 +122,7 @@ void nhit_slab(int set_ene, TFile *f_rs[])
 
 }
 
-void reco_sim_analysis(string particle = "e")
+void reco_sim_analysis(string particle = "e-")
 {
 	TFile *MyFile = new TFile("rootfiles/reco_sim_analysis.root","RECREATE");
 	TCanvas *c_sum_energy = new TCanvas("c_sum_energy","c_sum_energy",700,700);
