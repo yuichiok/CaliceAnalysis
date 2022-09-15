@@ -27,6 +27,9 @@ void TBEvent::ana_quality()
 
    Long64_t nentries = fChain->GetEntriesFast();
 
+   TString outpath = "rootfiles/quality/";
+   OutFile = new TFile(outpath + OutFileName + "_quality.root","RECREATE");
+
    TList* hList = new TList();
    TList* hList_energy = new TList();
    TH1F * h_sum_energy = new TH1F("h_sum_energy","; sum_energy; Entries",500,0,1.5E4);

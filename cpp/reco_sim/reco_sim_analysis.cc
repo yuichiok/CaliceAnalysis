@@ -36,8 +36,6 @@ void legend(TH1F *rh,TH1F *sh)
 
 void readfiles(string particle, int energy, TFile *f_rs[])
 {
-	string reco_name = particle + "." + to_string(energy);
-	string sim_name  = particle + "-." + to_string(energy);
 
 	std::map<int, std::string> run_list {
 		{10, "90320"},
@@ -50,7 +48,7 @@ void readfiles(string particle, int energy, TFile *f_rs[])
 	};
 
 	TString reco_path	= "../reco/rootfiles/quality/";
-	TString sim_path	= "../sim/rootfiles/";
+	TString sim_path	= "../sim/rootfiles/quality/" ;
 	TString reco_name	= "raw_siwecal_" + run_list[energy];
 	TString sim_name  = "ECAL_QGSP_BERT_conf6"
 	

@@ -4,30 +4,16 @@
 
 #include "src/TBEvent.cc"
 
-void run_sim(int set_ene = 10, string particle = "e-"){
+void run_sim(int energy = 10, string particle = "e-"){
 
-	// TString name = particle + TString(to_string(set_ene));
-	string name = particle + "." + to_string(set_ene);
-	cout << name << endl;
+	TString input_path = "../../data/sim/";
+	TString sim_name   = "ECAL_QGSP_BERT_conf6_" + particle + "_" + to_string(energy) + ".0GeV"
 
-	TString filein = "default";
-	string fileinpath = "../../data/sim/";
-	filein = fileinpath + "/ECAL_QGSP_BERT_conf6_" + particle + "_" + to_string(set_ene) + ".0GeV_build.root";
+	cout << "Input: " << input_path << endl; 
 
-	TString fileout = "default";
-	string fileoutpath = "rootfiles/";
-	fileout = fileoutpath + "ECAL.sim." + name + "GeV.quality.root";
-
-	cout << "Input: " << filein << endl; 
-
-	TBEvent TBEvent(filein,fileout);
-	// TBEvent.ana_SumE();
-	// TBEvent.ana_Eff();
-	// TBEvent.ana_Energy();
-	// TBEvent.ana_adc_bcid();
+	TBEvent TBEvent(input_path,sim_name);
 	TBEvent.ana_quality();
 
-	cout << "Output: " << fileout << endl; 
 	ROOT::Math::MinimizerOptions::SetDefaultMaxFunctionCalls( 200 );
 
 	gSystem->Exit(0);

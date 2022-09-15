@@ -6,21 +6,6 @@
 
 void run(int energy = 10, string particle = "e-"){
 
-/*
-	// TString name = particle + TString(to_string(set_ene));
-	string name = particle + "_" + to_string(set_ene);
-	cout << name << endl;
-
-
-	TString filein = "default";
-	string fileinpath = "../../data/reco/raw_siwecal_90";
-	filein = fileinpath + run_list[name] + "/full_run.root";
-
-	TString fileout = "default";
-	string fileoutpath = "rootfiles/";
-	fileout = fileoutpath + "run_90" + run_list[name] + "." + name;
-*/
-
 	std::map<int, std::string> run_list {
 		{10, "90320"},
 		{20, "90378"},
