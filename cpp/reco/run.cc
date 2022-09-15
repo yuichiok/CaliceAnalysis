@@ -4,21 +4,13 @@
 
 #include "src/TBEvent.cc"
 
-void run(int set_ene = 10, string particle = "e"){
+void run(int energy = 10, string particle = "e-"){
 
+/*
 	// TString name = particle + TString(to_string(set_ene));
-	string name = particle + "." + to_string(set_ene);
+	string name = particle + "_" + to_string(set_ene);
 	cout << name << endl;
 
-	std::map<std::string, std::string> run_list {
-		{"e.10", "320"},
-		{"e.20", "378"},
-		{"e.40", "375"},
-		{"e.60", "372"},
-		{"e.80", "367"},
-		{"e.100", "365"},
-		{"e.150", "355"},
-	};
 
 	TString filein = "default";
 	string fileinpath = "../../data/reco/raw_siwecal_90";
@@ -27,11 +19,24 @@ void run(int set_ene = 10, string particle = "e"){
 	TString fileout = "default";
 	string fileoutpath = "rootfiles/";
 	fileout = fileoutpath + "run_90" + run_list[name] + "." + name;
+*/
 
-	cout << "Input: " << filein << endl; 
-	cout << "Output: " << fileout << "*" << endl; 
+	std::map<int, std::string> run_list {
+		{10, "90320"},
+		{20, "90378"},
+		{40, "90375"},
+		{60, "90372"},
+		{80, "90367"},
+		{100,"90365"},
+		{150,"90355"},
+	};
 
-	TBEvent TBEvent(filein,fileout);
+	TString name 			 = "raw_siwecal_" + run_list[energy] + "_" + particle + "_" + to_string(energy) + ".0GeV";
+	TString input_path = "../../data/reco/";
+
+	cout << "Input: " << name << endl; 
+
+	TBEvent TBEvent(input_path,name);
 	// TBEvent.ana_SumE();
 	// TBEvent.ana_Eff();
 	// TBEvent.ana_Energy();

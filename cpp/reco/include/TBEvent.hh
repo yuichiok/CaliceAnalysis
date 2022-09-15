@@ -83,7 +83,7 @@ public :
    TBranch        *b_hit_isMasked;   //!
    TBranch        *b_hit_isCommissioned;   //!
 
-   TBEvent(TString filein_s, TString fileout_s);
+   TBEvent(TString input_path, TString name);
    TBEvent(TList *f=0);
    virtual ~TBEvent();
    virtual Int_t    Cut(Long64_t entry);
@@ -108,14 +108,15 @@ public :
 
 #ifdef TBEvent_cxx
 
-TBEvent::TBEvent(TString filein_s,TString fileout_s) : fChain(0) 
+TBEvent::TBEvent(TString input_path,TString name) : fChain(0) 
 {
+   TString filein_s = input_path + name + "_build.root";
    TFile *f = new TFile(filein_s);
    TTree *tree = (TTree*)f->Get("ecal");
    //  tree->Print();
    Init(tree);
    // OutFile = new TFile(fileout_s,"RECREATE");
-   OutFileName = fileout_s;
+   OutFileName = name;
 }
 
 TBEvent::TBEvent(TList *f) : fChain(0) 

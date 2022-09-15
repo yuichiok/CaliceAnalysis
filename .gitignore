@@ -4,6 +4,6 @@
 *.png
 .vscode/
 myclass/EventControl.*
-data/
+**/data
 tools/tutorial
 .DS_Store
