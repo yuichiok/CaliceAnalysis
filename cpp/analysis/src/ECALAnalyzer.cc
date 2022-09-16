@@ -4,6 +4,7 @@
 #include "../include/ECALAnalyzer.hh"
 #include "../include/TreeReader.hh"
 #include "../include/FileSelector.hh"
+#include "../include/HistManager.hh"
 
 using std::cout;   using std::endl;
 
@@ -33,7 +34,8 @@ bool ECALAnalyzer::MapTree(TTree* tree)
     fChain->SetMakeClass(1);
 
     TreeReader reader;
-    reader.InitializeRecoReadTree(fChain, _reco, _branch);
+    _data = _reco;
+    reader.InitializeRecoReadTree(fChain, _data, _branch);
 
     Notify();
 
@@ -44,6 +46,34 @@ bool ECALAnalyzer::MapTree(TTree* tree)
 void ECALAnalyzer::Analyze(Long64_t entry)
 {
 
+   HistManager hm;
+   Float_t sum_slab_energy[NSLABS] = {0};
+   
+   if(_data.nhit_slab < 13) return;
+
+   hm.h_sum_energy->Fill(_data.sum_energy);
+
+   for (int ihit = 0; ihit < _data.nhit_len; ihit++)
+   {
+      hm.h_hit_slab->Fill(_data.hit_slab[ihit]);
+      hm.h_hit_energy->Fill(_data.hit_energy[ihit]);
+
+      int ihit_slab = _data.hit_slab[ihit];
+      sum_slab_energy[ihit_slab] += _data.hit_energy[ihit];
+      hm.h_hit_slab_energy[ihit_slab]->Fill(_data.hit_energy[ihit]);
+   }
+
+   for (int islab = 0; islab < NSLABS; islab++)
+   {
+      hm.h_sum_slab_energy[islab]->Fill(sum_slab_energy[islab]);
+   }
+
+   FileSelector fs(options);
+
+   TFile *outfile = new TFile( "rootfiles/" + fs.GetRecoSim() + "/" + fs.GetRunName() + "_quality.root","RECREATE");
+   cout << "Output: " << outfile << endl;
+
+   hm.WriteLists(outfile);
 
 /*
    if (fChain == 0) return;
@@ -56,40 +86,40 @@ void ECALAnalyzer::Analyze(Long64_t entry)
    TList* hList = new TList();
    TList* hList_energy = new TList();
    TList* hList_energy_sca = new TList();
-   TH1F * h_sum_energy = new TH1F("h_sum_energy","; sum_energy; Entries",500,0,1.5E4);
-   TH1F * h_hit_energy = new TH1F("h_hit_energy","; hit_energy; Entries",120,-20,100);
-   TH1F * h_hit_slab_energy[nslabs];
+   TH1F * hm.h_sum_energy = new TH1F("hm.h_sum_energy","; sum_energy; Entries",500,0,1.5E4);
+   TH1F * hm.h_hit_energy = new TH1F("hm.h_hit_energy","; hit_energy; Entries",120,-20,100);
+   TH1F * hm.h_hit_slab_energy[nslabs];
    for (int islab = 0; islab < nslabs; islab++)
    {
-      TString hname = "h_hit_slab_energy" + to_string(islab);
-      h_hit_slab_energy[islab] = new TH1F(hname,hname,120,-20,100);
+      TString hname = "hm.h_hit_slab_energy" + to_string(islab);
+      hm.h_hit_slab_energy[islab] = new TH1F(hname,hname,120,-20,100);
    }
    
-   TH1F * h_hit_slab7_energy_sca[nscas];
+   TH1F * hm.h_hit_slab7_energy_sca[nscas];
    for (int isca = 0; isca < nscas; isca++)
    {
-      TString hname = "h_hit_slab7_energy_sca" + to_string(isca);
-      h_hit_slab7_energy_sca[isca] = new TH1F(hname,hname,120,-20,100);
+      TString hname = "hm.h_hit_slab7_energy_sca" + to_string(isca);
+      hm.h_hit_slab7_energy_sca[isca] = new TH1F(hname,hname,120,-20,100);
    }
 
-   TH1F * h_hit_slab   = new TH1F("h_hit_slab","; hit_slab; Entries",nslabs,-0.5,14.5);
+   TH1F * hm.h_hit_slab   = new TH1F("hm.h_hit_slab","; hit_slab; Entries",nslabs,-0.5,14.5);
 
-   hList->Add(h_sum_energy);
-   hList->Add(h_hit_energy);
-   for(int ih=0;ih<nslabs;ih++) hList_energy->Add(h_hit_slab_energy[ih]);
-   for(int isca=0;isca<nscas;isca++) hList_energy_sca->Add(h_hit_slab7_energy_sca[isca]);
-   hList->Add(h_hit_slab);
+   hList->Add(hm.h_sum_energy);
+   hList->Add(hm.h_hit_energy);
+   for(int ih=0;ih<nslabs;ih++) hList_energy->Add(hm.h_hit_slab_energy[ih]);
+   for(int isca=0;isca<nscas;isca++) hList_energy_sca->Add(hm.h_hit_slab7_energy_sca[isca]);
+   hList->Add(hm.h_hit_slab);
 
    if(nhit_slab < 13) continue;
 
-   h_sum_energy->Fill(sum_energy);
+   hm.h_sum_energy->Fill(sum_energy);
 
    for (int ihit = 0; ihit < nhit_len; ihit++)
    {
-      h_hit_slab->Fill(hit_slab[ihit]);
-      h_hit_energy->Fill(hit_energy[ihit]);
+      hm.h_hit_slab->Fill(hit_slab[ihit]);
+      hm.h_hit_energy->Fill(hit_energy[ihit]);
 
-      h_hit_slab_energy[hit_slab[ihit]]->Fill(hit_energy[ihit]);
+      hm.h_hit_slab_energy[hit_slab[ihit]]->Fill(hit_energy[ihit]);
       
    }
 
@@ -98,7 +128,7 @@ void ECALAnalyzer::Analyze(Long64_t entry)
    for (int islab = 0; islab < nslabs; islab++)
    {
       c_hit_slab_energy->cd(islab+1);
-      h_hit_slab_energy[islab]->Draw("h");
+      hm.h_hit_slab_energy[islab]->Draw("h");
    }
 
    TCanvas * c_hit_slab7_energy_sca = new TCanvas("c_hit_slab7_energy_sca","c_hit_slab7_energy_sca",700,700);
@@ -106,7 +136,7 @@ void ECALAnalyzer::Analyze(Long64_t entry)
    for (int isca = 0; isca < nscas; isca++)
    {
       c_hit_slab7_energy_sca->cd(isca+1);
-      h_hit_slab7_energy_sca[isca]->Draw("h");
+      hm.h_hit_slab7_energy_sca[isca]->Draw("h");
    }
 
 

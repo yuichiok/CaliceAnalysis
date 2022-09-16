@@ -44,6 +44,7 @@ class ECALAnalyzer
 
   private:
 
+    auto        _data;
     ECAL_reco   _reco;
     Branch_reco _branch;
 
