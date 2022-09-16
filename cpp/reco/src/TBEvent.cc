@@ -358,8 +358,8 @@ void TBEvent::ana_quality()
 
    Long64_t nentries = fChain->GetEntriesFast();
 
-   // TFile *MyFile = new TFile("rootfiles/run_90320.e.10GeV.quality.root","RECREATE");
-   OutFile = new TFile(OutFileName + "GeV.quality.root","RECREATE");
+   TString outpath = "rootfiles/quality/";
+   OutFile = new TFile(outpath + OutFileName + "_quality.root","RECREATE");
 
    TList* hList = new TList();
    TList* hList_energy = new TList();

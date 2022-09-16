@@ -34,23 +34,31 @@ void legend(TH1F *rh,TH1F *sh)
 	leg0->Draw("same");	
 }
 
-void readfiles(string name, TFile *f_rs[])
+void readfiles(string particle, int energy, TFile *f_rs[])
 {
-	std::map<std::string, std::string> run_list {
-		{"e.10", "320"},
-		{"e.20", "378"},
-		{"e.40", "375"},
-		{"e.60", "372"},
-		{"e.80", "367"},
-		{"e.100", "365"},
-		{"e.150", "355"},
+
+	std::map<int, std::string> run_list {
+		{10, "90320"},
+		{20, "90378"},
+		{40, "90375"},
+		{60, "90372"},
+		{80, "90367"},
+		{100,"90365"},
+		{150,"90355"},
 	};
 
-	TString reco_file = "../reco/rootfiles/quality/run_90" + run_list[name] + "." + name + "GeV.quality.root";
-	TString sim_file  = "../sim/rootfiles/ECAL.sim." + name + "GeV.quality.root";
+	TString reco_path	= "../reco/rootfiles/quality/";
+	TString sim_path	= "../sim/rootfiles/quality/" ;
+	TString reco_name	= "raw_siwecal_" + run_list[energy];
+	TString sim_name  = "ECAL_QGSP_BERT_conf6";
+	
+	TString common_name = "_" + particle + "_" + to_string(energy) + ".0GeV_quality.root";
+
+	TString reco_file = reco_path + reco_name + common_name;
+	TString sim_file  = sim_path  + sim_name  + common_name;
 
 	cout << "reco file: " << reco_file << endl;
-	cout << " sim file: " << sim_file << endl;
+	cout << " sim file: " << sim_file  << endl;
 
 	f_rs[0] = TFile::Open(reco_file);
 	f_rs[1] = TFile::Open(sim_file);
@@ -114,7 +122,7 @@ void nhit_slab(int set_ene, TFile *f_rs[])
 
 }
 
-void reco_sim_analysis(string particle = "e")
+void reco_sim_analysis(string particle = "e-")
 {
 	TFile *MyFile = new TFile("rootfiles/reco_sim_analysis.root","RECREATE");
 	TCanvas *c_sum_energy = new TCanvas("c_sum_energy","c_sum_energy",700,700);
@@ -126,8 +134,8 @@ void reco_sim_analysis(string particle = "e")
 	int l_energy[nene] = {10, 20, 40, 60, 80, 100, 150};
 	for (int ie=0; ie<nene; ie++){
 		TFile *f_rs[2];
-		string name = particle + "." + to_string(l_energy[ie]);
-		readfiles(name,f_rs);
+		// string name = particle + "." + to_string(l_energy[ie]);
+		readfiles(particle,l_energy[ie],f_rs);
 		c_sum_energy->cd(ie+1);
 		slab_energy(l_energy[ie],f_rs);
 		c_nhit_slab->cd(ie+1);
