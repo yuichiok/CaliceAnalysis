@@ -45,10 +45,22 @@ TString FileSelector::GetParticleName()
 TString FileSelector::GetRunName()
 {
   if(_recosim.Contains("reco")){
-    _runname = prefix_reco + TString::Form("%d",_runID) + "_" + _particle + "_" + _energy;
+    _runname = prefix_reco + TString::Format("%d",_runID) + "_" + _particle + "_" + _energy;
   }else if(_recosim.Contains("sim")){
     _runname = prefix_sim + "_" + _particle + "_" + _energy;
   }
 
   return _runname;
+}
+
+TString FileSelector::GetRunName_with_Path()
+{
+  TString fullpath;
+  if(!_runname){
+    GetRunName();
+  }
+
+  fullpath = data_path + _runname + suffix;
+
+  return fullpath;
 }

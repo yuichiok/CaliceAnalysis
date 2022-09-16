@@ -18,6 +18,7 @@ class FileSelector
     virtual TString GetParticleName();
 
     virtual TString GetRunName();
+    virtual TString GetRunName_with_Path();
 
     TString     options;
     TObjArray *tobj_arr;
@@ -26,7 +27,7 @@ class FileSelector
 
     TString prefix_reco = "raw_siwecal_";
     TString prefix_sim  = "ECAL_QGSP_BERT_conf6";
-    TString suffix      = ".0GeV_build.root"
+    TString suffix      = ".0GeV_build.root";
 
     std::map<std::pair<TString, Int_t>, Int_t > RunMap {
       {std::make_pair("e-", 10),  90320},
@@ -44,7 +45,7 @@ class FileSelector
     TString    _recosim;
     TString   _particle;
 
-    TString     _runame;
+    TString     _runname;
 
 
 
