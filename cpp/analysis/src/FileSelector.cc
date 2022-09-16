@@ -18,7 +18,9 @@ FileSelector::FileSelector(TString o)
     _energy   = ((TObjString *)(tobj_arr->At(2)))->String().Atoi();
     std::pair<TString, Int_t> setup = std::make_pair(_particle, _energy);
 
-    _runID    = RunMap[setup];
+    if(_recosim.Contains("reco")) _runID = RunMap[setup];
+
+    MakeRunName();
 
 }
 
@@ -44,23 +46,20 @@ TString FileSelector::GetParticleName()
 
 TString FileSelector::GetRunName()
 {
-  if(_recosim.Contains("reco")){
-    _runname = prefix_reco + TString::Format("%d",_runID) + "_" + _particle + "_" + _energy;
-  }else if(_recosim.Contains("sim")){
-    _runname = prefix_sim + "_" + _particle + "_" + _energy;
-  }
-
   return _runname;
 }
 
 TString FileSelector::GetRunName_with_Path()
 {
-  TString fullpath;
-  if(!_runname){
-    GetRunName();
+  TString fullpath = data_path + "/" + _recosim + "/" + _runname + suffix;
+  return  fullpath;
+}
+
+void FileSelector::MakeRunName()
+{
+  if(_recosim.Contains("reco")){
+    _runname = prefix_reco + TString::Format("%d",_runID) + "_" + _particle + "_" + _energy;
+  }else if(_recosim.Contains("sim")){
+    _runname = prefix_sim + "_" + _particle + "_" + _energy;
   }
-
-  fullpath = data_path + _runname + suffix;
-
-  return fullpath;
 }

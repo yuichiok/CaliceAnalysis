@@ -2,12 +2,18 @@
 #include <TString.h>
 #include <TFile.h> 
 #include "../include/NtupleProcessor.hh"
+#include "../include/FileSelector.hh"
 
 using std::cout;   using std::endl;
 
 NtupleProcessor::NtupleProcessor(TString o, int me)
 : eAnalyzer(o), tIter(eAnalyzer), options(o), maxEvents(me)
 {
+  FileSelector fs(options);
+  cout << options << endl;
+  cout << fs.GetRunID() << endl;
+  cout << fs.GetRunName_with_Path() << endl;
+
   // PARAM output
   TString dummy_label = "raw_siwecal_90378_e-_20.0GeV_build";
   TString filename = "../../data/reco/" + dummy_label + ".root";

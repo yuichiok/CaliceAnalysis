@@ -18,7 +18,7 @@ using namespace std;
 int main()
 {
 
-  NtupleProcessor ntplproc("reco",-1);
+  NtupleProcessor ntplproc("reco e- 20",-1);
 
   return 0;
 }

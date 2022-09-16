@@ -17,6 +17,7 @@ class FileSelector
     virtual TString GetRecoSim();
     virtual TString GetParticleName();
 
+    virtual void    MakeRunName();
     virtual TString GetRunName();
     virtual TString GetRunName_with_Path();
 
