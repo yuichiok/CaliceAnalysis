@@ -7,35 +7,35 @@ struct ECAL_reco  {
 
   public:
   // Declaration of leaf types
-    Int_t           event;
-    Int_t           spill;
-    Int_t           cycle;
-    Int_t           bcid;
-    Int_t           bcid_first_sca_full;
-    Int_t           bcid_merge_end;
-    Int_t           id_run;
-    Int_t           id_dat;
-    Int_t           nhit_slab;
-    Int_t           nhit_chip;
-    Int_t           nhit_chan;
-    Int_t           nhit_len;
-    Float_t         sum_energy;
-    Float_t         sum_energy_lg;
-    Int_t           hit_slab[MAX_NHITS];   //[nhit_len]
-    Int_t           hit_chip[MAX_NHITS];   //[nhit_len]
-    Int_t           hit_chan[MAX_NHITS];   //[nhit_len]
-    Int_t           hit_sca[MAX_NHITS];   //[nhit_len]
-    Float_t         hit_x[MAX_NHITS];   //[nhit_len]
-    Float_t         hit_y[MAX_NHITS];   //[nhit_len]
-    Float_t         hit_z[MAX_NHITS];   //[nhit_len]
-    Int_t           hit_adc_high[MAX_NHITS];   //[nhit_len]
-    Int_t           hit_adc_low[MAX_NHITS];   //[nhit_len]
-    Float_t         hit_energy[MAX_NHITS];   //[nhit_len]
-    Float_t         hit_energy_lg[MAX_NHITS];   //[nhit_len]
-    Int_t           hit_n_scas_filled[MAX_NHITS];   //[nhit_len]
-    Int_t           hit_isHit[MAX_NHITS];   //[nhit_len]
-    Int_t           hit_isMasked[MAX_NHITS];   //[nhit_len]
-    Int_t           hit_isCommissioned[MAX_NHITS];   //[nhit_len]
+    Int_t           event = 0;
+    Int_t           spill = 0;
+    Int_t           cycle = 0;
+    Int_t           bcid = 0;
+    Int_t           bcid_first_sca_full = 0;
+    Int_t           bcid_merge_end = 0;
+    Int_t           id_run = 0;
+    Int_t           id_dat = 0;
+    Int_t           nhit_slab = 0;
+    Int_t           nhit_chip = 0;
+    Int_t           nhit_chan = 0;
+    Int_t           nhit_len = 0;
+    Float_t         sum_energy = 0;
+    Float_t         sum_energy_lg = 0;
+    Int_t           hit_slab[MAX_NHITS] = {0};   //[nhit_len]
+    Int_t           hit_chip[MAX_NHITS] = {0};   //[nhit_len]
+    Int_t           hit_chan[MAX_NHITS] = {0};   //[nhit_len]
+    Int_t           hit_sca[MAX_NHITS] = {0};   //[nhit_len]
+    Float_t         hit_x[MAX_NHITS] = {0};   //[nhit_len]
+    Float_t         hit_y[MAX_NHITS] = {0};   //[nhit_len]
+    Float_t         hit_z[MAX_NHITS] = {0};   //[nhit_len]
+    Int_t           hit_adc_high[MAX_NHITS] = {0};   //[nhit_len]
+    Int_t           hit_adc_low[MAX_NHITS] = {0};   //[nhit_len]
+    Float_t         hit_energy[MAX_NHITS] = {0};   //[nhit_len]
+    Float_t         hit_energy_lg[MAX_NHITS] = {0};   //[nhit_len]
+    Int_t           hit_n_scas_filled[MAX_NHITS] = {0};   //[nhit_len]
+    Int_t           hit_isHit[MAX_NHITS] = {0};   //[nhit_len]
+    Int_t           hit_isMasked[MAX_NHITS] = {0};   //[nhit_len]
+    Int_t           hit_isCommissioned[MAX_NHITS] = {0};   //[nhit_len]
                                                                                       
 };
 
