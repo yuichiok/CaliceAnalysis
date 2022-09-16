@@ -2,8 +2,8 @@
 *.csv
 *.ods
 *.png
-.vscode/
+.vscode
 myclass/EventControl.*
-data/
+**/data
 tools/tutorial
 .DS_Store
