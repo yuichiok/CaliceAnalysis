@@ -53,7 +53,7 @@ Bool_t TreeIterator::Process(Long64_t entry)
     nEntriesProcessed++;
 
   // Evaluate the criteria for this entry
-      eAnalyzer.Analyze();
+      eAnalyzer.Analyze(entry);
 
     return true;
 }

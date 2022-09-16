@@ -32,9 +32,7 @@ bool ECALAnalyzer::MapTree(TTree* tree)
     fChain->SetMakeClass(1);
 
     TreeReader reader;
-    reader.InitializeMCReadTree(fChain, _mc, _branch);
-    reader.InitializeJetReadTree(fChain, _jet, _branch);
-    reader.InitializePFOReadTree(fChain, _pfo, _branch);
+    reader.InitializeRecoReadTree(fChain, _ecal, _branch);
 
     Notify();
 
