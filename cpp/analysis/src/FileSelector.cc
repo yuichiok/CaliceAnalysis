@@ -32,7 +32,23 @@ Int_t FileSelector::GetEnergy()
   return _energy;
 }
 
+TString FileSelector::GetRecoSim()
+{
+  return _recosim;
+}
+
 TString FileSelector::GetParticleName()
 {
   return _particle;
+}
+
+TString FileSelector::GetRunName()
+{
+  if(_recosim.Contains("reco")){
+    _runname = prefix_reco + TString::Form("%d",_runID) + "_" + _particle + "_" + _energy;
+  }else if(_recosim.Contains("sim")){
+    _runname = prefix_sim + "_" + _particle + "_" + _energy;
+  }
+
+  return _runname;
 }
