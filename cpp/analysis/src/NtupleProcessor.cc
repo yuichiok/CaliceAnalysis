@@ -10,13 +10,9 @@ NtupleProcessor::NtupleProcessor(TString o, int me)
 : eAnalyzer(o), tIter(eAnalyzer), options(o), maxEvents(me)
 {
   FileSelector fs(options);
-  cout << options << endl;
-  cout << fs.GetRunID() << endl;
-  cout << fs.GetRunName_with_Path() << endl;
 
   // PARAM output
-  TString dummy_label = "raw_siwecal_90378_e-_20.0GeV_build";
-  TString filename = "../../data/reco/" + dummy_label + ".root";
+  TString filename = fs.GetRunName_with_Path();
 
   ntupleFile = TFile::Open(filename);
   if(!ntupleFile) cout << "NtupleProcessor: ERROR: Unable to open file " << filename << endl;

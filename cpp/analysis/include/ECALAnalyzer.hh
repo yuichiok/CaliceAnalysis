@@ -44,7 +44,7 @@ class ECALAnalyzer
 
   private:
 
-    ECAL_reco   _ecal;
+    ECAL_reco   _reco;
     Branch_reco _branch;
 
 };

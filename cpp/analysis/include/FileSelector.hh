@@ -41,12 +41,12 @@ class FileSelector
     };
 
   private:
-    Int_t        _runID;
-    Int_t       _energy;
-    TString    _recosim;
-    TString   _particle;
+    Int_t     _runID    ;
+    Int_t     _energy   ;
+    TString   _recosim  ;
+    TString   _particle ;
 
-    TString     _runname;
+    TString   _runname  ;
 
 
 
