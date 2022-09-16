@@ -5,5 +5,9 @@
 .vscode
 myclass/EventControl.*
 **/data
+
+**/build
+*.exe
+
 tools/tutorial
 .DS_Store
