@@ -4,40 +4,30 @@
 
 #include "src/TBEvent.cc"
 
-void run(int set_ene = 10, string particle = "e"){
+void run(int energy = 10, string particle = "e-"){
 
-	// TString name = particle + TString(to_string(set_ene));
-	string name = particle + "." + to_string(set_ene);
-	cout << name << endl;
-
-	std::map<std::string, std::string> run_list {
-		{"e.10", "320"},
-		{"e.20", "378"},
-		{"e.40", "375"},
-		{"e.60", "372"},
-		{"e.80", "367"},
-		{"e.100", "365"},
-		{"e.150", "355"},
+	std::map<int, std::string> run_list {
+		{10, "90320"},
+		{20, "90378"},
+		{40, "90375"},
+		{60, "90372"},
+		{80, "90367"},
+		{100,"90365"},
+		{150,"90355"},
 	};
 
-	TString filein = "default";
-	string fileinpath = "../../data/reco/raw_siwecal_90";
-	filein = fileinpath + run_list[name] + "/full_run.root";
+	TString name 			 = "raw_siwecal_" + run_list[energy] + "_" + particle + "_" + to_string(energy) + ".0GeV";
+	TString input_path = "../../data/reco/";
 
-	TString fileout = "default";
-	string fileoutpath = "rootfiles/";
-	fileout = fileoutpath + "run_90" + run_list[name] + "." + name;
+	cout << "Input: " << name << endl; 
 
-	cout << "Input: " << filein << endl; 
-	cout << "Output: " << fileout << "*" << endl; 
-
-	TBEvent TBEvent(filein,fileout);
+	TBEvent TBEvent(input_path,name);
 	// TBEvent.ana_SumE();
 	// TBEvent.ana_Eff();
 	// TBEvent.ana_Energy();
 	// TBEvent.ana_adc_bcid();
-	// TBEvent.ana_quality();
-	TBEvent.ana_radius();
+	TBEvent.ana_quality();
+	// TBEvent.ana_radius();
 
 	ROOT::Math::MinimizerOptions::SetDefaultMaxFunctionCalls( 200 );
 

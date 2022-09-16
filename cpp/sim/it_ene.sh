@@ -1,6 +1,9 @@
 #!/bin/bash
 
-for energy in 10 20 40 60 80 100 150
+for particle in e- mu-
 do
-    root -l -q run_sim.cc\(${energy}\)
+    for energy in 10 20 40 60 80 100 150
+    do
+        root -l -q run_sim.cc\(${energy},\"${particle}\"\)
+    done
 done
