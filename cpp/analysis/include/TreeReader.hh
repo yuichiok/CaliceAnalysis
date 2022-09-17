@@ -18,7 +18,7 @@ class TreeReader
     TreeReader();
     virtual ~TreeReader() {};
 
-    void InitializeRecoReadTree (TTree *tree, ECAL_reco & _data,  Branch_reco & _branch);
+    void InitializeRecoReadTree (TTree *tree, ECAL_data & _data,  ECAL_branch & _branch);
 
   private: 
 

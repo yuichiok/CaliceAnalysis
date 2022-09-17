@@ -13,7 +13,7 @@ using std::cout;   using std::endl;
 
 TreeReader::TreeReader() {}
 
-void TreeReader::InitializeRecoReadTree(TTree *_hTree, ECAL_reco & _data, Branch_reco & _branch)
+void TreeReader::InitializeRecoReadTree(TTree *_hTree, ECAL_data & _data, ECAL_branch & _branch)
 {
    _hTree->SetBranchAddress("event", &_data.event, &_branch.b_event);
    _hTree->SetBranchAddress("spill", &_data.spill, &_branch.b_spill);
