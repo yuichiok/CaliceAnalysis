@@ -11,12 +11,15 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
-#include "library/TreeStructures.hh"
-#include "include/TreeWriter.hh"
+#include <vector>
+
+#include "../../library/TreeStructures.hh"
+#include "TreeWriter.hh"
 
 // Header file for the classes stored in the TTree if any.
-#include "vector"
-#include "vector"
+// #include "vector"
+// #include "vector"
+
 
 class Sim2Build {
    public :
@@ -40,24 +43,24 @@ class Sim2Build {
       Int_t           nhit_len;
       Float_t         sum_energy;
       Float_t         sum_energy_lg;
-      vector<int>     *hit_slab;
-      vector<int>     *hit_chip;
-      vector<int>     *hit_chan;
-      vector<int>     *hit_sca;
-      vector<int>     *hit_adc_high;
-      vector<int>     *hit_adc_low;
-      vector<int>     *hit_n_scas_filled;
-      vector<int>     *hit_isHit;
-      vector<int>     *hit_isMasked;
-      vector<int>     *hit_isCommissioned;
-      vector<float>   *hit_energy;
-      vector<float>   *hit_energy_w;
-      vector<float>   *hit_energy_lg;
-      vector<float>   *hit_x;
-      vector<float>   *hit_y;
-      vector<float>   *hit_z;
-      vector<int>     *hit_positron;
-      vector<int>     *hit_nMC;
+      std::vector<int>     *hit_slab;
+      std::vector<int>     *hit_chip;
+      std::vector<int>     *hit_chan;
+      std::vector<int>     *hit_sca;
+      std::vector<int>     *hit_adc_high;
+      std::vector<int>     *hit_adc_low;
+      std::vector<int>     *hit_n_scas_filled;
+      std::vector<int>     *hit_isHit;
+      std::vector<int>     *hit_isMasked;
+      std::vector<int>     *hit_isCommissioned;
+      std::vector<float>   *hit_energy;
+      std::vector<float>   *hit_energy_w;
+      std::vector<float>   *hit_energy_lg;
+      std::vector<float>   *hit_x;
+      std::vector<float>   *hit_y;
+      std::vector<float>   *hit_z;
+      std::vector<int>     *hit_positron;
+      std::vector<int>     *hit_nMC;
 
       // List of branches
       TBranch        *b_event;   //!
@@ -123,7 +126,8 @@ Sim2Build::Sim2Build(TString tree_s) : fChain(0)
    TTree *tree = (TTree*)f->Get("ecal");
    
    TreeWriter writer;
-   _hfile = new TFile( "rootfiles/ECAL_QGSP_BERT_conf6_e-_10.0GeV_build.root", "RECREATE", "rootfiles/ECAL_QGSP_BERT_conf6_e-_10.0GeV_build.root" ) ;
+   TString outroot = "rootfiles/ECAL_QGSP_BERT_conf6_e-_10.0GeV_build.root";
+   _hfile = new TFile( outroot, "RECREATE", outroot ) ;
    _hTree = new TTree( "ecal", "tree" );
    writer.InitializeECALTree(_hTree, _data);
 
@@ -144,7 +148,8 @@ Sim2Build::Sim2Build(TTree *tree) : fChain(0)
    }
 
    TreeWriter writer;
-   _hfile = new TFile( "rootfiles/ECAL_QGSP_BERT_conf6_e-_10.0GeV_build.root", "RECREATE", "rootfiles/ECAL_QGSP_BERT_conf6_e-_10.0GeV_build.root" ) ;
+   TString outroot = "rootfiles/ECAL_QGSP_BERT_conf6_e-_10.0GeV_build.root";
+   _hfile = new TFile( outroot, "RECREATE", outroot ) ;
    _hTree = new TTree( "ecal", "tree" );
    writer.InitializeECALTree(_hTree, _data);
 

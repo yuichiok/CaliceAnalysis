@@ -1,8 +1,11 @@
 #define Sim2Build_cxx
-#include "Sim2Build.h"
+#include "../include/Sim2Build.hh"
 #include <TH2.h>
 #include <TStyle.h>
 #include <TCanvas.h>
+#include <vector>
+
+using std::vector;
 
 void Sim2Build::Loop()
 {

@@ -3,7 +3,7 @@
 #include <string>
 #include <TFile.h>
 #include <TTree.h>
-#include "../library/TreeStructures.hh"
+#include "../../library/TreeStructures.hh"
 #ifndef _TreeWriter_hh
 #define _TreeWriter_hh
 
