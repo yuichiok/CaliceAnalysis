@@ -12,8 +12,8 @@ using std::cout;   using std::endl;
 HistManager::HistManager()
 {
   // Initialization
-    InitializeHists();
-    Hist2List();
+    // InitializeHists();
+    // Hist2List();
 }
 
 void HistManager::InitializeHists()
@@ -29,6 +29,9 @@ void HistManager::InitializeHists()
       h_hit_slab_energy[islab] = new TH1F(hname_hit_slab_energy,hname_hit_slab_energy,120,-20,100);
       h_sum_slab_energy[islab] = new TH1F(hname_sum_slab_energy,hname_sum_slab_energy,500,0,1.5E4);
     }
+
+    Hist2List();
+
 }
 
 void HistManager::Hist2List()
