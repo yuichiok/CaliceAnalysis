@@ -15,6 +15,8 @@
 
 #include "../../library/TreeStructures.hh"
 #include "TreeWriter.hh"
+#include "FileSelector.hh"
+
 
 // Header file for the classes stored in the TTree if any.
 // #include "vector"
@@ -25,6 +27,7 @@ class Sim2Build {
    public :
       TTree          *fChain;   //!pointer to the analyzed TTree or TChain
       Int_t           fCurrent; //!current Tree number in a TChain
+      TString         fOption;
 
    // Fixed size dimensions of array or collections stored in the TTree if any.
 
@@ -96,7 +99,7 @@ class Sim2Build {
       TBranch        *b_hit_positron;   //!
       TBranch        *b_hit_nMC;   //!
 
-      Sim2Build(TString tree_s);
+      Sim2Build(TString options);
       Sim2Build(TTree *tree=0);
       virtual ~Sim2Build();
       virtual Int_t    Cut(Long64_t entry);
@@ -120,13 +123,17 @@ class Sim2Build {
 #endif
 
 #ifdef Sim2Build_cxx
-Sim2Build::Sim2Build(TString tree_s) : fChain(0) 
+Sim2Build::Sim2Build(TString options) : fChain(0), fOption(options)
 {
+
+   FileSelector fs("sim " + fOption);
+   TString tree_s = fs.GetRunName_with_Path();
+
    TFile *f = new TFile(tree_s);
    TTree *tree = (TTree*)f->Get("ecal");
    
    TreeWriter writer;
-   TString outroot = "rootfiles/ECAL_QGSP_BERT_conf6_e-_10.0GeV_build.root";
+   TString outroot = "../../data/conv_sim/" + fs.GetRunName() + "_converted.root";
    _hfile = new TFile( outroot, "RECREATE", outroot ) ;
    _hTree = new TTree( "ecal", "tree" );
    writer.InitializeECALTree(_hTree, _data);
@@ -148,7 +155,7 @@ Sim2Build::Sim2Build(TTree *tree) : fChain(0)
    }
 
    TreeWriter writer;
-   TString outroot = "rootfiles/ECAL_QGSP_BERT_conf6_e-_10.0GeV_build.root";
+   TString outroot = "../../data/conv_sim/ECAL_QGSP_BERT_conf6_e-_10.0GeV_converted.root";
    _hfile = new TFile( outroot, "RECREATE", outroot ) ;
    _hTree = new TTree( "ecal", "tree" );
    writer.InitializeECALTree(_hTree, _data);

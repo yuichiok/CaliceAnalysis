@@ -57,9 +57,11 @@ TString FileSelector::GetRunName_with_Path()
 
 void FileSelector::MakeRunName()
 {
-  if(_recosim.Contains("reco")){
+  if(_recosim == "reco"){
     _runname = prefix_reco + TString::Format("%d",_runID) + "_" + _particle + "_" + _energy;
-  }else if(_recosim.Contains("sim")){
+  }else if(_recosim == "sim"){
+    _runname = prefix_sim + "_" + _particle + "_" + _energy;
+  }else if(_recosim == "conv_sim"){
     _runname = prefix_sim + "_" + _particle + "_" + _energy;
   }
 }

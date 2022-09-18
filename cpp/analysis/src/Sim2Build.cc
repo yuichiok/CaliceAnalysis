@@ -57,4 +57,6 @@ void Sim2Build::Loop()
    _hfile->Write();
    _hfile->Close();
 
+   if(0) std::cout << "nbytes = " << nbytes << std::endl;
+
 }
