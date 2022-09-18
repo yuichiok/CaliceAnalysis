@@ -3,7 +3,7 @@
 
 int MakeClass(){
 
-  TString filename = "../../data/reco/raw_siwecal_90320_e-_10.0GeV_build.root";
+  TString filename = "../../data/conv_sim/ECAL_QGSP_BERT_conf6_e-_10_converted.root";
   TFile *file = new TFile(filename);
 
   TString treename = "ecal";
@@ -11,7 +11,7 @@ int MakeClass(){
 
   file->ls();
 
-  tree->MakeClass("RecoSample");
+  tree->MakeClass("ConvSimSample");
 
   std::cout << "processed..." << std::endl;
 
