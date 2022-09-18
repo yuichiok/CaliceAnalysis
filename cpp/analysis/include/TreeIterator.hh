@@ -17,6 +17,7 @@
 #include <TSelector.h>
 #include <TTree.h>
 #include "ECALAnalyzer.hh"
+#include "HistManager.hh"
 
 typedef unsigned long counter;
 
@@ -45,6 +46,7 @@ class TreeIterator : public TSelector
 
   // Entry handler & list of Histogram Extractors
     ECALAnalyzer &eAnalyzer;
+    HistManager   hm;
 
   // TTree
     TTree *fChain;

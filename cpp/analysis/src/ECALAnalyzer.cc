@@ -3,8 +3,6 @@
 #include <TFile.h> 
 #include "../include/ECALAnalyzer.hh"
 #include "../include/TreeReader.hh"
-#include "../include/FileSelector.hh"
-#include "../include/HistManager.hh"
 
 using std::cout;   using std::endl;
 
@@ -42,10 +40,9 @@ bool ECALAnalyzer::MapTree(TTree* tree)
 
 }
 
-void ECALAnalyzer::Analyze(Long64_t entry)
+void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
 {
 
-   HistManager hm;
    Float_t sum_slab_energy[NSLABS] = {0};
    
    if(_data.nhit_slab < 13) return;
@@ -67,12 +64,6 @@ void ECALAnalyzer::Analyze(Long64_t entry)
       hm.h_sum_slab_energy[islab]->Fill(sum_slab_energy[islab]);
    }
 
-   FileSelector fs(options);
-
-   TFile *outfile = new TFile( "rootfiles/" + fs.GetRecoSim() + "/" + fs.GetRunName() + "_quality.root","RECREATE");
-   cout << "Output: " << outfile << endl;
-
-   hm.WriteLists(outfile);
 
 }
 
