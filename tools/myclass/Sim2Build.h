@@ -11,6 +11,8 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
+#include "library/TreeStructures.hh"
+#include "include/TreeWriter.hh"
 
 // Header file for the classes stored in the TTree if any.
 #include "vector"
@@ -100,6 +102,15 @@ public :
    virtual void     Loop();
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
+
+   private:
+
+      TFile * _hfile;
+      TTree * _hTree;
+      ECAL_data _data;
+
+
+
 };
 
 #endif
@@ -117,6 +128,12 @@ Sim2Build::Sim2Build(TTree *tree) : fChain(0)
       f->GetObject("ecal",tree);
 
    }
+
+   TreeWriter writer;
+   _hfile = new TFile( "rootfiles/ECAL_QGSP_BERT_conf6_e-_10.0GeV_build.root", "RECREATE", "rootfiles/ECAL_QGSP_BERT_conf6_e-_10.0GeV_build.root" ) ;
+   _hTree = new TTree( "ecal", "tree" );
+   writer.InitializeECALTree(_hTree, _data);
+
    Init(tree);
 }
 
@@ -155,6 +172,8 @@ void Sim2Build::Init(TTree *tree)
    // Init() will be called many times when running on PROOF
    // (once per file to be processed).
 
+
+
    // Set object pointer
    hit_slab = 0;
    hit_chip = 0;
@@ -178,6 +197,7 @@ void Sim2Build::Init(TTree *tree)
    if (!tree) return;
    fChain = tree;
    fCurrent = -1;
+
    fChain->SetMakeClass(1);
 
    fChain->SetBranchAddress("event", &event, &b_event);
@@ -213,6 +233,7 @@ void Sim2Build::Init(TTree *tree)
    fChain->SetBranchAddress("hit_positron", &hit_positron, &b_hit_positron);
    fChain->SetBranchAddress("hit_nMC", &hit_nMC, &b_hit_nMC);
    Notify();
+
 }
 
 Bool_t Sim2Build::Notify()
