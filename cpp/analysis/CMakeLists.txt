@@ -34,3 +34,6 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR} )
 ADD_SUBDIRECTORY( src )
 ADD_EXECUTABLE( main.exe main.cc )
 TARGET_LINK_LIBRARIES( main.exe Analyzer )
+
+ADD_EXECUTABLE( converter.exe converter.cc )
+TARGET_LINK_LIBRARIES( converter.exe Analyzer )

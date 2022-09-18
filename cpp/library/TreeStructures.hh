@@ -3,7 +3,7 @@
 
 const static int MAX_NHITS = 9999;
 
-struct ECAL_reco  {
+struct ECAL_data  {
 
   public:
   // Declaration of leaf types
@@ -39,7 +39,7 @@ struct ECAL_reco  {
                                                                                       
 };
 
-struct Branch_reco  {
+struct ECAL_branch  {
 
   public:
   // List of branches

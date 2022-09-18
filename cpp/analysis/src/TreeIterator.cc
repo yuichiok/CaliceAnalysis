@@ -9,6 +9,7 @@ TreeIterator.cpp
 #include <string>
 #include <TString.h>
 #include "../include/TreeIterator.hh"
+#include "../include/FileSelector.hh"
 
 using std::cout;  using std::endl;   using std::setw;   using std::string;
 
@@ -21,6 +22,9 @@ void TreeIterator::SlaveBegin(TTree * /*tree*/)
   // Initialize log, counters
     nEntries          = 0;
     nEntriesProcessed = 0;
+
+    hm.InitializeHists();
+
 }
 
 
@@ -53,10 +57,19 @@ Bool_t TreeIterator::Process(Long64_t entry)
     nEntriesProcessed++;
 
   // Evaluate the criteria for this entry
-    eAnalyzer.Analyze(entry);
+    eAnalyzer.Analyze( entry, hm );
 
     return true;
 }
 
 void TreeIterator::SlaveTerminate(){}
-void TreeIterator::Terminate(){}
+void TreeIterator::Terminate()
+{
+    FileSelector fs(fOption);
+
+    TFile *outfile = new TFile( "rootfiles/" + fs.GetRecoSim() + "/" + fs.GetRunName() + "_quality.root","RECREATE");
+    cout << "Output: " << outfile << endl;
+
+    hm.WriteLists(outfile);
+
+}

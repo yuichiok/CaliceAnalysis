@@ -15,8 +15,9 @@
 #include <TFile.h>
 #include <vector>
 #include <fstream>
-#include "../library/TreeStructures.hh"
+#include "../../library/TreeStructures.hh"
 #include "TreeReader.hh"
+#include "HistManager.hh"
 
 class ECALAnalyzer
 {
@@ -26,7 +27,7 @@ class ECALAnalyzer
 
   // methods
     bool             MapTree( TTree* ); // Maps class variables to an input TTree.
-    void             Analyze( Long64_t entry );
+    void             Analyze( Long64_t entry, HistManager hm );
     bool             Select();  // Evaluates the class' list of event selection criteria
     virtual Bool_t   Notify();
 
@@ -44,9 +45,8 @@ class ECALAnalyzer
 
   private:
 
-    auto        _data;
-    ECAL_reco   _reco;
-    Branch_reco _branch;
+    ECAL_data   _data;
+    ECAL_branch _branch;
 
 };
 
