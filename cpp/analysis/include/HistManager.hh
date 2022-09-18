@@ -29,11 +29,13 @@ class HistManager
 
     TH1F * h_hit_slab_energy[NSLABS];
     TH1F * h_sum_slab_energy[NSLABS];
+    TH1F * h_sum_slab_energy_stack[NSLABS];
 
   private:
     TList* hList = new TList();
     TList* hList_slab_energy = new TList();
     TList* hList_sum_slab_energy = new TList();
+    TList* hList_sum_slab_energy_stack = new TList();
 
 
 

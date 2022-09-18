@@ -24,10 +24,12 @@ void HistManager::InitializeHists()
 
     for (int islab = 0; islab < NSLABS; islab++)
     {
-      TString hname_hit_slab_energy = "h_hit_slab_energy" + TString::Format("%d",islab);
-      TString hname_sum_slab_energy = "h_sum_slab_energy" + TString::Format("%d",islab);
-      h_hit_slab_energy[islab] = new TH1F(hname_hit_slab_energy,hname_hit_slab_energy,120,-20,100);
-      h_sum_slab_energy[islab] = new TH1F(hname_sum_slab_energy,hname_sum_slab_energy,500,0,1.5E4);
+      TString hname_hit_slab_energy       = "h_hit_slab_energy" + TString::Format("%d",islab);
+      TString hname_sum_slab_energy       = "h_sum_slab_energy" + TString::Format("%d",islab);
+      TString hname_sum_slab_energy_stack = "h_sum_slab_energy_stack" + TString::Format("%d",islab);
+      h_hit_slab_energy[islab]            = new TH1F(hname_hit_slab_energy,hname_hit_slab_energy,120,-20,100);
+      h_sum_slab_energy[islab]            = new TH1F(hname_sum_slab_energy,hname_sum_slab_energy,500,0,4.0E3);
+      h_sum_slab_energy_stack[islab]      = new TH1F(hname_sum_slab_energy_stack,hname_sum_slab_energy_stack,500,0,1.5E4);
     }
 
     Hist2List();
@@ -43,6 +45,7 @@ void HistManager::Hist2List()
     for(int ih=0;ih<NSLABS;ih++){
       hList_slab_energy->Add(h_hit_slab_energy[ih]);
       hList_sum_slab_energy->Add(h_sum_slab_energy[ih]);
+      hList_sum_slab_energy_stack->Add(h_sum_slab_energy_stack[ih]);
     }
 
 }
@@ -65,4 +68,8 @@ void HistManager::WriteLists( TFile * output)
     hList_sum_slab_energy->Write();
     output->cd();
 
+  TDirectory * d_sum_slab_energy_stack = output->mkdir("sum_slab_energy_stack");
+    d_sum_slab_energy_stack->cd();
+    hList_sum_slab_energy_stack->Write();
+    output->cd();
 }

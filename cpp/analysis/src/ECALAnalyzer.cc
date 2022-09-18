@@ -39,6 +39,7 @@ bool ECALAnalyzer::MapTree(TTree* tree)
 void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
 {
 
+   Float_t sum_slab_energy_stack = 0;
    Float_t sum_slab_energy[NSLABS] = {0};
    
    if(_data.nhit_slab < 13) return;
@@ -57,6 +58,8 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
 
    for (int islab = 0; islab < NSLABS; islab++)
    {
+      sum_slab_energy_stack += sum_slab_energy[islab];
+      hm.h_sum_slab_energy_stack[islab]->Fill(sum_slab_energy_stack);
       hm.h_sum_slab_energy[islab]->Fill(sum_slab_energy[islab]);
    }
 
