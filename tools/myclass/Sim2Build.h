@@ -19,89 +19,90 @@
 #include "vector"
 
 class Sim2Build {
-public :
-   TTree          *fChain;   //!pointer to the analyzed TTree or TChain
-   Int_t           fCurrent; //!current Tree number in a TChain
+   public :
+      TTree          *fChain;   //!pointer to the analyzed TTree or TChain
+      Int_t           fCurrent; //!current Tree number in a TChain
 
-// Fixed size dimensions of array or collections stored in the TTree if any.
+   // Fixed size dimensions of array or collections stored in the TTree if any.
 
-   // Declaration of leaf types
-   Int_t           event;
-   Int_t           spill;
-   Int_t           cycle;
-   Int_t           bcid;
-   Int_t           bcid_first_sca_full;
-   Int_t           bcid_merge_end;
-   Int_t           id_run;
-   Int_t           id_dat;
-   Int_t           nhit_slab;
-   Int_t           nhit_chip;
-   Int_t           nhit_chan;
-   Int_t           nhit_len;
-   Float_t         sum_energy;
-   Float_t         sum_energy_lg;
-   vector<int>     *hit_slab;
-   vector<int>     *hit_chip;
-   vector<int>     *hit_chan;
-   vector<int>     *hit_sca;
-   vector<int>     *hit_adc_high;
-   vector<int>     *hit_adc_low;
-   vector<int>     *hit_n_scas_filled;
-   vector<int>     *hit_isHit;
-   vector<int>     *hit_isMasked;
-   vector<int>     *hit_isCommissioned;
-   vector<float>   *hit_energy;
-   vector<float>   *hit_energy_w;
-   vector<float>   *hit_energy_lg;
-   vector<float>   *hit_x;
-   vector<float>   *hit_y;
-   vector<float>   *hit_z;
-   vector<int>     *hit_positron;
-   vector<int>     *hit_nMC;
+      // Declaration of leaf types
+      Int_t           event;
+      Int_t           spill;
+      Int_t           cycle;
+      Int_t           bcid;
+      Int_t           bcid_first_sca_full;
+      Int_t           bcid_merge_end;
+      Int_t           id_run;
+      Int_t           id_dat;
+      Int_t           nhit_slab;
+      Int_t           nhit_chip;
+      Int_t           nhit_chan;
+      Int_t           nhit_len;
+      Float_t         sum_energy;
+      Float_t         sum_energy_lg;
+      vector<int>     *hit_slab;
+      vector<int>     *hit_chip;
+      vector<int>     *hit_chan;
+      vector<int>     *hit_sca;
+      vector<int>     *hit_adc_high;
+      vector<int>     *hit_adc_low;
+      vector<int>     *hit_n_scas_filled;
+      vector<int>     *hit_isHit;
+      vector<int>     *hit_isMasked;
+      vector<int>     *hit_isCommissioned;
+      vector<float>   *hit_energy;
+      vector<float>   *hit_energy_w;
+      vector<float>   *hit_energy_lg;
+      vector<float>   *hit_x;
+      vector<float>   *hit_y;
+      vector<float>   *hit_z;
+      vector<int>     *hit_positron;
+      vector<int>     *hit_nMC;
 
-   // List of branches
-   TBranch        *b_event;   //!
-   TBranch        *b_spill;   //!
-   TBranch        *b_cycle;   //!
-   TBranch        *b_bcid;   //!
-   TBranch        *b_bcid_first_sca_full;   //!
-   TBranch        *b_bcid_merge_end;   //!
-   TBranch        *b_id_run;   //!
-   TBranch        *b_id_dat;   //!
-   TBranch        *b_nhit_slab;   //!
-   TBranch        *b_nhit_chip;   //!
-   TBranch        *b_nhit_chan;   //!
-   TBranch        *b_nhit_len;   //!
-   TBranch        *b_sum_energy;   //!
-   TBranch        *b_sum_energy_lg;   //!
-   TBranch        *b_hit_slab;   //!
-   TBranch        *b_hit_chip;   //!
-   TBranch        *b_hit_chan;   //!
-   TBranch        *b_hit_sca;   //!
-   TBranch        *b_hit_adc_high;   //!
-   TBranch        *b_hit_adc_low;   //!
-   TBranch        *b_hit_n_scas_filled;   //!
-   TBranch        *b_hit_isHit;   //!
-   TBranch        *b_hit_isMasked;   //!
-   TBranch        *b_hit_isCommissioned;   //!
-   TBranch        *b_hit_energy;   //!
-   TBranch        *b_hit_energy_w;   //!
-   TBranch        *b_hit_energy_lg;   //!
-   TBranch        *b_hit_x;   //!
-   TBranch        *b_hit_y;   //!
-   TBranch        *b_hit_z;   //!
-   TBranch        *b_hit_positron;   //!
-   TBranch        *b_hit_nMC;   //!
+      // List of branches
+      TBranch        *b_event;   //!
+      TBranch        *b_spill;   //!
+      TBranch        *b_cycle;   //!
+      TBranch        *b_bcid;   //!
+      TBranch        *b_bcid_first_sca_full;   //!
+      TBranch        *b_bcid_merge_end;   //!
+      TBranch        *b_id_run;   //!
+      TBranch        *b_id_dat;   //!
+      TBranch        *b_nhit_slab;   //!
+      TBranch        *b_nhit_chip;   //!
+      TBranch        *b_nhit_chan;   //!
+      TBranch        *b_nhit_len;   //!
+      TBranch        *b_sum_energy;   //!
+      TBranch        *b_sum_energy_lg;   //!
+      TBranch        *b_hit_slab;   //!
+      TBranch        *b_hit_chip;   //!
+      TBranch        *b_hit_chan;   //!
+      TBranch        *b_hit_sca;   //!
+      TBranch        *b_hit_adc_high;   //!
+      TBranch        *b_hit_adc_low;   //!
+      TBranch        *b_hit_n_scas_filled;   //!
+      TBranch        *b_hit_isHit;   //!
+      TBranch        *b_hit_isMasked;   //!
+      TBranch        *b_hit_isCommissioned;   //!
+      TBranch        *b_hit_energy;   //!
+      TBranch        *b_hit_energy_w;   //!
+      TBranch        *b_hit_energy_lg;   //!
+      TBranch        *b_hit_x;   //!
+      TBranch        *b_hit_y;   //!
+      TBranch        *b_hit_z;   //!
+      TBranch        *b_hit_positron;   //!
+      TBranch        *b_hit_nMC;   //!
 
-   Sim2Build(TTree *tree=0);
-   virtual ~Sim2Build();
-   virtual Int_t    Cut(Long64_t entry);
-   virtual Int_t    GetEntry(Long64_t entry);
-   virtual Long64_t LoadTree(Long64_t entry);
-   virtual void     Init(TTree *tree);
-   virtual void     Loop();
-   virtual Bool_t   Notify();
-   virtual void     Show(Long64_t entry = -1);
+      Sim2Build(TString tree_s);
+      Sim2Build(TTree *tree=0);
+      virtual ~Sim2Build();
+      virtual Int_t    Cut(Long64_t entry);
+      virtual Int_t    GetEntry(Long64_t entry);
+      virtual Long64_t LoadTree(Long64_t entry);
+      virtual void     Init(TTree *tree);
+      virtual void     Loop();
+      virtual Bool_t   Notify();
+      virtual void     Show(Long64_t entry = -1);
 
    private:
 
@@ -116,6 +117,19 @@ public :
 #endif
 
 #ifdef Sim2Build_cxx
+Sim2Build::Sim2Build(TString tree_s) : fChain(0) 
+{
+   TFile *f = new TFile(tree_s);
+   TTree *tree = (TTree*)f->Get("ecal");
+   
+   TreeWriter writer;
+   _hfile = new TFile( "rootfiles/ECAL_QGSP_BERT_conf6_e-_10.0GeV_build.root", "RECREATE", "rootfiles/ECAL_QGSP_BERT_conf6_e-_10.0GeV_build.root" ) ;
+   _hTree = new TTree( "ecal", "tree" );
+   writer.InitializeECALTree(_hTree, _data);
+
+   Init(tree);
+}
+
 Sim2Build::Sim2Build(TTree *tree) : fChain(0) 
 {
 // if parameter tree is not specified (or zero), connect the file
