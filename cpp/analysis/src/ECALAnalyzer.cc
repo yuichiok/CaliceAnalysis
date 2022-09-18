@@ -34,7 +34,6 @@ bool ECALAnalyzer::MapTree(TTree* tree)
     fChain->SetMakeClass(1);
 
     TreeReader reader;
-    _data = _reco;
     reader.InitializeRecoReadTree(fChain, _data, _branch);
 
     Notify();

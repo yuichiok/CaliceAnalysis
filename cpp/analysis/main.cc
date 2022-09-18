@@ -9,7 +9,7 @@
 #include <TFile.h>                  // ROOT class headers
 #include <TString.h>
 #include <TTree.h>
-#include "library/TreeStructures.hh"
+#include "../library/TreeStructures.hh"
 #include "include/NtupleProcessor.hh"
 
 using namespace std;

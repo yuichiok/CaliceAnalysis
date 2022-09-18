@@ -17,5 +17,5 @@ ADD_LIBRARY(Analyzer
 TARGET_INCLUDE_DIRECTORIES(Analyzer
   PUBLIC
     ${PROJECT_SOURCE_DIR}/include
-    ${PROJECT_SOURCE_DIR}/library
+    ${PROJECT_SOURCE_DIR}/../library
 )

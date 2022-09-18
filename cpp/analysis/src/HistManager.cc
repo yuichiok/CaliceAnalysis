@@ -19,7 +19,7 @@ HistManager::HistManager()
 void HistManager::InitializeHists()
 {
     h_sum_energy = new TH1F("h_sum_energy","; sum_energy; Entries",500,0,1.5E4);
-    h_hit_slab   = new TH1F("h_hit_slab","; hit_slab; Entries",nslabs,-0.5,14.5);
+    h_hit_slab   = new TH1F("h_hit_slab","; hit_slab; Entries",NSLABS,-0.5,14.5);
     h_hit_energy = new TH1F("h_hit_energy","; hit_energy; Entries",120,-20,100);
 
     for (int islab = 0; islab < NSLABS; islab++)

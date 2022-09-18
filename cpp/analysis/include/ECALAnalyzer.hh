@@ -15,7 +15,7 @@
 #include <TFile.h>
 #include <vector>
 #include <fstream>
-#include "../library/TreeStructures.hh"
+#include "../../library/TreeStructures.hh"
 #include "TreeReader.hh"
 
 class ECALAnalyzer
@@ -44,8 +44,7 @@ class ECALAnalyzer
 
   private:
 
-    auto        _data;
-    ECAL_data   _reco;
+    ECAL_data   _data;
     ECAL_branch _branch;
 
 };
