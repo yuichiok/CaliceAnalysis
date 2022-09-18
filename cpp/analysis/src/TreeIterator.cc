@@ -14,7 +14,9 @@ TreeIterator.cpp
 using std::cout;  using std::endl;   using std::setw;   using std::string;
 
 
-void TreeIterator::Begin(TTree * /*tree*/){}
+void TreeIterator::Begin(TTree * /*tree*/){
+  cout << "  [TreeIterator] Begin" << endl;
+}
 
 
 void TreeIterator::SlaveBegin(TTree * /*tree*/)
@@ -66,9 +68,10 @@ void TreeIterator::SlaveTerminate(){}
 void TreeIterator::Terminate()
 {
     FileSelector fs(fOption);
+    TString outname = "rootfiles/" + fs.GetRecoSim() + "/" + fs.GetRunName() + "_quality.root";
 
-    TFile *outfile = new TFile( "rootfiles/" + fs.GetRecoSim() + "/" + fs.GetRunName() + "_quality.root","RECREATE");
-    cout << "Output: " << outfile << endl;
+    TFile *outfile = new TFile( outname ,"RECREATE");
+    cout << "  [TreeIterator] Output: " << outname << endl;
 
     hm.WriteLists(outfile);
 

@@ -19,7 +19,7 @@ class FileSelector
 
     virtual void    MakeRunName();
     virtual TString GetRunName();
-    virtual TString GetRunName_with_Path();
+    virtual TString GetRunName_with_path();
 
     TString     options;
     TObjArray *tobj_arr;

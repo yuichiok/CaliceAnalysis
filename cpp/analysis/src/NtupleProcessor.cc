@@ -5,21 +5,21 @@
 #include "../include/FileSelector.hh"
 
 using std::cout;   using std::endl;
+using std::cerr;
 
 NtupleProcessor::NtupleProcessor(TString o, int me)
 : eAnalyzer(o), tIter(eAnalyzer), options(o), maxEvents(me)
 {
-  FileSelector fs(options);
+  // Reconstructed
+    FileSelector fs(options);
+    TString filename = fs.GetRunName_with_path();
 
-  // PARAM output
-  TString filename = fs.GetRunName_with_Path();
-
-  ntupleFile = TFile::Open(filename);
-  if(!ntupleFile) cout << "NtupleProcessor: ERROR: Unable to open file " << filename << endl;
-  
-  TTree *ntuple_reco   = (TTree*) ntupleFile->Get("ecal");
-  if(!ntuple_reco) cout << "NtupleProcessor: ERROR: Unable to open ttree in " << filename << endl;
-  
-  ntuple_reco->Process(&tIter, options);
+    ntupleFile = TFile::Open(filename);
+    if(!ntupleFile)  cerr << " [NtupleProcessor] ERROR: Unable to open file " << filename << endl;
+    
+    TTree *ntuple = (TTree*) ntupleFile->Get("ecal");
+    if(!ntuple)      cerr << " [NtupleProcessor] ERROR: Unable to open ttree in " << filename << endl;
+    
+    ntuple->Process(&tIter, options);
 
 }

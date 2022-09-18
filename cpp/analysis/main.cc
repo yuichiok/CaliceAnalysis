@@ -14,11 +14,18 @@
 
 using namespace std;
 
-// int main(int argc, char* argv[])
-int main()
+int main(int argc, char* argv[])
+// int main()
 {
 
-  NtupleProcessor ntplproc("reco e- 20",-1);
+  if(argc < 3) cerr << "Error: Arguments missing. (e.g. ./main.exe reco e- 10 for 10 GeV electron)" << endl;
+
+  TString recosim  = argv[1];
+  TString particle = argv[2];
+  TString energy   = argv[3];
+  TString option   = recosim + " " + particle + " " + energy;
+
+  NtupleProcessor ntplproc(option,-1);
 
   return 0;
 }

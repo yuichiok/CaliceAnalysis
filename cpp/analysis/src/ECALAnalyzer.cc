@@ -9,12 +9,8 @@ using std::cout;   using std::endl;
 ECALAnalyzer::ECALAnalyzer(TString o)
 : options(o)
 {
-  // TEST output
-    cout << "[Begin ECALAnalyzer]" << endl;
-
     patEventsAnalyzed = 0;
     entriesInNtuple   = 0;
-
 }
 
 bool ECALAnalyzer::MapTree(TTree* tree)

@@ -127,7 +127,7 @@ Sim2Build::Sim2Build(TString options) : fChain(0), fOption(options)
 {
 
    FileSelector fs("sim " + fOption);
-   TString tree_s = fs.GetRunName_with_Path();
+   TString tree_s = fs.GetRunName_with_path();
    std::cout << "Input:  " << tree_s << std::endl;
 
    TFile *f = new TFile(tree_s);
