@@ -51,17 +51,15 @@ TString FileSelector::GetRunName()
 
 TString FileSelector::GetRunName_with_Path()
 {
-  TString fullpath = data_path + "/" + _recosim + "/" + _runname + suffix;
+  TString fullpath = data_path + "/" + _recosim + "/" + _runname + suffix_build;
   return  fullpath;
 }
 
 void FileSelector::MakeRunName()
 {
   if(_recosim == "reco"){
-    _runname = prefix_reco + TString::Format("%d",_runID) + "_" + _particle + "_" + _energy;
-  }else if(_recosim == "sim"){
-    _runname = prefix_sim + "_" + _particle + "_" + _energy;
-  }else if(_recosim == "conv_sim"){
-    _runname = prefix_sim + "_" + _particle + "_" + _energy;
+    _runname = prefix_reco + TString::Format("%d",_runID) + "_" + _particle + "_" + _energy + gev;
+  }else if(_recosim == "sim" || _recosim == "conv_sim"){
+    _runname = prefix_sim + "_" + _particle + "_" + _energy + gev;
   }
 }

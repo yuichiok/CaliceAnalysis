@@ -28,8 +28,9 @@ class FileSelector
 
     TString prefix_reco       = "raw_siwecal_";
     TString prefix_sim        = "ECAL_QGSP_BERT_conf6";
-    TString suffix            = ".0GeV_build.root";
-    TString conv_sim_suffix   = ".0GeV_converted.root";
+    TString gev               = ".0GeV";
+    TString suffix_build      = "_build.root";
+    TString suffix_conv       = "_converted.root";
 
     std::map<std::pair<TString, Int_t>, Int_t > RunMap {
       {std::make_pair("e-", 10),  90320},

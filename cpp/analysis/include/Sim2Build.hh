@@ -128,12 +128,15 @@ Sim2Build::Sim2Build(TString options) : fChain(0), fOption(options)
 
    FileSelector fs("sim " + fOption);
    TString tree_s = fs.GetRunName_with_Path();
+   std::cout << "Input:  " << tree_s << std::endl;
 
    TFile *f = new TFile(tree_s);
    TTree *tree = (TTree*)f->Get("ecal");
    
    TreeWriter writer;
    TString outroot = "../../data/conv_sim/" + fs.GetRunName() + "_converted.root";
+   std::cout << "Output: " << outroot << std::endl;
+
    _hfile = new TFile( outroot, "RECREATE", outroot ) ;
    _hTree = new TTree( "ecal", "tree" );
    writer.InitializeECALTree(_hTree, _data);
