@@ -44,6 +44,17 @@ void MakePretty(TH1F *h, TString option)
 
 }
 
+void Legend(TH1F *rh,TH1F *sh)
+{
+	TLegend *leg0 = new TLegend(0.6,0.85,0.75,0.65,"","brNDC");
+	leg0->SetFillStyle(0);
+	leg0->SetBorderSize(0);
+	leg0->SetTextSize(0.04);
+	leg0->AddEntry(rh,"Reco");
+	leg0->AddEntry(sh,"Sim");
+	leg0->Draw("same");	
+}
+
 void sum_slab_energy_stack2gif_withSim(TString particle = "e-")
 {
 
@@ -82,22 +93,25 @@ void sum_slab_energy_stack2gif_withSim(TString particle = "e-")
 	{
 		for (int ie=0; ie < nEconfigs; ie++)
 		{
+			TH1F * hs[2];
 			for (int irecosim=0; irecosim < 2; irecosim++)
 			{
-				TH1F * hs = (TH1F*) files[irecosim][ie]->Get(stack + "/h_" + stack + TString::Format("%d",islab));
-				Normalize(hs);
-				MakePretty(hs,recosims[irecosim]);
-				hs->SetTitle(TString::Format("Layer energy stacked (0 - %d) at %d GeV;Stack energy (MIPs); Entries",islab,energies[ie]));
+				hs[irecosim] = (TH1F*) files[irecosim][ie]->Get(stack + "/h_" + stack + TString::Format("%d",islab));
+				Normalize(hs[irecosim]);
+				MakePretty(hs[irecosim],recosims[irecosim]);
+				hs[irecosim]->SetTitle(TString::Format("Layer energy stacked (0 - %d) at %d GeV;Stack energy (MIPs); Entries",islab,energies[ie]));
 
 				c1->cd(ie+1);
 				// hs->Draw("hsame");
 				if(irecosim==0){
-					hs->Draw("h");
+					hs[irecosim]->Draw("h");
 				}else{
-					hs->Draw("hsame");
+					hs[irecosim]->Draw("hsame");
 				}
-
 			}
+
+			Legend(hs[1],hs[0]);
+
 		}
 		c1->Update();
 		c1->Print(output + "+");
