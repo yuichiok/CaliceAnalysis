@@ -27,9 +27,17 @@ class HistManager
     TH1F * h_hit_slab;
     TH1F * h_hit_energy;
 
+    TH1F * h_sum_energy_corrected;
+    TH1F * h_hit_slab_corrected;
+    TH1F * h_hit_energy_corrected;
+
     TH1F * h_hit_slab_energy[NSLABS];
     TH1F * h_sum_slab_energy[NSLABS];
     TH1F * h_sum_slab_energy_stack[NSLABS];
+
+    TH1F * h_hit_slab_energy_corrected[NSLABS];
+    TH1F * h_sum_slab_energy_corrected[NSLABS];
+    TH1F * h_sum_slab_energy_stack_corrected[NSLABS];
 
   private:
     TList* hList = new TList();
