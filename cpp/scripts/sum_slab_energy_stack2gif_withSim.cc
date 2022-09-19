@@ -55,7 +55,7 @@ void Legend(TH1F *rh,TH1F *sh)
 	leg0->Draw("same");	
 }
 
-void sum_slab_energy_stack2gif_withSim(TString particle = "e-")
+void sum_slab_energy_stack2gif_withSim(TString particle = "e-", Bool_t correct = true)
 {
 
 	auto c1 = new TCanvas("c1","The HSUM example",800,800);
@@ -96,7 +96,12 @@ void sum_slab_energy_stack2gif_withSim(TString particle = "e-")
 			TH1F * hs[2];
 			for (int irecosim=0; irecosim < 2; irecosim++)
 			{
-				hs[irecosim] = (TH1F*) files[irecosim][ie]->Get(stack + "/h_" + stack + TString::Format("%d",islab));
+				if(correct)
+				{
+					hs[irecosim] = (TH1F*) files[irecosim][ie]->Get(stack + "/h_" + stack + "_corrected" + TString::Format("%d",islab));
+				}else{
+					hs[irecosim] = (TH1F*) files[irecosim][ie]->Get(stack + "/h_" + stack + TString::Format("%d",islab));
+				}
 				Normalize(hs[irecosim]);
 				MakePretty(hs[irecosim],recosims[irecosim]);
 				hs[irecosim]->SetTitle(TString::Format("Layer energy stacked (0 - %d) at %d GeV;Stack energy (MIPs); Entries",islab,energies[ie]));
