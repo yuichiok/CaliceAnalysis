@@ -1,0 +1,140 @@
+#include <unistd.h>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <TH2.h>
+#include <TStyle.h>
+#include <TCanvas.h>
+#include "../analysis/src/FileSelector.cc"
+
+using std::cout;
+using std::endl;
+
+#define MAXV 8
+
+void SetStyle()
+{
+	gStyle->SetOptFit(0);
+	gStyle->SetOptStat(0);  
+	gStyle->SetOptTitle(1);
+	gStyle->SetTitleBorderSize(0);
+	gStyle->SetTitleStyle(0);
+	gStyle->SetMarkerSize(0);
+	gStyle->SetTitleX(0.2); 
+	gStyle->SetTitleY(0.9); 
+
+	gStyle->SetTitleAlign(33);
+	gStyle->SetTitleX(.85);
+	gStyle->SetTitleY(.97);
+
+}
+void Normalize(TH1F* h)
+{
+	h->Scale(1.0/h->GetEntries());
+}
+
+void MakePretty(TH1F *h, TString option)
+{
+	h->SetLineWidth(1);
+	h->GetYaxis()->SetRangeUser(0,0.15);
+	if(option == "reco"){
+		h->SetLineColor(kBlue+1);
+	}else{
+		h->SetLineColor(kBlack);
+	}
+
+}
+
+void Legend(TH1F *rh,TH1F *sh)
+{
+	TLegend *leg0 = new TLegend(0.6,0.85,0.75,0.65,"","brNDC");
+	leg0->SetFillStyle(0);
+	leg0->SetBorderSize(0);
+	leg0->SetTextSize(0.04);
+	leg0->AddEntry(rh,"Reco");
+	leg0->AddEntry(sh,"Sim");
+	leg0->Draw("same");	
+}
+
+void Draw2H(TH1F *h, Int_t recosim)
+{
+	if(recosim==0){
+		h->Draw("h");
+	}else{
+		h->Draw("hsame");
+	}
+}
+
+void reco_sim_analysis(TString particle = "e-")
+{
+	SetStyle();
+
+	TFile *MyFile = new TFile("rootfiles/reco_sim_analysis/reco_sim_analysis.root","RECREATE");
+	TCanvas *c_sum_energy = new TCanvas("c_sum_energy","c_sum_energy",700,700);
+	c_sum_energy->Divide(3,3);
+	TCanvas *c_nhit_slab = new TCanvas("c_nhit_slab","c_nhit_slab",700,700);
+	c_nhit_slab->Divide(3,3);
+
+	const static int nEconfigs = 7;
+	TString recosims[2]       = {"conv_sim","reco"};
+	Int_t energies[nEconfigs] = {10, 20, 40, 60, 80, 100, 150};
+	TFile * files[2][nEconfigs];
+
+	TString suffix      = "_quality.root";
+
+	for (int irecosim=0; irecosim < 2; irecosim++)
+	{
+		for (int ie=0; ie < nEconfigs; ie++)
+		{
+			TString energy  = TString::Format("%d",energies[ie]);
+			TString setting = recosims[irecosim] + " " + particle + " " + energy;
+
+			FileSelector fs(setting);
+			TString name = fs.GetRunName();
+			TString data_path = "../analysis/rootfiles/" + fs.GetRecoSim() + "/";
+			cout << data_path + name + suffix << endl;
+			files[irecosim][ie] = TFile::Open(data_path + name + suffix);
+		}
+	}
+
+	for (int ie=0; ie < nEconfigs; ie++)
+	{
+
+		TH1F * hs_sum_energy[2];
+		TH1F * hs_hit_slab[2];
+		for (int irecosim=0; irecosim < 2; irecosim++)
+		{
+			hs_sum_energy[irecosim] = (TH1F*) files[irecosim][ie]->Get("h_sum_energy");
+			hs_hit_slab[irecosim]   = (TH1F*) files[irecosim][ie]->Get("h_hit_slab");
+
+			Normalize(hs_sum_energy[irecosim]);
+			MakePretty(hs_sum_energy[irecosim],recosims[irecosim]);
+
+			Normalize(hs_hit_slab[irecosim]);
+			MakePretty(hs_hit_slab[irecosim],recosims[irecosim]);
+
+			hs_sum_energy[irecosim]->SetTitle(TString::Format("sum energy at %d GeV;Stack energy (MIPs); Entries",energies[ie]));
+			hs_hit_slab[irecosim]->SetTitle(TString::Format("hit slab at %d GeV;nhits; Entries",energies[ie]));
+
+			c_sum_energy->cd(ie+1);
+			Draw2H(hs_sum_energy[irecosim],irecosim);
+			c_nhit_slab->cd(ie+1);
+			Draw2H(hs_hit_slab[irecosim],irecosim);
+		}
+
+		c_sum_energy->cd(ie+1);
+		Legend(hs_sum_energy[1],hs_sum_energy[0]);
+
+		c_nhit_slab->cd(ie+1);
+		Legend(hs_hit_slab[1],hs_hit_slab[0]);
+
+	}
+
+	MyFile->cd();
+	c_sum_energy->Write();
+	c_nhit_slab->Write();
+	c_sum_energy->Print("rootfiles/reco_sim_analysis/sum_energy_" + particle + "_allE.png");
+	c_nhit_slab->Print("rootfiles/reco_sim_analysis/nhit_slab_" + particle + "_allE.png");
+
+
+}
