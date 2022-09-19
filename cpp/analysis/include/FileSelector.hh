@@ -39,7 +39,7 @@ class FileSelector
       {std::make_pair("e-", 60),  90372},
       {std::make_pair("e-", 80),  90367},
       {std::make_pair("e-", 100), 90365},
-      {std::make_pair("e-", 150), 90355}
+      {std::make_pair("e-", 150), 90355}, {std::make_pair("mu-", 150), 90266}
     };
 
   private:
