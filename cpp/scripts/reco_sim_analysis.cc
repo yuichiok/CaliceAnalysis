@@ -99,8 +99,8 @@ void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 	TH1F * hs_hit_slab[2];
 	for (int irecosim=0; irecosim < 2; irecosim++)
 	{
-		hs_sum_energy[irecosim] = (TH1F*) files[irecosim]->Get("h_sum_energy");
-		hs_hit_slab[irecosim]   = (TH1F*) files[irecosim]->Get("h_hit_slab");
+		hs_sum_energy[irecosim] = (TH1F*) files[irecosim]->Get("h_sum_energy_corrected");
+		hs_hit_slab[irecosim]   = (TH1F*) files[irecosim]->Get("h_hit_slab_corrected");
 
 		Normalize(hs_sum_energy[irecosim]);
 		MakePretty(hs_sum_energy[irecosim],recosims[irecosim]);
