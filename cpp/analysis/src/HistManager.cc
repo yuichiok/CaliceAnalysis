@@ -20,6 +20,7 @@ void HistManager::InitializeHists()
 {
     h_sum_energy = new TH1F("h_sum_energy","; sum_energy; Entries",500,0,1.5E4);
     h_hit_slab   = new TH1F("h_hit_slab","; hit_slab; Entries",NSLABS,-0.5,14.5);
+    h_nhit_len   = new TH1F("h_nhit_len","; nhit_len; Entries",500,0,1.5E3);
     h_hit_energy = new TH1F("h_hit_energy","; hit_energy; Entries",120,-20,100);
 
     h_sum_energy_corrected = new TH1F("h_sum_energy_corrected","; sum_energy; Entries",500,0,1.5E4);
@@ -54,6 +55,7 @@ void HistManager::Hist2List()
 {
     hList->Add(h_sum_energy);
     hList->Add(h_hit_slab);
+    hList->Add(h_nhit_len);
     hList->Add(h_hit_energy);
     
     hList->Add(h_sum_energy_corrected);

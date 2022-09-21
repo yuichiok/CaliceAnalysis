@@ -49,6 +49,7 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
    if(_data.nhit_slab < 13) return;
 
    hm.h_sum_energy->Fill(_data.sum_energy);
+   hm.h_nhit_len->Fill(_data.nhit_len);
 
    for (int ihit = 0; ihit < _data.nhit_len; ihit++)
    {

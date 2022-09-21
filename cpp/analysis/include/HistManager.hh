@@ -25,6 +25,7 @@ class HistManager
   // Declear histograms
     TH1F * h_sum_energy;
     TH1F * h_hit_slab;
+    TH1F * h_nhit_len;
     TH1F * h_hit_energy;
 
     TH1F * h_sum_energy_corrected;
