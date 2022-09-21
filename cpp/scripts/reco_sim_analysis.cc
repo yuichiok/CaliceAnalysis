@@ -31,7 +31,7 @@ void SetStyle()
 void Normalize(TH1F* h)
 {
 	h->Scale(1.0/h->GetEntries());
-	h->GetYaxis()->SetRangeUser(0.0001,1.0);
+	// h->GetYaxis()->SetRangeUser(0.0001,1.0);
 }
 
 void MakePretty(TH1F *h, TString option)

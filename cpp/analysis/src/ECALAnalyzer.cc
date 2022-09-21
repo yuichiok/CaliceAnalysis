@@ -99,8 +99,11 @@ bool ECALAnalyzer::Select()
 { // Evaluates the class' list of event selection criteria
 
    FileSelector fs(options);
-   Int_t energy = fs.GetEnergy();
+   TString   recosim = fs.GetRecoSim();
+   Int_t      energy = fs.GetEnergy();
    Int_t nhit_len_th = 0;
+
+   if( recosim == "conv_sim" ) return true;
 
    std::pair<Int_t,Int_t> opt_nhit_len_threshold[7] = {
       std::make_pair(  10, 150 ),
