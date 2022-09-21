@@ -35,7 +35,7 @@ void Normalize(TH1F* h)
 
 void MakePretty(TH1F *h, TString option)
 {
-	h->SetLineWidth(1.5);
+	h->SetLineWidth(1);
 	if(option == "reco"){
 		h->SetLineColor(kBlue+1);
 	}else{
