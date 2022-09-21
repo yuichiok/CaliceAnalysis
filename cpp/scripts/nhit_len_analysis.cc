@@ -153,6 +153,19 @@ void analysis_allE( TString particle = "e-" )
 
 			h_nhit_len[irecosim]->SetTitle(TString::Format("Number of total hits at %d GeV;nhits; Entries",energies[ie]));
 
+			if( recosims[irecosim] == "conv_sim" ){
+				
+				TF1 *f1 = new TF1("f1","gaus");
+				h_nhit_len[irecosim]->Fit(f1,"QN");
+				Float_t mean  = f1->GetParameter(1);
+				Float_t sigma = f1->GetParameter(2);
+				cout << "Fit at "  << energies[ie] << ".0GeV ====\n"
+						 << "  mean : " << mean  << "\n"
+						 << "  sigma: " << sigma << "\n"
+						 << "  mean - sigma = " << mean - sigma << endl;
+
+			}
+
 			c_nhit_len->cd(ie+1);
 			Draw2H(h_nhit_len[irecosim],irecosim);
 		}
