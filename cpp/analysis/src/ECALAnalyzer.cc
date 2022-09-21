@@ -3,6 +3,7 @@
 #include <TFile.h> 
 #include "../include/ECALAnalyzer.hh"
 #include "../include/TreeReader.hh"
+#include "../include/FileSelector.hh"
 
 using std::cout;   using std::endl;
 
@@ -97,6 +98,31 @@ Bool_t ECALAnalyzer::Notify()
 bool ECALAnalyzer::Select()
 { // Evaluates the class' list of event selection criteria
 
-    return true;
+   FileSelector fs(options);
+   Int_t energy = fs.GetEnergy();
+   Int_t nhit_len_th = 0;
+
+   std::pair<Int_t,Int_t> opt_nhit_len_threshold[7] = {
+      std::make_pair(  10, 150 ),
+      std::make_pair(  20, 250 ),
+      std::make_pair(  40, 410 ),
+      std::make_pair(  60, 535 ),
+      std::make_pair(  80, 641 ),
+      std::make_pair( 100, 736 ),
+      std::make_pair( 150, 935 )
+   };
+
+   if( _data.nhit_slab < 13 ) return false;
+
+   for (auto pair : opt_nhit_len_threshold){
+      if( energy == pair.first ) {
+         nhit_len_th = pair.second;
+         break;
+      }
+   }
+
+   if( _data.nhit_len < nhit_len_th ) return false;
+
+   return true;
 
 }
