@@ -31,7 +31,7 @@ void SetStyle()
 void Normalize(TH1F* h)
 {
 	h->Scale(1.0/h->GetEntries());
-	h->GetYaxis()->SetRangeUser(0.0001,1.0);
+	// h->GetYaxis()->SetRangeUser(0.0001,1.0);
 }
 
 void MakePretty(TH1F *h, TString option)
@@ -82,8 +82,7 @@ TFile * readfile( TString option )
 void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 {
 	TFile   *MyFile			  = new TFile("rootfiles/nhit_len_analysis/nhit_len_analysis_" + particle + "_" + ".root","RECREATE");
-	TCanvas *c_sum_energy = new TCanvas("c_sum_energy","c_sum_energy",700,700);
-	TCanvas *c_nhit_slab  = new TCanvas("c_nhit_slab" ,"c_nhit_slab" ,700,700);
+	TCanvas *c_nhit_len  = new TCanvas("c_nhit_len" ,"c_nhit_len" ,700,700);
 
 	TString recosims[2] = {"conv_sim","reco"};
 	TString energy  = TString::Format("%d",ienergy);
@@ -95,43 +94,27 @@ void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 	
 	}
 
-	TH1F * hs_sum_energy[2];
-	TH1F * hs_hit_slab[2];
+	TH1F * h_nhit_len[2];
 	for (int irecosim=0; irecosim < 2; irecosim++)
 	{
-		hs_sum_energy[irecosim] = (TH1F*) files[irecosim]->Get("h_sum_energy_corrected");
-		hs_hit_slab[irecosim]   = (TH1F*) files[irecosim]->Get("h_hit_slab_corrected");
+		h_nhit_len[irecosim]   = (TH1F*) files[irecosim]->Get("h_nhit_len");
 
-		Normalize(hs_sum_energy[irecosim]);
-		MakePretty(hs_sum_energy[irecosim],recosims[irecosim]);
+		Normalize(h_nhit_len[irecosim]);
+		MakePretty(h_nhit_len[irecosim],recosims[irecosim]);
 
-		Normalize(hs_hit_slab[irecosim]);
-		MakePretty(hs_hit_slab[irecosim],recosims[irecosim]);
+		h_nhit_len[irecosim]->SetTitle(TString::Format("Number of total hits at %d GeV;nhits; Entries",ienergy));
 
-		hs_sum_energy[irecosim]->SetTitle(TString::Format("sum energy at %d GeV;Stack energy (MIPs); Entries",ienergy));
-		hs_hit_slab[irecosim]->SetTitle(TString::Format("hit slab at %d GeV;nhits; Entries",ienergy));
-
-		c_sum_energy->cd();
-		if( particle == "mu-" ){
-			// hs_sum_energy[irecosim]->GetYaxis()->SetRangeUser(0.0001,0.20);
-			hs_sum_energy[irecosim]->GetXaxis()->SetRangeUser(1,2E3);
-		}
-		Draw2H(hs_sum_energy[irecosim],irecosim);
-		c_nhit_slab->cd();
-		Draw2H(hs_hit_slab[irecosim]  ,irecosim);
+		c_nhit_len->cd();
+		Draw2H(h_nhit_len[irecosim],irecosim);
 	}
 
-	c_sum_energy->cd();
-	Legend(hs_sum_energy[1],hs_sum_energy[0]);
-	c_nhit_slab->cd();
-	Legend(hs_hit_slab[1],hs_hit_slab[0]);
+	c_nhit_len->cd();
+	Legend(h_nhit_len[1],h_nhit_len[0]);
 
 
 	MyFile->cd();
-	c_sum_energy->Write();
-	c_nhit_slab->Write();
-	c_sum_energy->Print("rootfiles/nhit_len_analysis/sum_energy_" + particle + "_" + energy + ".0GeV.png");
-	c_nhit_slab->Print("rootfiles/nhit_len_analysis/nhit_slab_" + particle + "_" + energy + ".0GeV.png");
+	c_nhit_len->Write();
+	c_nhit_len->Print("rootfiles/nhit_len_analysis/nhit_len_" + particle + "_" + energy + ".0GeV.png");
 
 
 }
@@ -139,17 +122,13 @@ void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 void analysis_allE( TString particle = "e-" )
 {
 	TFile *MyFile = new TFile("rootfiles/nhit_len_analysis/nhit_len_analysis_" + particle + "_" + ".root","RECREATE");
-	TCanvas *c_sum_energy = new TCanvas("c_sum_energy","c_sum_energy",700,700);
-	c_sum_energy->Divide(3,3);
-	TCanvas *c_nhit_slab = new TCanvas("c_nhit_slab","c_nhit_slab",700,700);
-	c_nhit_slab->Divide(3,3);
+	TCanvas *c_nhit_len = new TCanvas("c_nhit_len","c_nhit_len",700,700);
+	c_nhit_len->Divide(3,3);
 
 	const static int nEconfigs = 7;
 	TString recosims[2]       = {"conv_sim","reco"};
 	Int_t energies[nEconfigs] = {10, 20, 40, 60, 80, 100, 150};
-	// Int_t energies[nEconfigs] = {150};
 	TFile * files[2][nEconfigs];
-
 
 	for (int irecosim=0; irecosim < 2; irecosim++)
 	{
@@ -164,41 +143,28 @@ void analysis_allE( TString particle = "e-" )
 	for (int ie=0; ie < nEconfigs; ie++)
 	{
 
-		TH1F * hs_sum_energy[2];
-		TH1F * hs_hit_slab[2];
+		TH1F * h_nhit_len[2];
 		for (int irecosim=0; irecosim < 2; irecosim++)
 		{
-			hs_sum_energy[irecosim] = (TH1F*) files[irecosim][ie]->Get("h_sum_energy");
-			hs_hit_slab[irecosim]   = (TH1F*) files[irecosim][ie]->Get("h_hit_slab");
+			h_nhit_len[irecosim] = (TH1F*) files[irecosim][ie]->Get("h_nhit_len");
 
-			Normalize(hs_sum_energy[irecosim]);
-			MakePretty(hs_sum_energy[irecosim],recosims[irecosim]);
+			Normalize(h_nhit_len[irecosim]);
+			MakePretty(h_nhit_len[irecosim],recosims[irecosim]);
 
-			Normalize(hs_hit_slab[irecosim]);
-			MakePretty(hs_hit_slab[irecosim],recosims[irecosim]);
+			h_nhit_len[irecosim]->SetTitle(TString::Format("Number of total hits at %d GeV;nhits; Entries",energies[ie]));
 
-			hs_sum_energy[irecosim]->SetTitle(TString::Format("sum energy at %d GeV;Stack energy (MIPs); Entries",energies[ie]));
-			hs_hit_slab[irecosim]->SetTitle(TString::Format("hit slab at %d GeV;nhits; Entries",energies[ie]));
-
-			c_sum_energy->cd(ie+1);
-			Draw2H(hs_sum_energy[irecosim],irecosim);
-			c_nhit_slab->cd(ie+1);
-			Draw2H(hs_hit_slab[irecosim],irecosim);
+			c_nhit_len->cd(ie+1);
+			Draw2H(h_nhit_len[irecosim],irecosim);
 		}
 
-		c_sum_energy->cd(ie+1);
-		Legend(hs_sum_energy[1],hs_sum_energy[0]);
-
-		c_nhit_slab->cd(ie+1);
-		Legend(hs_hit_slab[1],hs_hit_slab[0]);
+		c_nhit_len->cd(ie+1);
+		Legend(h_nhit_len[1],h_nhit_len[0]);
 
 	}
 
 	MyFile->cd();
-	c_sum_energy->Write();
-	c_nhit_slab->Write();
-	c_sum_energy->Print("rootfiles/nhit_len_analysis/sum_energy_" + particle + "_allE.png");
-	c_nhit_slab->Print("rootfiles/nhit_len_analysis/nhit_slab_" + particle + "_allE.png");
+	c_nhit_len->Write();
+	c_nhit_len->Print("rootfiles/nhit_len_analysis/nhit_len_" + particle + "_allE.png");
 
 }
 
