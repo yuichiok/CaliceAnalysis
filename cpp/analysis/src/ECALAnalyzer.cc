@@ -47,8 +47,6 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
    Float_t sum_slab_energy_stack_corrected = 0;
    Float_t sum_slab_energy_corrected[NSLABS] = {0};
 
-   if(_data.nhit_slab < 13) return;
-
    hm.h_sum_energy->Fill(_data.sum_energy);
    hm.h_nhit_len->Fill(_data.nhit_len);
 
