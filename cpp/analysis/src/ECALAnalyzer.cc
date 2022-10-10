@@ -39,6 +39,7 @@ bool ECALAnalyzer::MapTree(TTree* tree)
 
 void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
 {
+   Float_t X0s[NSLABS] = {1.198630137, 2.397260274, 3.595890411, 4.794520548, 5.993150685, 7.191780822, 8.390410959, 9.589041096, 10.78767123, 12.38584475, 13.98401826, 15.58219178, 17.1803653, 18.77853881, 20.37671233};
 
    Float_t sum_slab_energy_stack = 0;
    Float_t sum_slab_energy[NSLABS] = {0};
@@ -58,6 +59,7 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
       int ihit_slab = _data.hit_slab[ihit];
       sum_slab_energy[ihit_slab] += _data.hit_energy[ihit];
       hm.h_hit_slab_energy[ihit_slab]->Fill(_data.hit_energy[ihit]);
+      hm.h_energy_profile->Fill(X0s[ihit_slab],_data.hit_energy[ihit]);
 
       if(_data.hit_energy[ihit] > 0)
       {

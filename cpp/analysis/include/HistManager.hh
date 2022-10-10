@@ -32,6 +32,8 @@ class HistManager
     TH1F * h_hit_slab_corrected;
     TH1F * h_hit_energy_corrected;
 
+    TH1F * h_energy_profile;
+
     TH1F * h_hit_slab_energy[NSLABS];
     TH1F * h_sum_slab_energy[NSLABS];
     TH1F * h_sum_slab_energy_stack[NSLABS];

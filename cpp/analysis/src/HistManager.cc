@@ -27,6 +27,8 @@ void HistManager::InitializeHists()
     h_hit_slab_corrected   = new TH1F("h_hit_slab_corrected","; hit_slab; Entries",NSLABS,-0.5,14.5);
     h_hit_energy_corrected = new TH1F("h_hit_energy_corrected","; hit_energy; Entries",120,-20,100);
 
+    h_energy_profile = new TH1F("h_energy_profile",";X0;dE/dx",100,0,22);
+
     for (int islab = 0; islab < NSLABS; islab++)
     {
       TString hname_hit_slab_energy       = "h_hit_slab_energy" + TString::Format("%d",islab);
@@ -61,6 +63,8 @@ void HistManager::Hist2List()
     hList->Add(h_sum_energy_corrected);
     hList->Add(h_hit_slab_corrected);
     hList->Add(h_hit_energy_corrected);
+
+    hList->Add(h_energy_profile);
 
     for(int ih=0;ih<NSLABS;ih++){
       hList_slab_energy->Add(h_hit_slab_energy[ih]);
