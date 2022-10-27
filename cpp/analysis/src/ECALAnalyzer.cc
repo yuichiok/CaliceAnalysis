@@ -41,6 +41,8 @@ bool ECALAnalyzer::MapTree(TTree *tree)
 void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
 {
   Float_t X0s[NSLABS] = {1.198630137, 2.397260274, 3.595890411, 4.794520548, 5.993150685, 7.191780822, 8.390410959, 9.589041096, 10.78767123, 12.38584475, 13.98401826, 15.58219178, 17.1803653, 18.77853881, 20.37671233};
+  std::vector<Float_t> layer_hit_x[NSLABS];
+  std::vector<Float_t> layer_hit_y[NSLABS];
 
   Float_t sum_slab_energy_stack = 0;
   Float_t sum_slab_energy[NSLABS] = {0};
@@ -54,6 +56,9 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
 
   for (int ihit = 0; ihit < _data.nhit_len; ihit++)
   {
+    layer_hit_x[_data.hit_slab[ihit]].push_back(_data.hit_x[ihit]);
+    layer_hit_y[_data.hit_slab[ihit]].push_back(_data.hit_y[ihit]);
+
     hm.h_hit_slab->Fill(_data.hit_slab[ihit]);
     hm.h_hit_energy->Fill(_data.hit_energy[ihit]);
 
@@ -75,6 +80,8 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
 
   hm.h_sum_energy_corrected->Fill(sum_energy_corrected);
 
+  std::vector<std::vector<Float_t>> Mean_SD_x;
+  std::vector<std::vector<Float_t>> Mean_SD_y;
   for (int islab = 0; islab < NSLABS; islab++)
   {
     sum_slab_energy_stack += sum_slab_energy[islab];
@@ -84,7 +91,29 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
     sum_slab_energy_stack_corrected += sum_slab_energy_corrected[islab];
     hm.h_sum_slab_energy_corrected[islab]->Fill(sum_slab_energy_corrected[islab]);
     hm.h_sum_slab_energy_stack_corrected[islab]->Fill(sum_slab_energy_stack_corrected);
+
+    std::vector<Float_t> iMean_SD_x = Mean_SD(islab, layer_hit_x[islab]);
+    std::vector<Float_t> iMean_SD_y = Mean_SD(islab, layer_hit_y[islab]);
+    Mean_SD_x.push_back(iMean_SD_x);
+    Mean_SD_y.push_back(iMean_SD_y);
   }
+
+  Int_t n_valid_slab = Mean_SD_x.size();
+  std::vector<Int_t> valid_slabs;
+  if(n_valid_slab){
+    for (int islab=0; islab<n_valid_slab; islab++){
+
+      Bool_t is_nhit   =  10 < Mean_SD_x.at(islab).at(1);
+      Bool_t is_sigw_x = ( 0 < Mean_SD_x.at(islab).at(3) ) && ( Mean_SD_x.at(islab).at(3) < 20 );
+      Bool_t is_sigw_y = ( 0 < Mean_SD_y.at(islab).at(3) ) && ( Mean_SD_y.at(islab).at(3) < 20 );
+
+      if( is_nhit && is_sigw_x && is_sigw_y ){
+        valid_slabs.push_back(Mean_SD_x.at(islab).at(0));
+      }
+
+    }
+  }
+
 }
 
 Bool_t ECALAnalyzer::Notify()
@@ -130,9 +159,9 @@ bool ECALAnalyzer::Select()
   return true;
 }
 
-vector<Float_t> TBDisplay::Mean_SD(int slab, vector<Float_t> arr)
+std::vector<Float_t> ECALAnalyzer::Mean_SD(int slab, std::vector<Float_t> arr)
 {
-  static vector<Float_t> Mean_SD_vec;
+  static std::vector<Float_t> Mean_SD_vec;
   Float_t sum = 0;
   Int_t nhits = arr.size();
   Mean_SD_vec = {static_cast<float>(slab), static_cast<float>(nhits), -1000.0, -1000.0};

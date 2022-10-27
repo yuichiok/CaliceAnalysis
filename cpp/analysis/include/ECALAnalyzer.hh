@@ -32,7 +32,7 @@ class ECALAnalyzer
     virtual Bool_t   Notify();
 
   // Tools
-    virtual vector<Float_t> Mean_SD(int slab, vector<Float_t> arr);
+    virtual std::vector<Float_t> Mean_SD(int slab, std::vector<Float_t> arr);
 
 
   // Running Variables
