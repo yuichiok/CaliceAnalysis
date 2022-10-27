@@ -31,6 +31,9 @@ class ECALAnalyzer
     bool             Select();  // Evaluates the class' list of event selection criteria
     virtual Bool_t   Notify();
 
+  // Tools
+    virtual vector<Float_t> Mean_SD(int slab, vector<Float_t> arr);
+
 
   // Running Variables
     TString  options;  // Options input with TreeIterator.
