@@ -170,6 +170,7 @@ void analysis_allE( TString particle = "e-" )
 		for (int irecosim=0; irecosim < 2; irecosim++)
 		{
 			hs_sum_energy[irecosim] = (TH1F*) files[irecosim][ie]->Get("h_sum_energy");
+			// hs_sum_energy[irecosim] = (TH1F*) files[irecosim][ie]->Get("h_sum_energy_corrected_MeanSD");
 			hs_hit_slab[irecosim]   = (TH1F*) files[irecosim][ie]->Get("h_hit_slab");
 
 			Normalize(hs_sum_energy[irecosim]);

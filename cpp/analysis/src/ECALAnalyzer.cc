@@ -114,7 +114,7 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
     }
   }
 
-  if( 5 < valid_slabs.size() ){
+  if( 3 < valid_slabs.size() ){
     hm.h1[hm.h_sum_energy_corrected_MeanSD]->Fill(_data.sum_energy);
   }
 
