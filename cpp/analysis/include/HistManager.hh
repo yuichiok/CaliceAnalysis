@@ -23,24 +23,39 @@ class HistManager
     virtual void WriteLists( TFile * output );
 
   // Declear histograms
-    TH1F * h_sum_energy;
-    TH1F * h_hit_slab;
-    TH1F * h_nhit_len;
-    TH1F * h_hit_energy;
+  // h1 hist
+    enum h1_index{
+      h_sum_energy,
+      h_hit_slab,
+      h_nhit_len,
+      h_hit_energy,
 
-    TH1F * h_sum_energy_corrected;
-    TH1F * h_hit_slab_corrected;
-    TH1F * h_hit_energy_corrected;
+      h_sum_energy_corrected,
+      h_hit_slab_corrected,
+      h_hit_energy_corrected,
 
-    TH1F * h_energy_profile;
+      h_sum_energy_corrected_MeanSD,
 
-    TH1F * h_hit_slab_energy[NSLABS];
-    TH1F * h_sum_slab_energy[NSLABS];
-    TH1F * h_sum_slab_energy_stack[NSLABS];
+      h_energy_profile,
 
-    TH1F * h_hit_slab_energy_corrected[NSLABS];
-    TH1F * h_sum_slab_energy_corrected[NSLABS];
-    TH1F * h_sum_slab_energy_stack_corrected[NSLABS];
+      dummy1,
+      LastH1 = dummy1
+    };
+    TH1F * h1[LastH1];
+
+    enum h1_layer_index{
+      h_hit_slab_energy,
+      h_sum_slab_energy,
+      h_sum_slab_energy_stack,
+
+      h_hit_slab_energy_corrected,
+      h_sum_slab_energy_corrected,
+      h_sum_slab_energy_stack_corrected,
+
+      dummy1_layer,
+      LastH1_layer = dummy1_layer
+    };
+    TH1F * h1_layer[LastH1_layer][NSLABS];
 
   private:
     TList* hList = new TList();

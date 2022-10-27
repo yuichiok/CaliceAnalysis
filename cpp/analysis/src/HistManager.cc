@@ -18,16 +18,18 @@ HistManager::HistManager()
 
 void HistManager::InitializeHists()
 {
-    h_sum_energy = new TH1F("h_sum_energy","; sum_energy; Entries",500,0,1.5E4);
-    h_hit_slab   = new TH1F("h_hit_slab","; hit_slab; Entries",NSLABS,-0.5,14.5);
-    h_nhit_len   = new TH1F("h_nhit_len","; nhit_len; Entries",500,0,1.5E3);
-    h_hit_energy = new TH1F("h_hit_energy","; hit_energy; Entries",120,-20,100);
+    h1[h_sum_energy] = new TH1F("h_sum_energy","; sum_energy; Entries",500,0,1.5E4);
+    h1[h_hit_slab]   = new TH1F("h_hit_slab","; hit_slab; Entries",NSLABS,-0.5,14.5);
+    h1[h_nhit_len]   = new TH1F("h_nhit_len","; nhit_len; Entries",500,0,1.5E3);
+    h1[h_hit_energy] = new TH1F("h_hit_energy","; hit_energy; Entries",120,-20,100);
 
-    h_sum_energy_corrected = new TH1F("h_sum_energy_corrected","; sum_energy; Entries",500,0,1.5E4);
-    h_hit_slab_corrected   = new TH1F("h_hit_slab_corrected","; hit_slab; Entries",NSLABS,-0.5,14.5);
-    h_hit_energy_corrected = new TH1F("h_hit_energy_corrected","; hit_energy; Entries",120,-20,100);
+    h1[h_sum_energy_corrected] = new TH1F("h_sum_energy_corrected","; sum_energy; Entries",500,0,1.5E4);
+    h1[h_hit_slab_corrected]   = new TH1F("h_hit_slab_corrected","; hit_slab; Entries",NSLABS,-0.5,14.5);
+    h1[h_hit_energy_corrected] = new TH1F("h_hit_energy_corrected","; hit_energy; Entries",120,-20,100);
 
-    h_energy_profile = new TH1F("h_energy_profile",";X0;dE/dx",100,0,22);
+    h1[h_sum_energy_corrected_MeanSD] = new TH1F("h_sum_energy_corrected_MeanSD","; sum_energy; Entries",500,0,1.5E4);
+
+    h1[h_energy_profile] = new TH1F("h_energy_profile",";X0;dE/dx",100,0,22);
 
     for (int islab = 0; islab < NSLABS; islab++)
     {
@@ -39,13 +41,13 @@ void HistManager::InitializeHists()
       TString hname_sum_slab_energy_corrected       = "h_sum_slab_energy_corrected" + TString::Format("%d",islab);
       TString hname_sum_slab_energy_stack_corrected = "h_sum_slab_energy_stack_corrected" + TString::Format("%d",islab);
 
-      h_hit_slab_energy[islab]            = new TH1F(hname_hit_slab_energy,hname_hit_slab_energy,120,-20,100);
-      h_sum_slab_energy[islab]            = new TH1F(hname_sum_slab_energy,hname_sum_slab_energy,500,0,4.0E3);
-      h_sum_slab_energy_stack[islab]      = new TH1F(hname_sum_slab_energy_stack,hname_sum_slab_energy_stack,500,0,1.5E4);
+      h1_layer[h_hit_slab_energy][islab]            = new TH1F(hname_hit_slab_energy,hname_hit_slab_energy,120,-20,100);
+      h1_layer[h_sum_slab_energy][islab]            = new TH1F(hname_sum_slab_energy,hname_sum_slab_energy,500,0,4.0E3);
+      h1_layer[h_sum_slab_energy_stack][islab]      = new TH1F(hname_sum_slab_energy_stack,hname_sum_slab_energy_stack,500,0,1.5E4);
 
-      h_hit_slab_energy_corrected[islab]            = new TH1F(hname_hit_slab_energy_corrected,hname_hit_slab_energy_corrected,120,-20,100);
-      h_sum_slab_energy_corrected[islab]            = new TH1F(hname_sum_slab_energy_corrected,hname_sum_slab_energy_corrected,500,0,4.0E3);
-      h_sum_slab_energy_stack_corrected[islab]      = new TH1F(hname_sum_slab_energy_stack_corrected,hname_sum_slab_energy_stack_corrected,500,0,1.5E4);
+      h1_layer[h_hit_slab_energy_corrected][islab]            = new TH1F(hname_hit_slab_energy_corrected,hname_hit_slab_energy_corrected,120,-20,100);
+      h1_layer[h_sum_slab_energy_corrected][islab]            = new TH1F(hname_sum_slab_energy_corrected,hname_sum_slab_energy_corrected,500,0,4.0E3);
+      h1_layer[h_sum_slab_energy_stack_corrected][islab]      = new TH1F(hname_sum_slab_energy_stack_corrected,hname_sum_slab_energy_stack_corrected,500,0,1.5E4);
 
     }
 
@@ -55,27 +57,19 @@ void HistManager::InitializeHists()
 
 void HistManager::Hist2List()
 {
-    hList->Add(h_sum_energy);
-    hList->Add(h_hit_slab);
-    hList->Add(h_nhit_len);
-    hList->Add(h_hit_energy);
-    
-    hList->Add(h_sum_energy_corrected);
-    hList->Add(h_hit_slab_corrected);
-    hList->Add(h_hit_energy_corrected);
+  for (auto ih : h1) {
+    hList->Add(ih);
+  }
 
-    hList->Add(h_energy_profile);
+  for(int ih=0;ih<NSLABS;ih++){
+    hList_slab_energy->Add(h1_layer[h_hit_slab_energy][ih]);
+    hList_sum_slab_energy->Add(h1_layer[h_sum_slab_energy][ih]);
+    hList_sum_slab_energy_stack->Add(h1_layer[h_sum_slab_energy_stack][ih]);
 
-    for(int ih=0;ih<NSLABS;ih++){
-      hList_slab_energy->Add(h_hit_slab_energy[ih]);
-      hList_sum_slab_energy->Add(h_sum_slab_energy[ih]);
-      hList_sum_slab_energy_stack->Add(h_sum_slab_energy_stack[ih]);
-
-      hList_slab_energy->Add(h_hit_slab_energy_corrected[ih]);
-      hList_sum_slab_energy->Add(h_sum_slab_energy_corrected[ih]);
-      hList_sum_slab_energy_stack->Add(h_sum_slab_energy_stack_corrected[ih]);
-
-    }
+    hList_slab_energy->Add(h1_layer[h_hit_slab_energy_corrected][ih]);
+    hList_sum_slab_energy->Add(h1_layer[h_sum_slab_energy_corrected][ih]);
+    hList_sum_slab_energy_stack->Add(h1_layer[h_sum_slab_energy_stack_corrected][ih]);
+  }
 
 }
 
