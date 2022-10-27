@@ -51,46 +51,46 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
   Float_t sum_slab_energy_stack_corrected = 0;
   Float_t sum_slab_energy_corrected[NSLABS] = {0};
 
-  hm.h_sum_energy->Fill(_data.sum_energy);
-  hm.h_nhit_len->Fill(_data.nhit_len);
+  hm.h1[hm.h_sum_energy]->Fill(_data.sum_energy);
+  hm.h1[hm.h_nhit_len]->Fill(_data.nhit_len);
 
   for (int ihit = 0; ihit < _data.nhit_len; ihit++)
   {
     layer_hit_x[_data.hit_slab[ihit]].push_back(_data.hit_x[ihit]);
     layer_hit_y[_data.hit_slab[ihit]].push_back(_data.hit_y[ihit]);
 
-    hm.h_hit_slab->Fill(_data.hit_slab[ihit]);
-    hm.h_hit_energy->Fill(_data.hit_energy[ihit]);
+    hm.h1[hm.h_hit_slab]->Fill(_data.hit_slab[ihit]);
+    hm.h1[hm.h_hit_energy]->Fill(_data.hit_energy[ihit]);
 
     int ihit_slab = _data.hit_slab[ihit];
     sum_slab_energy[ihit_slab] += _data.hit_energy[ihit];
-    hm.h_hit_slab_energy[ihit_slab]->Fill(_data.hit_energy[ihit]);
-    hm.h_energy_profile->Fill(X0s[ihit_slab], _data.hit_energy[ihit]);
+    hm.h1_layer[hm.h_hit_slab_energy][ihit_slab]->Fill(_data.hit_energy[ihit]);
+    hm.h1[hm.h_energy_profile]->Fill(X0s[ihit_slab], _data.hit_energy[ihit]);
 
     if (_data.hit_energy[ihit] > 0)
     {
-      hm.h_hit_slab_corrected->Fill(_data.hit_slab[ihit]);
-      hm.h_hit_energy_corrected->Fill(_data.hit_energy[ihit]);
+      hm.h1[hm.h_hit_slab_corrected]->Fill(_data.hit_slab[ihit]);
+      hm.h1[hm.h_hit_energy_corrected]->Fill(_data.hit_energy[ihit]);
 
       sum_energy_corrected += _data.hit_energy[ihit];
       sum_slab_energy_corrected[ihit_slab] += _data.hit_energy[ihit];
-      hm.h_hit_slab_energy_corrected[ihit_slab]->Fill(_data.hit_energy[ihit]);
+      hm.h1_layer[hm.h_hit_slab_energy_corrected][ihit_slab]->Fill(_data.hit_energy[ihit]);
     }
   }
 
-  hm.h_sum_energy_corrected->Fill(sum_energy_corrected);
+  hm.h1[hm.h_sum_energy_corrected]->Fill(sum_energy_corrected);
 
   std::vector<std::vector<Float_t>> Mean_SD_x;
   std::vector<std::vector<Float_t>> Mean_SD_y;
   for (int islab = 0; islab < NSLABS; islab++)
   {
     sum_slab_energy_stack += sum_slab_energy[islab];
-    hm.h_sum_slab_energy[islab]->Fill(sum_slab_energy[islab]);
-    hm.h_sum_slab_energy_stack[islab]->Fill(sum_slab_energy_stack);
+    hm.h1_layer[hm.h_sum_slab_energy][islab]->Fill(sum_slab_energy[islab]);
+    hm.h1_layer[hm.h_sum_slab_energy_stack][islab]->Fill(sum_slab_energy_stack);
 
     sum_slab_energy_stack_corrected += sum_slab_energy_corrected[islab];
-    hm.h_sum_slab_energy_corrected[islab]->Fill(sum_slab_energy_corrected[islab]);
-    hm.h_sum_slab_energy_stack_corrected[islab]->Fill(sum_slab_energy_stack_corrected);
+    hm.h1_layer[hm.h_sum_slab_energy_corrected][islab]->Fill(sum_slab_energy_corrected[islab]);
+    hm.h1_layer[hm.h_sum_slab_energy_stack_corrected][islab]->Fill(sum_slab_energy_stack_corrected);
 
     std::vector<Float_t> iMean_SD_x = Mean_SD(islab, layer_hit_x[islab]);
     std::vector<Float_t> iMean_SD_y = Mean_SD(islab, layer_hit_y[islab]);
@@ -112,6 +112,10 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
       }
 
     }
+  }
+
+  if( 5 < valid_slabs.size() ){
+    hm.h1[hm.h_sum_energy_corrected_MeanSD]->Fill(_data.sum_energy);
   }
 
 }
