@@ -40,6 +40,8 @@ bool ECALAnalyzer::MapTree(TTree *tree)
 
 void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
 {
+  if( Is_SCA_Maxed() ) return;
+
   Float_t X0s[NSLABS] = {1.198630137, 2.397260274, 3.595890411, 4.794520548, 5.993150685, 7.191780822, 8.390410959, 9.589041096, 10.78767123, 12.38584475, 13.98401826, 15.58219178, 17.1803653, 18.77853881, 20.37671233};
   std::vector<Float_t> layer_hit_x[NSLABS];
   std::vector<Float_t> layer_hit_y[NSLABS];
@@ -161,6 +163,17 @@ bool ECALAnalyzer::Select()
     return false;
 
   return true;
+}
+
+Bool_t ECALAnalyzer::Is_SCA_Maxed()
+{
+  for (int ihit = 0; ihit < _data.nhit_len; ihit++)
+  {
+    if(13 < _data.hit_slab[ihit]) return 1;
+  }
+  
+  return 0;
+
 }
 
 std::vector<Float_t> ECALAnalyzer::Mean_SD(int slab, std::vector<Float_t> arr)

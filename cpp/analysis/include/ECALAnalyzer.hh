@@ -32,8 +32,8 @@ class ECALAnalyzer
     virtual Bool_t   Notify();
 
   // Tools
+    Bool_t  Is_SCA_Maxed();
     virtual std::vector<Float_t> Mean_SD(int slab, std::vector<Float_t> arr);
-
 
   // Running Variables
     TString  options;  // Options input with TreeIterator.
