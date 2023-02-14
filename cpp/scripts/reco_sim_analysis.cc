@@ -100,7 +100,8 @@ void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 	TH1F * hs_hit_slab[2];
 	for (int irecosim=0; irecosim < 2; irecosim++)
 	{
-		hs_sum_energy[irecosim] = (TH1F*) files[irecosim]->Get("h_sum_energy_corrected");
+		// hs_sum_energy[irecosim] = (TH1F*) files[irecosim]->Get("h_sum_energy_corrected");
+		hs_sum_energy[irecosim] = (TH1F*) files[irecosim]->Get("h_sum_energy_corrected_MeanSD");
 		hs_hit_slab[irecosim]   = (TH1F*) files[irecosim]->Get("h_hit_slab_corrected");
 
 		Normalize(hs_sum_energy[irecosim]);
@@ -166,17 +167,24 @@ void analysis_allE( TString particle = "e-" )
 	{
 
 		TH1F * hs_sum_energy[2];
+		TH1F * hs_sum_energy2[2];
 		TH1F * hs_hit_slab[2];
 		for (int irecosim=0; irecosim < 2; irecosim++)
 		{
-			hs_sum_energy[irecosim] = (TH1F*) files[irecosim][ie]->Get("h_sum_energy");
-			// hs_sum_energy[irecosim] = (TH1F*) files[irecosim][ie]->Get("h_sum_energy_corrected_MeanSD");
+			// hs_sum_energy[irecosim] = (TH1F*) files[irecosim][ie]->Get("h_sum_energy");
+			hs_sum_energy[irecosim] = (TH1F*) files[irecosim][ie]->Get("h_sum_energy_corrected_MeanSD");
 			hs_hit_slab[irecosim]   = (TH1F*) files[irecosim][ie]->Get("h_hit_slab");
+
+			hs_sum_energy2[irecosim] = (TH1F*) files[irecosim][ie]->Get("h_sum_energy");
+			Int_t NEvents = hs_sum_energy2[irecosim]->GetEntries();
+			Int_t NHits   = hs_hit_slab[irecosim]->GetEntries();
+			cout << "NEvents: " << NEvents << " NHits: " << NHits << " Hits/Events = " << (Float_t) NHits / (Float_t) NEvents << endl;
 
 			Normalize(hs_sum_energy[irecosim]);
 			MakePretty(hs_sum_energy[irecosim],recosims[irecosim]);
 
-			Normalize(hs_hit_slab[irecosim]);
+			// Normalize(hs_hit_slab[irecosim]);
+			hs_hit_slab[irecosim]->Scale((Float_t)1/(Float_t)NEvents);
 			MakePretty(hs_hit_slab[irecosim],recosims[irecosim]);
 
 			hs_sum_energy[irecosim]->SetTitle(TString::Format("sum energy at %d GeV;Stack energy (MIPs); Entries",energies[ie]));

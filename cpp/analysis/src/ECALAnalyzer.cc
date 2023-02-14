@@ -56,6 +56,13 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
   hm.h1[hm.h_sum_energy]->Fill(_data.sum_energy);
   hm.h1[hm.h_nhit_len]->Fill(_data.nhit_len);
 
+  cout << "================= Event : " << entry << "=================" << endl;
+  cout << "spill: " << _data.spill << " cycle: " << _data.cycle << endl;
+  cout << "BCID : " << _data.bcid << " BCID END: " << _data.bcid_merge_end << " BCID First SCA Full: " << _data.bcid_first_sca_full << endl;
+  cout << "Hit Len " << _data.nhit_len << endl;
+  cout << "==================================" << endl;
+
+
   for (int ihit = 0; ihit < _data.nhit_len; ihit++)
   {
     layer_hit_x[_data.hit_slab[ihit]].push_back(_data.hit_x[ihit]);
@@ -106,8 +113,8 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
     for (int islab=0; islab<n_valid_slab; islab++){
 
       Bool_t is_nhit   =  10 < Mean_SD_x.at(islab).at(1);
-      Bool_t is_sigw_x = ( 0 < Mean_SD_x.at(islab).at(3) ) && ( Mean_SD_x.at(islab).at(3) < 20 );
-      Bool_t is_sigw_y = ( 0 < Mean_SD_y.at(islab).at(3) ) && ( Mean_SD_y.at(islab).at(3) < 20 );
+      Bool_t is_sigw_x = ( 15 < Mean_SD_x.at(islab).at(3) ) && ( Mean_SD_x.at(islab).at(3) < 25 );
+      Bool_t is_sigw_y = ( 15 < Mean_SD_y.at(islab).at(3) ) && ( Mean_SD_y.at(islab).at(3) < 25 );
 
       if( is_nhit && is_sigw_x && is_sigw_y ){
         valid_slabs.push_back(Mean_SD_x.at(islab).at(0));
@@ -116,7 +123,7 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
     }
   }
 
-  if( 3 < valid_slabs.size() ){
+  if( 5 < valid_slabs.size() ){
     hm.h1[hm.h_sum_energy_corrected_MeanSD]->Fill(_data.sum_energy);
   }
 
@@ -159,8 +166,8 @@ bool ECALAnalyzer::Select()
     }
   }
 
-  if (_data.nhit_len < nhit_len_th)
-    return false;
+  // if (_data.nhit_len < nhit_len_th)
+  //   return false;
 
   return true;
 }
