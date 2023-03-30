@@ -99,7 +99,7 @@ void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 	{
 		h_nhit_len[irecosim]   = (TH1F*) files[irecosim]->Get("h_nhit_len");
 
-		Normalize(h_nhit_len[irecosim]);
+		// Normalize(h_nhit_len[irecosim]);
 		MakePretty(h_nhit_len[irecosim],recosims[irecosim]);
 
 		h_nhit_len[irecosim]->SetTitle(TString::Format("Number of total hits at %d GeV;nhits; Entries",ienergy));
@@ -126,7 +126,8 @@ void analysis_allE( TString particle = "e-" )
 	c_nhit_len->Divide(3,3);
 
 	const static int nEconfigs = 7;
-	TString recosims[2]       = {"conv_sim","reco"};
+	// TString recosims[2]       = {"conv_sim","reco"};
+	TString recosims[2]       = {"reco","conv_sim"};
 	Int_t energies[nEconfigs] = {10, 20, 40, 60, 80, 100, 150};
 	TFile * files[2][nEconfigs];
 
@@ -148,7 +149,7 @@ void analysis_allE( TString particle = "e-" )
 		{
 			h_nhit_len[irecosim] = (TH1F*) files[irecosim][ie]->Get("h_nhit_len");
 
-			Normalize(h_nhit_len[irecosim]);
+			// Normalize(h_nhit_len[irecosim]);
 			MakePretty(h_nhit_len[irecosim],recosims[irecosim]);
 
 			h_nhit_len[irecosim]->SetTitle(TString::Format("Number of total hits at %d GeV;nhits; Entries",energies[ie]));
