@@ -56,11 +56,11 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
   hm.h1[hm.h_sum_energy]->Fill(_data.sum_energy);
   hm.h1[hm.h_nhit_len]->Fill(_data.nhit_len);
 
-  cout << "================= Event : " << entry << "=================" << endl;
-  cout << "spill: " << _data.spill << " cycle: " << _data.cycle << endl;
-  cout << "BCID : " << _data.bcid << " BCID END: " << _data.bcid_merge_end << " BCID First SCA Full: " << _data.bcid_first_sca_full << endl;
-  cout << "Hit Len " << _data.nhit_len << endl;
-  cout << "==================================" << endl;
+  // cout << "================= Event : " << entry << "=================" << endl;
+  // cout << "spill: " << _data.spill << " cycle: " << _data.cycle << endl;
+  // cout << "BCID : " << _data.bcid << " BCID END: " << _data.bcid_merge_end << " BCID First SCA Full: " << _data.bcid_first_sca_full << endl;
+  // cout << "Hit Len " << _data.nhit_len << endl;
+  // cout << "==================================" << endl;
 
 
   for (int ihit = 0; ihit < _data.nhit_len; ihit++)
@@ -76,7 +76,7 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
     hm.h1_layer[hm.h_hit_slab_energy][ihit_slab]->Fill(_data.hit_energy[ihit]);
     hm.h1[hm.h_energy_profile]->Fill(X0s[ihit_slab], _data.hit_energy[ihit]);
 
-    if (_data.hit_energy[ihit] > 0)
+    if (_data.hit_energy[ihit] > 1)
     {
       hm.h1[hm.h_hit_slab_corrected]->Fill(_data.hit_slab[ihit]);
       hm.h1[hm.h_hit_energy_corrected]->Fill(_data.hit_energy[ihit]);
@@ -156,6 +156,10 @@ bool ECALAnalyzer::Select()
 
   if (_data.nhit_slab < 13)
     return false;
+
+  for (int ihit=0; ihit<_data.nhit_len; ihit++){
+    if(2 < _data.hit_sca[ihit]) return false;
+  }
 
   for (auto pair : opt_nhit_len_threshold)
   {
