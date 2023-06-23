@@ -16,17 +16,19 @@ void EventControl::Loop(Bool_t isMaskReq)
     if (ientry < 0) break;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
 
+    Int_t count_nhit_len = 0;
     Int_t nhit_len_slab[NSLAB] = {0};
 
-    h_nhit_len->Fill( nhit_len );
     for( int ihit=0; ihit < nhit_len; ihit++ ){
       if( isMaskReq && hit_isMasked[ihit] == 1 ) continue;
+      count_nhit_len++;
 
       nhit_len_slab[ hit_slab[ihit] ]++;
       h_hit_slab->Fill( hit_slab[ihit] );
       h_hit_xy_slab.at( hit_slab[ihit] )->Fill( hit_x[ihit], hit_y[ihit] );
 
     }
+    h_nhit_len->Fill( count_nhit_len );
 
     for( int islab=0; islab<NSLAB; islab++ ){
       h_nhit_len_slab.at(islab)->Fill( nhit_len_slab[islab] );
