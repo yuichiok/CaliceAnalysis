@@ -19,8 +19,8 @@ void run_sim(int energy = 10, string particle = "e-"){
 	cout << "Input:      " << full_name << endl; 
 	cout << "Input mask: " << full_name_mask << endl; 
 
-	EventControl EC(full_name);
-	EventControl ECMask(full_name_mask);
+	EventControl EC(full_name,1);
+	EventControl ECMask(full_name_mask,1);
 
 	ROOT::Math::MinimizerOptions::SetDefaultMaxFunctionCalls( 200 );
 

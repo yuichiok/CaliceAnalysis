@@ -8,11 +8,16 @@
 #ifndef EventControl_h
 #define EventControl_h
 
+#include <vector>
+
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
 
+using std::vector;
+
 // Header file for the classes stored in the TTree if any.
+const Int_t NSLAB = 15; const Int_t NCHIP = 16; const Int_t NCHAN = 64;
 
 class EventControl {
 public :
@@ -83,18 +88,24 @@ public :
   TBranch        *b_hit_isMasked;   //!
   TBranch        *b_hit_isCommissioned;   //!
 
-  EventControl(TString input_name);
+  EventControl(TString input_name, Bool_t isMask);
   virtual ~EventControl();
   virtual Int_t    Cut(Long64_t entry);
   virtual Int_t    GetEntry(Long64_t entry);
   virtual Long64_t LoadTree(Long64_t entry);
   virtual void     Init(TTree *tree);
+  virtual void     InitHist();
   virtual void     Loop();
   virtual Bool_t   Notify();
   virtual void     Show(Long64_t entry = -1);
 
 private:
-  TH1F *h1;
+  TH1F * h_hit_slab = new TH1F("h_hit_slab", "h_hit_slab", NSLAB, -0.5, 14.5);
+  TH1F * h_nhit_len = new TH1F("h_nhit_len", "h_nhit_len", 700,0,700);
+  vector<TH1F*> h_nhit_len_slab;
+  vector<TH2F*> h_hit_xy_slab;
+
+  Bool_t isMaskReq;
 
 };
 
@@ -102,11 +113,21 @@ private:
 
 #ifdef EventControl_cxx
 
-EventControl::EventControl(TString input_name) : fChain(0) 
+void EventControl::InitHist()
 {
+  for(int i=0; i<NSLAB; i++){
+    h_nhit_len_slab.push_back(new TH1F(Form("h_nhit_len_slab_%d",i), Form("h_nhit_len_slab_%d",i), 100,0,100));
+    h_hit_xy_slab.push_back(new TH2F(Form("h_hit_xy_slab_%d",i), Form("h_hit_xy_slab_%d",i),32,-90,90,32,-90,90));
+  }
+}
+
+EventControl::EventControl(TString input_name, Bool_t isMask) : fChain(0) 
+{
+   isMaskReq = isMask;
    TFile *f = new TFile(input_name);
    TTree *tree = (TTree*)f->Get("ecal");
    Init(tree);
+   InitHist();
 }
 
 EventControl::~EventControl()
