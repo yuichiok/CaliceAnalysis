@@ -18,6 +18,7 @@ class FileSelector
     virtual Int_t   GetEnergy();
     virtual TString GetRecoSim();
     virtual TString GetParticleName();
+    virtual Bool_t  GetMaskOut();
 
     virtual void    MakeRunName();
     virtual TString JoinInputs();

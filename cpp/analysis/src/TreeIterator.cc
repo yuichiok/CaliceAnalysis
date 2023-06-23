@@ -68,7 +68,9 @@ void TreeIterator::SlaveTerminate(){}
 void TreeIterator::Terminate()
 {
     FileSelector fs(fOption);
-    TString outname = "rootfiles/" + fs.GetRecoSim() + "/" + fs.GetRunName() + "_quality.root";
+    TString outname = "rootfiles/" + fs.GetRecoSim() + "/" + fs.GetRunName() + "_quality";
+    if( fs.GetMaskOut() ) outname += "_masked";
+    outname += ".root";
 
     TFile *outfile = new TFile( outname ,"RECREATE");
     cout << "  [TreeIterator] Output: " << outname << endl;

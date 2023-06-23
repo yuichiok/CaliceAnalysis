@@ -56,6 +56,11 @@ TString FileSelector::GetParticleName()
   return _inputs["particle"];
 }
 
+Bool_t FileSelector::GetMaskOut()
+{
+  return _inputs["masked"].Length();
+}
+
 TString FileSelector::GetRunName()
 {
   return _runname;
