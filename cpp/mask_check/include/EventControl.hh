@@ -88,17 +88,19 @@ public :
   TBranch        *b_hit_isMasked;   //!
   TBranch        *b_hit_isCommissioned;   //!
 
-  EventControl(TString input_name, Bool_t isMask);
+  EventControl(TString input_name);
   virtual ~EventControl();
   virtual Int_t    Cut(Long64_t entry);
   virtual Int_t    GetEntry(Long64_t entry);
   virtual Long64_t LoadTree(Long64_t entry);
   virtual void     Init(TTree *tree);
-  virtual void     InitHist();
-  virtual void     Loop();
+  virtual void     Loop(Bool_t isMaskReq);
   virtual Bool_t   Notify();
   virtual void     Show(Long64_t entry = -1);
   virtual void     SaveFile(TString output_name);
+
+  virtual void     InitHists();
+  virtual void     ResetHists();
 
 private:
   TH1F * h_hit_slab = new TH1F("h_hit_slab", "h_hit_slab", NSLAB, -0.5, 14.5);
@@ -106,15 +108,13 @@ private:
   vector<TH1F*> h_nhit_len_slab;
   vector<TH2F*> h_hit_xy_slab;
 
-  Bool_t isMaskReq;
-
 };
 
 #endif
 
 #ifdef EventControl_cxx
 
-void EventControl::InitHist()
+void EventControl::InitHists()
 {
   for(int i=0; i<NSLAB; i++){
     h_nhit_len_slab.push_back(new TH1F(Form("h_nhit_len_slab_%d",i), Form("h_nhit_len_slab_%d",i), 100,0,100));
@@ -122,13 +122,22 @@ void EventControl::InitHist()
   }
 }
 
-EventControl::EventControl(TString input_name, Bool_t isMask) : fChain(0) 
+void EventControl::ResetHists()
 {
-   isMaskReq = isMask;
+  h_hit_slab->Reset();
+  h_nhit_len->Reset();
+  for(int i=0; i<NSLAB; i++){
+    h_nhit_len_slab.at(i)->Reset();
+    h_hit_xy_slab.at(i)->Reset();
+  }
+}
+
+EventControl::EventControl(TString input_name) : fChain(0) 
+{
    TFile *f = new TFile(input_name);
    TTree *tree = (TTree*)f->Get("ecal");
    Init(tree);
-   InitHist();
+   InitHists();
 }
 
 EventControl::~EventControl()

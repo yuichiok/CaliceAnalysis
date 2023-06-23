@@ -4,7 +4,7 @@
 #include <TStyle.h>
 #include <TCanvas.h>
 
-void EventControl::Loop()
+void EventControl::Loop(Bool_t isMaskReq)
 {
   if (fChain == 0) return;
 

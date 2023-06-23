@@ -6,21 +6,33 @@
 
 #include "src/EventControl.cc"
 
-void run_sim(int energy = 10, string particle = "e-"){
+void run_sim(int energy = 10, TString particle = "e-"){
 
 	TString input_path = "../../data/conv_sim/";
-	TString sim_name   		= "ECAL_QGSP_BERT_conf6_" + particle + "_" + to_string(energy) + ".0GeV_converted";
-	TString sim_name_mask	= "ECAL_QGSP_BERT_conf6_" + particle + "_" + to_string(energy) + ".0GeV_converted_masked";
+	TString sim_prefix = "ECAL_QGSP_BERT_conf6";
+	TString str_energy = TString(to_string(energy));
+	TString sim_name   = sim_prefix + "_" + particle + "_" + str_energy + ".0GeV_converted_masked";
 	TString extension = ".root";
 
-	TString full_name 		 = input_path + sim_name 			+ extension;
-	TString full_name_mask = input_path + sim_name_mask + extension;
+	TString full_in_name = input_path + sim_name + extension;
+	cout << "Input:  " << full_in_name << endl; 
 
-	cout << "Input:      " << full_name << endl; 
-	cout << "Input mask: " << full_name_mask << endl; 
+	EventControl ECMask(full_in_name);
+	ECMask.Loop(0);
 
-	EventControl EC(full_name,1);
-	EventControl ECMask(full_name_mask,1);
+	TString output_path = "rootfiles/";
+	TString output_name = sim_prefix + "_" + particle + "_" + str_energy + ".0GeV_checks";
+
+	TString full_out_name = output_path + output_name + extension;
+	cout << "Output: " << full_out_name << endl; 
+	ECMask.SaveFile(full_out_name);
+
+	ECMask.ResetHists();
+	ECMask.Loop(1);
+
+	full_out_name = output_path + output_name + "_masked" + extension;
+	cout << "Output: " << full_out_name << endl;
+	ECMask.SaveFile(full_out_name);
 
 	ROOT::Math::MinimizerOptions::SetDefaultMaxFunctionCalls( 200 );
 
