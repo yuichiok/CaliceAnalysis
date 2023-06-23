@@ -16,99 +16,96 @@
 
 class EventControl {
 public :
-   TTree          *fChain;   //!pointer to the analyzed TTree or TChain
-   Int_t           fCurrent; //!current Tree number in a TChain
+  TTree          *fChain;   //!pointer to the analyzed TTree or TChain
+  Int_t           fCurrent; //!current Tree number in a TChain
 
 // Fixed size dimensions of array or collections stored in the TTree if any.
 
-   // Declaration of leaf types
-   Int_t           event;
-   Int_t           spill;
-   Int_t           cycle;
-   Int_t           bcid;
-   Int_t           bcid_first_sca_full;
-   Int_t           bcid_merge_end;
-   Int_t           id_run;
-   Int_t           id_dat;
-   Int_t           nhit_slab;
-   Int_t           nhit_chip;
-   Int_t           nhit_chan;
-   Int_t           nhit_len;
-   Float_t         sum_energy;
-   Float_t         sum_energy_lg;
-   Int_t           hit_slab[218];   //[nhit_len]
-   Int_t           hit_chip[218];   //[nhit_len]
-   Int_t           hit_chan[218];   //[nhit_len]
-   Int_t           hit_sca[218];   //[nhit_len]
-   Float_t         hit_x[218];   //[nhit_len]
-   Float_t         hit_y[218];   //[nhit_len]
-   Float_t         hit_z[218];   //[nhit_len]
-   Int_t           hit_adc_high[218];   //[nhit_len]
-   Int_t           hit_adc_low[218];   //[nhit_len]
-   Float_t         hit_energy[218];   //[nhit_len]
-   Float_t         hit_energy_lg[218];   //[nhit_len]
-   Int_t           hit_n_scas_filled[218];   //[nhit_len]
-   Int_t           hit_isHit[218];   //[nhit_len]
-   Int_t           hit_isMasked[218];   //[nhit_len]
-   Int_t           hit_isCommissioned[218];   //[nhit_len]
+  // Declaration of leaf types
+  Int_t           event;
+  Int_t           spill;
+  Int_t           cycle;
+  Int_t           bcid;
+  Int_t           bcid_first_sca_full;
+  Int_t           bcid_merge_end;
+  Int_t           id_run;
+  Int_t           id_dat;
+  Int_t           nhit_slab;
+  Int_t           nhit_chip;
+  Int_t           nhit_chan;
+  Int_t           nhit_len;
+  Float_t         sum_energy;
+  Float_t         sum_energy_lg;
+  Int_t           hit_slab[218];   //[nhit_len]
+  Int_t           hit_chip[218];   //[nhit_len]
+  Int_t           hit_chan[218];   //[nhit_len]
+  Int_t           hit_sca[218];   //[nhit_len]
+  Float_t         hit_x[218];   //[nhit_len]
+  Float_t         hit_y[218];   //[nhit_len]
+  Float_t         hit_z[218];   //[nhit_len]
+  Int_t           hit_adc_high[218];   //[nhit_len]
+  Int_t           hit_adc_low[218];   //[nhit_len]
+  Float_t         hit_energy[218];   //[nhit_len]
+  Float_t         hit_energy_lg[218];   //[nhit_len]
+  Int_t           hit_n_scas_filled[218];   //[nhit_len]
+  Int_t           hit_isHit[218];   //[nhit_len]
+  Int_t           hit_isMasked[218];   //[nhit_len]
+  Int_t           hit_isCommissioned[218];   //[nhit_len]
 
-   // List of branches
-   TBranch        *b_event;   //!
-   TBranch        *b_spill;   //!
-   TBranch        *b_cycle;   //!
-   TBranch        *b_bcid;   //!
-   TBranch        *b_bcid_first_sca_full;   //!
-   TBranch        *b_bcid_merge_end;   //!
-   TBranch        *b_id_run;   //!
-   TBranch        *b_id_dat;   //!
-   TBranch        *b_nhit_slab;   //!
-   TBranch        *b_nhit_chip;   //!
-   TBranch        *b_nhit_chan;   //!
-   TBranch        *b_nhit_len;   //!
-   TBranch        *b_sum_energy;   //!
-   TBranch        *b_sum_energy_lg;   //!
-   TBranch        *b_hit_slab;   //!
-   TBranch        *b_hit_chip;   //!
-   TBranch        *b_hit_chan;   //!
-   TBranch        *b_hit_sca;   //!
-   TBranch        *b_hit_x;   //!
-   TBranch        *b_hit_y;   //!
-   TBranch        *b_hit_z;   //!
-   TBranch        *b_hit_adc_high;   //!
-   TBranch        *b_hit_adc_low;   //!
-   TBranch        *b_hit_energy;   //!
-   TBranch        *b_hit_energy_lg;   //!
-   TBranch        *b_hit_n_scas_filled;   //!
-   TBranch        *b_hit_isHit;   //!
-   TBranch        *b_hit_isMasked;   //!
-   TBranch        *b_hit_isCommissioned;   //!
+  // List of branches
+  TBranch        *b_event;   //!
+  TBranch        *b_spill;   //!
+  TBranch        *b_cycle;   //!
+  TBranch        *b_bcid;   //!
+  TBranch        *b_bcid_first_sca_full;   //!
+  TBranch        *b_bcid_merge_end;   //!
+  TBranch        *b_id_run;   //!
+  TBranch        *b_id_dat;   //!
+  TBranch        *b_nhit_slab;   //!
+  TBranch        *b_nhit_chip;   //!
+  TBranch        *b_nhit_chan;   //!
+  TBranch        *b_nhit_len;   //!
+  TBranch        *b_sum_energy;   //!
+  TBranch        *b_sum_energy_lg;   //!
+  TBranch        *b_hit_slab;   //!
+  TBranch        *b_hit_chip;   //!
+  TBranch        *b_hit_chan;   //!
+  TBranch        *b_hit_sca;   //!
+  TBranch        *b_hit_x;   //!
+  TBranch        *b_hit_y;   //!
+  TBranch        *b_hit_z;   //!
+  TBranch        *b_hit_adc_high;   //!
+  TBranch        *b_hit_adc_low;   //!
+  TBranch        *b_hit_energy;   //!
+  TBranch        *b_hit_energy_lg;   //!
+  TBranch        *b_hit_n_scas_filled;   //!
+  TBranch        *b_hit_isHit;   //!
+  TBranch        *b_hit_isMasked;   //!
+  TBranch        *b_hit_isCommissioned;   //!
 
-   EventControl(TTree *tree=0);
-   virtual ~EventControl();
-   virtual Int_t    Cut(Long64_t entry);
-   virtual Int_t    GetEntry(Long64_t entry);
-   virtual Long64_t LoadTree(Long64_t entry);
-   virtual void     Init(TTree *tree);
-   virtual void     Loop();
-   virtual Bool_t   Notify();
-   virtual void     Show(Long64_t entry = -1);
+  EventControl(TString input_name);
+  virtual ~EventControl();
+  virtual Int_t    Cut(Long64_t entry);
+  virtual Int_t    GetEntry(Long64_t entry);
+  virtual Long64_t LoadTree(Long64_t entry);
+  virtual void     Init(TTree *tree);
+  virtual void     Loop();
+  virtual Bool_t   Notify();
+  virtual void     Show(Long64_t entry = -1);
+
+private:
+  TH1F *h1;
+
 };
 
 #endif
 
 #ifdef EventControl_cxx
-EventControl::EventControl(TTree *tree) : fChain(0) 
-{
-// if parameter tree is not specified (or zero), connect the file
-// used to generate this class and read the Tree.
-   if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("../../data/conv_sim/ECAL_QGSP_BERT_conf6_e-_10.0GeV_converted.root");
-      if (!f || !f->IsOpen()) {
-         f = new TFile("../../data/conv_sim/ECAL_QGSP_BERT_conf6_e-_10.0GeV_converted.root");
-      }
-      f->GetObject("ecal",tree);
 
-   }
+EventControl::EventControl(TString input_name) : fChain(0) 
+{
+   TFile *f = new TFile(input_name);
+   TTree *tree = (TTree*)f->Get("ecal");
    Init(tree);
 }
 
