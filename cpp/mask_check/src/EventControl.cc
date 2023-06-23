@@ -17,6 +17,8 @@ void EventControl::Loop()
     nb = fChain->GetEntry(jentry);   nbytes += nb;
 
     Int_t nhit_len_slab[NSLAB] = {0};
+
+    h_nhit_len->Fill( nhit_len );
     for( int ihit=0; ihit < nhit_len; ihit++ ){
       if( isMaskReq && hit_isMasked[ihit] == 1 ) continue;
 
@@ -31,4 +33,23 @@ void EventControl::Loop()
     }
 
   }
+}
+
+void EventControl::SaveFile(TString output_name)
+{
+  TFile *f = new TFile(output_name,"recreate");
+  h_hit_slab->Write();
+  h_nhit_len->Write();
+
+  TDirectory *dir_nhit_len = f->mkdir("nhit_len");
+  dir_nhit_len->cd();
+  for (int i=0; i<NSLAB; i++) h_nhit_len_slab.at(i)->Write();
+  f->cd();
+
+  TDirectory *dir_hit_xy = f->mkdir("hit_xy");
+  dir_hit_xy->cd();
+  for (int i=0; i<NSLAB; i++) h_hit_xy_slab.at(i)->Write();
+  f->cd();
+
+  f->Close();
 }

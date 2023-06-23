@@ -98,6 +98,7 @@ public :
   virtual void     Loop();
   virtual Bool_t   Notify();
   virtual void     Show(Long64_t entry = -1);
+  virtual void     SaveFile(TString output_name);
 
 private:
   TH1F * h_hit_slab = new TH1F("h_hit_slab", "h_hit_slab", NSLAB, -0.5, 14.5);
