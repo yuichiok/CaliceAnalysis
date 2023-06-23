@@ -143,6 +143,8 @@ void mask_check_analysis()
 
 	const int nene = 7;
 	vector<TCanvas*> c_nhit_len_slab;
+	vector<TCanvas*> c_hit_xy_slab;
+	vector<TCanvas*> c_hit_xy_slab_masked;
 	int l_energy[nene] = {10, 20, 40, 60, 80, 100, 150};
 	for (int ie=0; ie<nene; ie++){
 		TFile *f_rs[2];
@@ -155,16 +157,22 @@ void mask_check_analysis()
 		}
 
 		c_nhit_len_slab.push_back(draw_h_nhit_len_slab(l_energy[ie],f_rs));
+
+    vector<TCanvas*> ctmp = draw_h_hit_xy(l_energy[ie],f_rs);
+    c_hit_xy_slab.push_back(ctmp.at(0));
+    c_hit_xy_slab_masked.push_back(ctmp.at(1));
 	
 	}
 
 
 	MyFile->cd();
-	for (auto const& [key, val] : cmap)
+	
+  for (auto const& [key, val] : cmap)
 	{
 		val->Write();
 		val->Print(outpath+val->GetName()+".png");
 	}
+
 	TDirectory * d_nhit_len_slab = MyFile->mkdir("nhit_len_slab");
 		d_nhit_len_slab->cd();
 		for( auto ic : c_nhit_len_slab ){
@@ -172,6 +180,22 @@ void mask_check_analysis()
 			ic->Print(outpath+"/nhit_len_slab/"+ic->GetName()+".png");
 		}
 		MyFile->cd();
+
+  TDirectory * d_hit_xy_slab = MyFile->mkdir("hit_xy_slab");
+    d_hit_xy_slab->cd();
+    for( auto ic : c_hit_xy_slab ){
+      ic->Write();
+      ic->Print(outpath+"/hit_xy_slab/"+ic->GetName()+".png");
+    }
+    MyFile->cd();
+
+  TDirectory * d_hit_xy_slab_masked = MyFile->mkdir("hit_xy_slab_masked");
+    d_hit_xy_slab_masked->cd();
+    for( auto ic : c_hit_xy_slab_masked ){
+      ic->Write();
+      ic->Print(outpath+"/hit_xy_slab_masked/"+ic->GetName()+".png");
+    }
+    MyFile->cd();
 
 
 }
