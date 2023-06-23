@@ -16,7 +16,8 @@ NtupleProcessor::NtupleProcessor(TString o, int me)
 
     ntupleFile = TFile::Open(filename);
     if(!ntupleFile)  cerr << " [NtupleProcessor] ERROR: Unable to open file " << filename << endl;
-    
+    cout << " [NtupleProcessor] INFO: Opened file " << filename << endl;
+
     TTree *ntuple = (TTree*) ntupleFile->Get("ecal");
     if(!ntuple)      cerr << " [NtupleProcessor] ERROR: Unable to open ttree in " << filename << endl;
     
