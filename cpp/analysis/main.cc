@@ -20,10 +20,11 @@ int main(int argc, char* argv[])
 
   if(argc < 3) cerr << "Error: Arguments missing. (e.g. ./main.exe reco e- 10 for 10 GeV electron)" << endl;
 
-  TString recosim  = argv[1];
-  TString particle = argv[2];
-  TString energy   = argv[3];
-  TString option   = recosim + " " + particle + " " + energy;
+  TString option;
+  for( int i = 1; i <= argc; i++ ){
+    option += argv[i];
+    if( i < argc ) option += " ";
+  }
 
   NtupleProcessor ntplproc(option,-1);
 

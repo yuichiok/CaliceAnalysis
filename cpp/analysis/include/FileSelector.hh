@@ -6,6 +6,8 @@
 #include <TObjString.h>
 #include <map>
 
+using std::map; using std::vector;
+
 class FileSelector
 {
   public:
@@ -18,6 +20,7 @@ class FileSelector
     virtual TString GetParticleName();
 
     virtual void    MakeRunName();
+    virtual TString JoinInputs();
     virtual TString GetRunName();
     virtual TString GetRunName_with_path();
 
@@ -29,8 +32,10 @@ class FileSelector
     TString prefix_reco       = "raw_siwecal_";
     TString prefix_sim        = "ECAL_QGSP_BERT_conf6";
     TString gev               = ".0GeV";
-    TString suffix_build      = "_build.root";
-    TString suffix_conv       = "_converted.root";
+    TString build             = "_build";
+    TString conv              = "_converted";
+    TString masked            = "_masked";
+    TString extension         = ".root";
 
     std::map<std::pair<TString, Int_t>, Int_t > RunMap {
       {std::make_pair("e-", 10),  90320},
@@ -46,7 +51,12 @@ class FileSelector
     Int_t     _runID    ;
     Int_t     _energy   ;
     TString   _recosim  ;
+    TString   _masked   ;
     TString   _particle ;
+
+    vector<TString>       _input_names = {"recosim", "particle", "energy", "masked"};
+    Int_t                 _input_size;
+    map<TString, TString> _inputs;
 
     TString   _runname  ;
 

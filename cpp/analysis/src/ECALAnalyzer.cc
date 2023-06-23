@@ -65,6 +65,10 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
 
   for (int ihit = 0; ihit < _data.nhit_len; ihit++)
   {
+    // mask check
+    if (_data.hit_isMasked[ihit] == 1)
+      continue;
+
     layer_hit_x[_data.hit_slab[ihit]].push_back(_data.hit_x[ihit]);
     layer_hit_y[_data.hit_slab[ihit]].push_back(_data.hit_y[ihit]);
 

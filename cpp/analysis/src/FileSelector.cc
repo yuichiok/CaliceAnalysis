@@ -1,4 +1,6 @@
 #include <iostream>
+#include <filesystem>
+
 #include <TString.h>
 #include <TFile.h> 
 
@@ -13,12 +15,22 @@ FileSelector::FileSelector(TString o)
     tobj_arr = options.Tokenize(" ");
 
   // Extract information (run(reco/sim) particle energy)
-    _recosim  = ((TObjString *)(tobj_arr->At(0)))->String();
-    _particle = ((TObjString *)(tobj_arr->At(1)))->String();
-    _energy   = ((TObjString *)(tobj_arr->At(2)))->String().Atoi();
-    std::pair<TString, Int_t> setup = std::make_pair(_particle, _energy);
+    _input_size = tobj_arr->GetEntriesFast();
+    for( int i = 0; i < tobj_arr->GetEntriesFast(); i++ ){
+      TString input = ((TObjString *)(tobj_arr->At(i)))->String();
+      _inputs[_input_names[i]] = input;
+    }
 
-    if(_recosim.Contains("reco")) _runID = RunMap[setup];
+    std::pair<TString, Int_t> setup = std::make_pair(_inputs["particle"], _inputs["energy"].Atoi());
+
+    if(_inputs["recosim"].Contains("reco")) _runID = RunMap[setup];
+
+    // using std::filesystem::directory_iterator;
+    // std::string directory_path = "../../data/conv_sim/";
+    // for (const auto & file: directory_iterator(directory_path)) {
+    //     cout << file.path() << endl;
+    // }
+
 
     MakeRunName();
 
@@ -31,17 +43,17 @@ Int_t FileSelector::GetRunID()
 
 Int_t FileSelector::GetEnergy()
 {
-  return _energy;
+  return _inputs["energy"].Atoi();
 }
 
 TString FileSelector::GetRecoSim()
 {
-  return _recosim;
+  return _inputs["recosim"];
 }
 
 TString FileSelector::GetParticleName()
 {
-  return _particle;
+  return _inputs["particle"];
 }
 
 TString FileSelector::GetRunName()
@@ -51,18 +63,31 @@ TString FileSelector::GetRunName()
 
 TString FileSelector::GetRunName_with_path()
 {
-  TString title    = data_path + "/" + _recosim + "/" + _runname;
-  TString fullpath = title + suffix_build;
-  if( _recosim == "conv_sim" ) fullpath = title + suffix_conv;
+  TString title    = data_path + "/" + _inputs["recosim"] + "/" + _runname;
+  TString fullpath = title + build;
+  if( _inputs["recosim"] == "conv_sim" ) {
+    fullpath = title + conv;
+    if( _inputs["masked"].Length() ){
+      fullpath += masked;
+    }
+  }
+
+  fullpath += extension;
 
   return  fullpath;
 }
 
+TString FileSelector::JoinInputs()
+{
+  return _inputs["particle"] + "_" + TString::Format("%d.0GeV",_inputs["energy"].Atoi());
+}
+
 void FileSelector::MakeRunName()
 {
-  if(_recosim == "reco"){
-    _runname = prefix_reco + TString::Format("%d",_runID) + "_" + _particle + "_" + _energy + gev;
-  }else if(_recosim.Contains("sim")){
-    _runname = prefix_sim + "_" + _particle + "_" + _energy + gev;
+  if( _inputs["recosim"] == "reco" ){
+    _runname = prefix_reco + TString::Format("%d",_runID) + "_" + JoinInputs();
+  }else if( _inputs["recosim"] == "conv_sim" ){
+    _runname = prefix_sim + "_" + JoinInputs();
   }
+
 }
