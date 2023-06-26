@@ -127,14 +127,16 @@ Sim2Build::Sim2Build(TString options) : fChain(0), fOption(options)
 {
 
    FileSelector fs("sim " + fOption);
-   TString tree_s = fs.GetRunName_with_path();
+   // TString tree_s = fs.GetRunName_with_path();
+   TString tree_s = "../../data/sim/" + fs.GetRunName() + "_build_masked.root";
    std::cout << "Input:  " << tree_s << std::endl;
 
    TFile *f = new TFile(tree_s);
    TTree *tree = (TTree*)f->Get("ecal");
    
    TreeWriter writer;
-   TString outroot = "../../data/conv_sim/" + fs.GetRunName() + "_converted.root";
+   // TString outroot = "../../data/conv_sim/" + fs.GetRunName() + "_converted.root";
+   TString outroot = "../../data/conv_sim/" + fs.GetRunName() + "_converted_masked.root";
    std::cout << "Output: " << outroot << std::endl;
 
    _hfile = new TFile( outroot, "RECREATE", outroot ) ;
@@ -259,8 +261,8 @@ void Sim2Build::Init(TTree *tree)
    fChain->SetBranchAddress("hit_x", &hit_x, &b_hit_x);
    fChain->SetBranchAddress("hit_y", &hit_y, &b_hit_y);
    fChain->SetBranchAddress("hit_z", &hit_z, &b_hit_z);
-   fChain->SetBranchAddress("hit_positron", &hit_positron, &b_hit_positron);
-   fChain->SetBranchAddress("hit_nMC", &hit_nMC, &b_hit_nMC);
+   // fChain->SetBranchAddress("hit_positron", &hit_positron, &b_hit_positron);
+   // fChain->SetBranchAddress("hit_nMC", &hit_nMC, &b_hit_nMC);
    Notify();
 
 }

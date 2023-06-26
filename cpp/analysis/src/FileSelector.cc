@@ -91,7 +91,7 @@ void FileSelector::MakeRunName()
 {
   if( _inputs["recosim"] == "reco" ){
     _runname = prefix_reco + TString::Format("%d",_runID) + "_" + JoinInputs();
-  }else if( _inputs["recosim"] == "conv_sim" ){
+  }else if( _inputs["recosim"] == "conv_sim" || _inputs["recosim"] == "sim" ){
     _runname = prefix_sim + "_" + JoinInputs();
   }
 
