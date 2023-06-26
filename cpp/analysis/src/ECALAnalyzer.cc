@@ -54,7 +54,9 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
   Float_t sum_slab_energy_corrected[NSLABS] = {0};
 
   hm.h1[hm.h_sum_energy]->Fill(_data.sum_energy);
-  hm.h1[hm.h_nhit_len]->Fill(_data.nhit_len);
+
+  // hm.h1[hm.h_nhit_len]->Fill(_data.nhit_len);
+  Int_t hit_counter = 0;
 
   // cout << "================= Event : " << entry << "=================" << endl;
   // cout << "spill: " << _data.spill << " cycle: " << _data.cycle << endl;
@@ -66,8 +68,10 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
   for (int ihit = 0; ihit < _data.nhit_len; ihit++)
   {
     // mask check
-    if (_data.hit_isMasked[ihit] == 1)
+    if (_data.hit_isMasked[ihit] == 1 || _data.hit_energy[ihit] < 1)
       continue;
+
+    hit_counter++;
 
     layer_hit_x[_data.hit_slab[ihit]].push_back(_data.hit_x[ihit]);
     layer_hit_y[_data.hit_slab[ihit]].push_back(_data.hit_y[ihit]);
@@ -90,6 +94,9 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
       hm.h1_layer[hm.h_hit_slab_energy_corrected][ihit_slab]->Fill(_data.hit_energy[ihit]);
     }
   }
+
+  hm.h1[hm.h_nhit_len]->Fill(hit_counter);
+
 
   hm.h1[hm.h_sum_energy_corrected]->Fill(sum_energy_corrected);
 
