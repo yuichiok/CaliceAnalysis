@@ -73,6 +73,8 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
 
     hit_counter++;
 
+    hm.h2_layer[hm.h_hit_slab_xy][_data.hit_slab[ihit]]->Fill(_data.hit_x[ihit], _data.hit_y[ihit]);
+
     layer_hit_x[_data.hit_slab[ihit]].push_back(_data.hit_x[ihit]);
     layer_hit_y[_data.hit_slab[ihit]].push_back(_data.hit_y[ihit]);
 

@@ -41,6 +41,8 @@ void HistManager::InitializeHists()
       TString hname_sum_slab_energy_corrected       = "h_sum_slab_energy_corrected" + TString::Format("%d",islab);
       TString hname_sum_slab_energy_stack_corrected = "h_sum_slab_energy_stack_corrected" + TString::Format("%d",islab);
 
+      TString hname_hit_slab_xy = "h_hit_slab_xy" + TString::Format("%d",islab);
+
       h1_layer[h_hit_slab_energy][islab]            = new TH1F(hname_hit_slab_energy,hname_hit_slab_energy,120,-20,100);
       h1_layer[h_sum_slab_energy][islab]            = new TH1F(hname_sum_slab_energy,hname_sum_slab_energy,500,0,4.0E3);
       h1_layer[h_sum_slab_energy_stack][islab]      = new TH1F(hname_sum_slab_energy_stack,hname_sum_slab_energy_stack,500,0,1.5E4);
@@ -48,6 +50,8 @@ void HistManager::InitializeHists()
       h1_layer[h_hit_slab_energy_corrected][islab]            = new TH1F(hname_hit_slab_energy_corrected,hname_hit_slab_energy_corrected,120,-20,100);
       h1_layer[h_sum_slab_energy_corrected][islab]            = new TH1F(hname_sum_slab_energy_corrected,hname_sum_slab_energy_corrected,500,0,4.0E3);
       h1_layer[h_sum_slab_energy_stack_corrected][islab]      = new TH1F(hname_sum_slab_energy_stack_corrected,hname_sum_slab_energy_stack_corrected,500,0,1.5E4);
+
+      h2_layer[h_hit_slab_xy][islab] = new TH2F(hname_hit_slab_xy,hname_hit_slab_xy,32,-90,90,32,-90,90);
 
     }
 
@@ -69,6 +73,8 @@ void HistManager::Hist2List()
     hList_slab_energy->Add(h1_layer[h_hit_slab_energy_corrected][ih]);
     hList_sum_slab_energy->Add(h1_layer[h_sum_slab_energy_corrected][ih]);
     hList_sum_slab_energy_stack->Add(h1_layer[h_sum_slab_energy_stack_corrected][ih]);
+
+    hList_slab_xy->Add(h2_layer[h_hit_slab_xy][ih]);
   }
 
 }
@@ -94,5 +100,10 @@ void HistManager::WriteLists( TFile * output)
   TDirectory * d_sum_slab_energy_stack = output->mkdir("sum_slab_energy_stack");
     d_sum_slab_energy_stack->cd();
     hList_sum_slab_energy_stack->Write();
+    output->cd();
+
+  TDirectory * d_hit_slab_xy = output->mkdir("hit_slab_xy");
+    d_hit_slab_xy->cd();
+    hList_slab_xy->Write();
     output->cd();
 }

@@ -57,11 +57,20 @@ class HistManager
     };
     TH1F * h1_layer[LastH1_layer][NSLABS];
 
+    enum h2_layer_index{
+      h_hit_slab_xy,
+
+      dummy2_layer,
+      LastH2_layer = dummy2_layer
+    };
+    TH2F * h2_layer[LastH2_layer][NSLABS];
+
   private:
     TList* hList = new TList();
     TList* hList_slab_energy = new TList();
     TList* hList_sum_slab_energy = new TList();
     TList* hList_sum_slab_energy_stack = new TList();
+    TList* hList_slab_xy = new TList();
 
 
 
