@@ -31,6 +31,8 @@ void HistManager::InitializeHists()
 
     h1[h_energy_profile] = new TH1F("h_energy_profile",";X0;dE/dx",100,0,22);
 
+    h1[h_nhit_len_radius] = new TH1F("h_nhit_len_radius","; nhit_len_radius; Entries",700,0,700);
+
     for (int islab = 0; islab < NSLABS; islab++)
     {
       TString hname_hit_slab_energy       = "h_hit_slab_energy" + TString::Format("%d",islab);
@@ -43,6 +45,9 @@ void HistManager::InitializeHists()
 
       TString hname_hit_slab_xy = "h_hit_slab_xy" + TString::Format("%d",islab);
 
+      TString hname_nhit_len_slab = "h_nhit_len_slab" + TString::Format("%d",islab);
+      TString hname_nhit_len_radius_slab = "h_nhit_len_radius_slab" + TString::Format("%d",islab);
+
       h1_layer[h_hit_slab_energy][islab]            = new TH1F(hname_hit_slab_energy,hname_hit_slab_energy,120,-20,100);
       h1_layer[h_sum_slab_energy][islab]            = new TH1F(hname_sum_slab_energy,hname_sum_slab_energy,500,0,4.0E3);
       h1_layer[h_sum_slab_energy_stack][islab]      = new TH1F(hname_sum_slab_energy_stack,hname_sum_slab_energy_stack,500,0,1.5E4);
@@ -52,6 +57,9 @@ void HistManager::InitializeHists()
       h1_layer[h_sum_slab_energy_stack_corrected][islab]      = new TH1F(hname_sum_slab_energy_stack_corrected,hname_sum_slab_energy_stack_corrected,500,0,1.5E4);
 
       h2_layer[h_hit_slab_xy][islab] = new TH2F(hname_hit_slab_xy,hname_hit_slab_xy,32,-90,90,32,-90,90);
+
+      h1_layer[h_nhit_len_slab][islab] = new TH1F(hname_nhit_len_slab,hname_nhit_len_slab,100,0,100);
+      h1_layer[h_nhit_len_radius_slab][islab] = new TH1F(hname_nhit_len_radius_slab,hname_nhit_len_radius_slab,100,0,100);
 
     }
 
@@ -75,6 +83,9 @@ void HistManager::Hist2List()
     hList_sum_slab_energy_stack->Add(h1_layer[h_sum_slab_energy_stack_corrected][ih]);
 
     hList_slab_xy->Add(h2_layer[h_hit_slab_xy][ih]);
+
+    hList_nhit_len->Add(h1_layer[h_nhit_len_slab][ih]);
+    hList_nhit_len->Add(h1_layer[h_nhit_len_radius_slab][ih]);
   }
 
 }
@@ -105,5 +116,10 @@ void HistManager::WriteLists( TFile * output)
   TDirectory * d_hit_slab_xy = output->mkdir("hit_slab_xy");
     d_hit_slab_xy->cd();
     hList_slab_xy->Write();
+    output->cd();
+
+  TDirectory * d_nhit_len_slab = output->mkdir("nhit_len_slab");
+    d_nhit_len_slab->cd();
+    hList_nhit_len->Write();
     output->cd();
 }

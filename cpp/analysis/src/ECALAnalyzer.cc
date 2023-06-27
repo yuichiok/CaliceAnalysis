@@ -57,6 +57,22 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
 
   // hm.h1[hm.h_nhit_len]->Fill(_data.nhit_len);
   Int_t hit_counter = 0;
+  Int_t hit_counter_slab[NSLABS] = {0};
+
+  Float_t set_radius = 0;
+  Float_t origin[2];
+  if(_recosim=="reco"){
+    set_radius = 5;
+    origin[0] = -37;
+    origin[1] = -33;
+  }
+  if(_recosim=="conv_sim"){
+    set_radius = 2.1;
+    origin[0] = -42;
+    origin[1] = -42;
+  }
+  Int_t hit_counter_radius = 0;
+  Int_t hit_coutner_radius_slab[NSLABS] = {0};
 
   // cout << "================= Event : " << entry << "=================" << endl;
   // cout << "spill: " << _data.spill << " cycle: " << _data.cycle << endl;
@@ -72,6 +88,14 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
       continue;
 
     hit_counter++;
+    hit_counter_slab[_data.hit_slab[ihit]]++;
+
+    Float_t radius = sqrt(pow(_data.hit_x[ihit] - origin[0], 2) + pow(_data.hit_y[ihit] - origin[1], 2));
+    if (radius < set_radius)
+    {
+      hit_counter_radius++;
+      hit_coutner_radius_slab[_data.hit_slab[ihit]]++;
+    }
 
     hm.h2_layer[hm.h_hit_slab_xy][_data.hit_slab[ihit]]->Fill(_data.hit_x[ihit], _data.hit_y[ihit]);
 
@@ -98,7 +122,7 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
   }
 
   hm.h1[hm.h_nhit_len]->Fill(hit_counter);
-
+  hm.h1[hm.h_nhit_len_radius]->Fill(hit_counter_radius);
 
   hm.h1[hm.h_sum_energy_corrected]->Fill(sum_energy_corrected);
 
@@ -113,6 +137,9 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
     sum_slab_energy_stack_corrected += sum_slab_energy_corrected[islab];
     hm.h1_layer[hm.h_sum_slab_energy_corrected][islab]->Fill(sum_slab_energy_corrected[islab]);
     hm.h1_layer[hm.h_sum_slab_energy_stack_corrected][islab]->Fill(sum_slab_energy_stack_corrected);
+
+    hm.h1_layer[hm.h_nhit_len_slab][islab]->Fill(hit_counter_slab[islab]);
+    hm.h1_layer[hm.h_nhit_len_radius_slab][islab]->Fill(hit_coutner_radius_slab[islab]);
 
     std::vector<Float_t> iMean_SD_x = Mean_SD(islab, layer_hit_x[islab]);
     std::vector<Float_t> iMean_SD_y = Mean_SD(islab, layer_hit_y[islab]);
@@ -151,11 +178,11 @@ bool ECALAnalyzer::Select()
 { // Evaluates the class' list of event selection criteria
 
   FileSelector fs(options);
-  TString recosim = fs.GetRecoSim();
+  _recosim = fs.GetRecoSim();
   Int_t energy = fs.GetEnergy();
   Int_t nhit_len_th = 0;
 
-  if (recosim == "conv_sim")
+  if (_recosim == "conv_sim")
     return true;
 
   std::pair<Int_t, Int_t> opt_nhit_len_threshold[7] = {

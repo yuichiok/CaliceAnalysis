@@ -50,6 +50,7 @@ class ECALAnalyzer
 
     ECAL_data   _data;
     ECAL_branch _branch;
+    TString    _recosim;
 
 };
 

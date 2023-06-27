@@ -38,6 +38,8 @@ class HistManager
 
       h_energy_profile,
 
+      h_nhit_len_radius,
+
       dummy1,
       LastH1 = dummy1
     };
@@ -51,6 +53,9 @@ class HistManager
       h_hit_slab_energy_corrected,
       h_sum_slab_energy_corrected,
       h_sum_slab_energy_stack_corrected,
+
+      h_nhit_len_slab,
+      h_nhit_len_radius_slab,
 
       dummy1_layer,
       LastH1_layer = dummy1_layer
@@ -68,6 +73,7 @@ class HistManager
   private:
     TList* hList = new TList();
     TList* hList_slab_energy = new TList();
+    TList* hList_nhit_len = new TList();
     TList* hList_sum_slab_energy = new TList();
     TList* hList_sum_slab_energy_stack = new TList();
     TList* hList_slab_xy = new TList();
