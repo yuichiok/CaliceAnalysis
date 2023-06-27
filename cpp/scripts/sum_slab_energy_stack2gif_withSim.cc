@@ -63,7 +63,6 @@ void sum_slab_energy_stack2gif_withSim(TString particle = "e-", Bool_t correct =
 
 	SetStyle();
 
-	TString suffix      = "_quality.root";
 	TString stack       = "sum_slab_energy_stack";
 	TString output_path = "rootfiles/sum_slab_energy_stack2gif/";
 	TString output			= output_path + "reco_conv_sim_" + particle + "_allEStack.gif";
@@ -84,6 +83,11 @@ void sum_slab_energy_stack2gif_withSim(TString particle = "e-", Bool_t correct =
 			FileSelector fs(setting);
 			TString name = fs.GetRunName();
 			TString data_path = "../analysis/rootfiles/" + fs.GetRecoSim() + "/";
+			TString suffix      = "_quality.root";
+			if(fs.GetRecoSim() == "conv_sim"){
+				suffix = "_quality_masked.root";
+			}
+
 			cout << data_path + name + suffix << endl;
 			files[irecosim][ie] = TFile::Open(data_path + name + suffix);
 		}
@@ -133,7 +137,6 @@ void sum_slab_energy_stack2gif(TString recosim  = "reco", TString particle = "e-
 	auto c1 = new TCanvas("c1","The HSUM example",800,800);
 	c1->Divide(3,3);
 
-	TString suffix      = "_quality.root";
 	TString output_path = "rootfiles/sum_slab_energy_stack2gif/";
 	TString stack       = "sum_slab_energy_stack";
 	TString output;
@@ -149,6 +152,10 @@ void sum_slab_energy_stack2gif(TString recosim  = "reco", TString particle = "e-
 		FileSelector fs(setting);
 		TString name = fs.GetRunName();
 		TString data_path = "../analysis/rootfiles/" + fs.GetRecoSim() + "/";
+		TString suffix      = "_quality.root";
+		if(fs.GetRecoSim() == "conv_sim"){
+			suffix = "_quality_masked.root";
+		}
 
 		output = output_path + fs.GetRecoSim() + "_" + fs.GetParticleName() + "_allEStack.gif";
 
