@@ -14,12 +14,12 @@ void rdf_tree(){
   //                       hit_energy > 1    &&\
   //                       hit_isMasked == 0 &&\
   //                       hit_slab == 4");
-  auto df2 = df.Filter("12 < nhit_slab"); //&& hit_energy > 1 && hit_isMasked == 0 && hit_slab == 4");
-  auto df3 = df2.Define("n_good", "Sum( hit_sca < 2 && hit_energy > 1 && hit_isMasked == 0)");
-  auto df4 = df3.Filter("n_good > 0");
+  auto df2 = df.Filter("nhit_slab < 12"); //&& hit_energy > 1 && hit_isMasked == 0 && hit_slab == 4");
+  auto df3 = df2.Define("any_high_sca", "Sum( hit_sca > 2 )");
+  auto df4 = df3.Filter("any_high_sca != 0");
 
   TCanvas *c_nhit_len = new TCanvas("c_nhit_len","c_nhit_len",700,700);
-  auto h_nhit_len = df2.Histo1D({"hit_energy", "nhit_slab;nhit_slab;Entries", 40, 0, 40}, "hit_energy");
+  auto h_nhit_len = df4.Histo1D({"hit_energy", "nhit_slab;nhit_slab;Entries", 40, 0, 40}, "hit_energy");
   h_nhit_len->DrawClone("");
 
 }

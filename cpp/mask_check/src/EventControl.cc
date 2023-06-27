@@ -20,7 +20,7 @@ void EventControl::Loop(Bool_t isMaskReq)
     Int_t nhit_len_slab[NSLAB] = {0};
 
     for( int ihit=0; ihit < nhit_len; ihit++ ){
-      if( isMaskReq && hit_isMasked[ihit] == 1 ) continue;
+      if( (isMaskReq && hit_isMasked[ihit] == 1) || hit_energy[ihit] < 1 ) continue;
       count_nhit_len++;
 
       nhit_len_slab[ hit_slab[ihit] ]++;
