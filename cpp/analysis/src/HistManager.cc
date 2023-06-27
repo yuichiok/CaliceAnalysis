@@ -32,6 +32,7 @@ void HistManager::InitializeHists()
     h1[h_energy_profile] = new TH1F("h_energy_profile",";X0;dE/dx",100,0,22);
 
     h1[h_nhit_len_radius] = new TH1F("h_nhit_len_radius","; nhit_len_radius; Entries",700,0,700);
+    h1[h_sum_energy_radius] = new TH1F("h_sum_energy_radius","; h_sum_energy_radius; Entries",500,0,1.5E4);
 
     for (int islab = 0; islab < NSLABS; islab++)
     {

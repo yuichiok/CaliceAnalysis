@@ -39,6 +39,7 @@ class HistManager
       h_energy_profile,
 
       h_nhit_len_radius,
+      h_sum_energy_radius,
 
       dummy1,
       LastH1 = dummy1

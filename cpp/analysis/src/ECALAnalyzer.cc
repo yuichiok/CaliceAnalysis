@@ -55,31 +55,8 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
 
   hm.h1[hm.h_sum_energy]->Fill(_data.sum_energy);
 
-  // hm.h1[hm.h_nhit_len]->Fill(_data.nhit_len);
   Int_t hit_counter = 0;
   Int_t hit_counter_slab[NSLABS] = {0};
-
-  Float_t set_radius = 0;
-  Float_t origin[2];
-  if(_recosim=="reco"){
-    set_radius = 5;
-    origin[0] = -37;
-    origin[1] = -33;
-  }
-  if(_recosim=="conv_sim"){
-    set_radius = 2.1;
-    origin[0] = -42;
-    origin[1] = -42;
-  }
-  Int_t hit_counter_radius = 0;
-  Int_t hit_coutner_radius_slab[NSLABS] = {0};
-
-  // cout << "================= Event : " << entry << "=================" << endl;
-  // cout << "spill: " << _data.spill << " cycle: " << _data.cycle << endl;
-  // cout << "BCID : " << _data.bcid << " BCID END: " << _data.bcid_merge_end << " BCID First SCA Full: " << _data.bcid_first_sca_full << endl;
-  // cout << "Hit Len " << _data.nhit_len << endl;
-  // cout << "==================================" << endl;
-
 
   for (int ihit = 0; ihit < _data.nhit_len; ihit++)
   {
@@ -90,12 +67,12 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
     hit_counter++;
     hit_counter_slab[_data.hit_slab[ihit]]++;
 
-    Float_t radius = sqrt(pow(_data.hit_x[ihit] - origin[0], 2) + pow(_data.hit_y[ihit] - origin[1], 2));
-    if (radius < set_radius)
-    {
-      hit_counter_radius++;
-      hit_coutner_radius_slab[_data.hit_slab[ihit]]++;
-    }
+    // Float_t radius = sqrt(pow(_data.hit_x[ihit] - origin[0], 2) + pow(_data.hit_y[ihit] - origin[1], 2));
+    // if (radius < set_radius)
+    // {
+    //   hit_counter_radius++;
+    //   hit_coutner_radius_slab[_data.hit_slab[ihit]]++;
+    // }
 
     hm.h2_layer[hm.h_hit_slab_xy][_data.hit_slab[ihit]]->Fill(_data.hit_x[ihit], _data.hit_y[ihit]);
 
@@ -122,7 +99,7 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
   }
 
   hm.h1[hm.h_nhit_len]->Fill(hit_counter);
-  hm.h1[hm.h_nhit_len_radius]->Fill(hit_counter_radius);
+  // hm.h1[hm.h_nhit_len_radius]->Fill(hit_counter_radius);
 
   hm.h1[hm.h_sum_energy_corrected]->Fill(sum_energy_corrected);
 
@@ -139,7 +116,7 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
     hm.h1_layer[hm.h_sum_slab_energy_stack_corrected][islab]->Fill(sum_slab_energy_stack_corrected);
 
     hm.h1_layer[hm.h_nhit_len_slab][islab]->Fill(hit_counter_slab[islab]);
-    hm.h1_layer[hm.h_nhit_len_radius_slab][islab]->Fill(hit_coutner_radius_slab[islab]);
+    // hm.h1_layer[hm.h_nhit_len_radius_slab][islab]->Fill(hit_coutner_radius_slab[islab]);
 
     std::vector<Float_t> iMean_SD_x = Mean_SD(islab, layer_hit_x[islab]);
     std::vector<Float_t> iMean_SD_y = Mean_SD(islab, layer_hit_y[islab]);
@@ -161,6 +138,35 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
       }
 
     }
+  }
+
+  // just for radius analysis
+  Int_t hit_counter_radius = 0;
+  Float_t sum_energy_radius = 0;
+  Int_t hit_coutner_radius_slab[NSLABS] = {0};
+  Float_t set_radius = 0;
+  if(_recosim=="reco"){
+    set_radius = 3.;
+  }
+  if(_recosim=="conv_sim"){
+    set_radius = 2.1;
+  }
+
+  for (int ihit = 0; ihit < _data.nhit_len; ihit++)
+  {
+    Float_t radius = sqrt(pow(_data.hit_x[ihit] - Mean_SD_x.at(_data.hit_slab[ihit]).at(2), 2) + pow(_data.hit_y[ihit] - Mean_SD_y.at(_data.hit_slab[ihit]).at(2), 2));
+    if (radius < set_radius)
+    {
+      hit_counter_radius++;
+      hit_coutner_radius_slab[_data.hit_slab[ihit]]++;
+      sum_energy_radius += _data.hit_energy[ihit];
+    }
+
+  }
+  hm.h1[hm.h_nhit_len_radius]->Fill(hit_counter_radius);
+  hm.h1[hm.h_sum_energy_radius]->Fill(sum_energy_radius);
+  for(int islab=0; islab<NSLABS; islab++){
+    hm.h1_layer[hm.h_nhit_len_radius_slab][islab]->Fill(hit_coutner_radius_slab[islab]);
   }
 
   if( 5 < valid_slabs.size() ){
