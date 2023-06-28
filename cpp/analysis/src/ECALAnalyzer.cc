@@ -38,6 +38,11 @@ bool ECALAnalyzer::MapTree(TTree *tree)
   return true;
 }
 
+Float_t ECALAnalyzer::Radius(Float_t x, Float_t y)
+{
+  return sqrt(x * x + y * y);
+}
+
 void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
 {
   // if( Is_SCA_Maxed() ) return;
@@ -144,17 +149,11 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
   Int_t hit_counter_radius = 0;
   Float_t sum_energy_radius = 0;
   Int_t hit_coutner_radius_slab[NSLABS] = {0};
-  Float_t set_radius = 0;
-  if(_recosim=="reco"){
-    set_radius = 3.;
-  }
-  if(_recosim=="conv_sim"){
-    set_radius = 2.1;
-  }
+  Float_t set_radius = 3;
 
   for (int ihit = 0; ihit < _data.nhit_len; ihit++)
   {
-    Float_t radius = sqrt(pow(_data.hit_x[ihit] - Mean_SD_x.at(_data.hit_slab[ihit]).at(2), 2) + pow(_data.hit_y[ihit] - Mean_SD_y.at(_data.hit_slab[ihit]).at(2), 2));
+    Float_t radius = Radius(_data.hit_x[ihit] - Mean_SD_x.at(_data.hit_slab[ihit]).at(2), _data.hit_y[ihit] - Mean_SD_y.at(_data.hit_slab[ihit]).at(2));
     if (radius < set_radius)
     {
       hit_counter_radius++;
