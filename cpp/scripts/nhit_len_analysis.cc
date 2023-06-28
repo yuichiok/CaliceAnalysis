@@ -59,6 +59,8 @@ void Legend(TH1F *rh,TH1F *sh)
 void Draw2H(TH1F *h, Int_t recosim)
 {
 	if(recosim==0){
+		h->GetXaxis()->SetRangeUser(0,600);
+		h->GetYaxis()->SetRangeUser(0,0.15);
 		h->Draw("h");
 	}else{
 		h->Draw("hsame");
@@ -172,6 +174,7 @@ void analysis_allE( TString particle = "e-" )
 
 			}
 
+			h_nhit_len[irecosim]->Scale(1/h_nhit_len[irecosim]->GetEntries());
 			c_nhit_len->cd(ie+1);
 			Draw2H(h_nhit_len[irecosim],irecosim);
 		}
