@@ -11,6 +11,7 @@ using std::cout;
 using std::endl;
 
 #define MAXV 8
+#define NSLABS 15
 
 void SetStyle()
 {
@@ -59,8 +60,8 @@ void Legend(TH1F *rh,TH1F *sh)
 void Draw2H(TH1F *h, Int_t recosim)
 {
 	if(recosim==0){
-		h->GetXaxis()->SetRangeUser(0,600);
-		h->GetYaxis()->SetRangeUser(0,0.15);
+		// h->GetXaxis()->SetRangeUser(0,600);
+		// h->GetYaxis()->SetRangeUser(0,0.15);
 		h->Draw("h");
 	}else{
 		h->Draw("hsame");
@@ -131,10 +132,11 @@ void analysis_allE( TString particle = "e-" )
 	TFile *MyFile = new TFile("rootfiles/nhit_len_analysis/nhit_len_analysis_" + particle + "_" + ".root","RECREATE");
 	TCanvas *c_nhit_len = new TCanvas("c_nhit_len","c_nhit_len",700,700);
 	c_nhit_len->Divide(3,3);
+	TDirectory *dir_nhit_len_slab = MyFile->mkdir("nhit_len_slab");
 
 	const static int nEconfigs = 7;
-	// TString recosims[2]       = {"conv_sim","reco"};
-	TString recosims[2]       = {"reco","conv_sim"};
+	TString recosims[2]       = {"conv_sim","reco"};
+	// TString recosims[2]       = {"reco","conv_sim"};
 	Int_t energies[nEconfigs] = {10, 20, 40, 60, 80, 100, 150};
 	TFile * files[2][nEconfigs];
 
@@ -150,8 +152,13 @@ void analysis_allE( TString particle = "e-" )
 
 	for (int ie=0; ie < nEconfigs; ie++)
 	{
+		TString c_nhit_len_slab_name = TString::Format("c_nhit_len_slab_%d",ie);
+		TCanvas *c_nhit_len_slab = new TCanvas(c_nhit_len_slab_name,c_nhit_len_slab_name,700,700);
+		c_nhit_len_slab->Divide(4,4);	
 
 		TH1F * h_nhit_len[2];
+		TH1F * h_nhit_len_slab[2][NSLABS];
+	
 		for (int irecosim=0; irecosim < 2; irecosim++)
 		{
 			h_nhit_len[irecosim] = (TH1F*) files[irecosim][ie]->Get("h_nhit_len");
@@ -177,6 +184,29 @@ void analysis_allE( TString particle = "e-" )
 			h_nhit_len[irecosim]->Scale(1/h_nhit_len[irecosim]->GetEntries());
 			c_nhit_len->cd(ie+1);
 			Draw2H(h_nhit_len[irecosim],irecosim);
+
+			for( int islab = 0; islab < NSLABS; islab++ ){
+				
+				TString h_nhit_len_slab_name = TString::Format("nhit_len_slab/h_nhit_len_slab%d",islab);
+				h_nhit_len_slab[irecosim][islab] = (TH1F*) files[irecosim][ie]->Get(h_nhit_len_slab_name);
+
+				MakePretty(h_nhit_len_slab[irecosim][islab],recosims[irecosim]);
+
+				h_nhit_len_slab[irecosim][islab]->SetTitle(TString::Format("Number of total hits at %d GeV in slab %d;nhits; Entries",energies[ie],islab));
+
+				h_nhit_len_slab[irecosim][islab]->Scale(1/h_nhit_len[irecosim]->GetEntries());
+				h_nhit_len_slab[irecosim][islab]->GetYaxis()->SetRangeUser(0,0.2);
+				c_nhit_len_slab->cd(islab+1);
+				Draw2H(h_nhit_len_slab[irecosim][islab],irecosim);
+			}
+
+			c_nhit_len_slab->cd(1);
+			Legend(h_nhit_len_slab[irecosim][1],h_nhit_len_slab[irecosim][0]);
+
+			dir_nhit_len_slab->cd();
+			c_nhit_len_slab->Write();
+			MyFile->cd();
+
 		}
 
 		c_nhit_len->cd(ie+1);
@@ -186,6 +216,7 @@ void analysis_allE( TString particle = "e-" )
 
 	MyFile->cd();
 	c_nhit_len->Write();
+	MyFile->Write();
 	c_nhit_len->Print("rootfiles/nhit_len_analysis/nhit_len_" + particle + "_allE.png");
 
 }
