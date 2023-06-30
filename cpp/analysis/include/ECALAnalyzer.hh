@@ -34,7 +34,7 @@ class ECALAnalyzer
   // Tools
     Bool_t  Is_SCA_Maxed();
     Float_t Radius(Float_t x, Float_t y);
-    virtual std::vector<Float_t> Mean_SD(int slab, std::vector<Float_t> arr);
+    virtual std::vector<Float_t> Mean_SD(int slab, std::vector< std::pair<Float_t,Float_t> > arr);
 
   // Running Variables
     TString  options;  // Options input with TreeIterator.
