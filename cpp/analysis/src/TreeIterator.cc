@@ -64,7 +64,12 @@ Bool_t TreeIterator::Process(Long64_t entry)
     return true;
 }
 
-void TreeIterator::SlaveTerminate(){}
+void TreeIterator::SlaveTerminate()
+{
+  cout << "  [TreeIterator] Total Events:    " << eAnalyzer.total_events << endl;
+  cout << "  [TreeIterator] Selected Events: " << eAnalyzer.selected_events << endl;
+}
+
 void TreeIterator::Terminate()
 {
     FileSelector fs(fOption);
