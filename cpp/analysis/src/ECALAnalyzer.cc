@@ -48,8 +48,8 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
   // if( Is_SCA_Maxed() ) return;
 
   Float_t X0s[NSLABS] = {1.198630137, 2.397260274, 3.595890411, 4.794520548, 5.993150685, 7.191780822, 8.390410959, 9.589041096, 10.78767123, 12.38584475, 13.98401826, 15.58219178, 17.1803653, 18.77853881, 20.37671233};
-  std::vector<Float_t> layer_hit_x[NSLABS];
-  std::vector<Float_t> layer_hit_y[NSLABS];
+  std::vector< std::pair<Float_t,Float_t> > layer_hit_x[NSLABS];
+  std::vector< std::pair<Float_t,Float_t> > layer_hit_y[NSLABS];
 
   Float_t sum_slab_energy_stack = 0;
   Float_t sum_slab_energy[NSLABS] = {0};
@@ -72,17 +72,10 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
     hit_counter++;
     hit_counter_slab[_data.hit_slab[ihit]]++;
 
-    // Float_t radius = sqrt(pow(_data.hit_x[ihit] - origin[0], 2) + pow(_data.hit_y[ihit] - origin[1], 2));
-    // if (radius < set_radius)
-    // {
-    //   hit_counter_radius++;
-    //   hit_coutner_radius_slab[_data.hit_slab[ihit]]++;
-    // }
-
     hm.h2_layer[hm.h_hit_slab_xy][_data.hit_slab[ihit]]->Fill(_data.hit_x[ihit], _data.hit_y[ihit]);
 
-    layer_hit_x[_data.hit_slab[ihit]].push_back(_data.hit_x[ihit]);
-    layer_hit_y[_data.hit_slab[ihit]].push_back(_data.hit_y[ihit]);
+    layer_hit_x[_data.hit_slab[ihit]].push_back( std::make_pair( _data.hit_x[ihit], _data.hit_energy[ihit] ) );
+    layer_hit_y[_data.hit_slab[ihit]].push_back( std::make_pair( _data.hit_y[ihit], _data.hit_energy[ihit] ) );
 
     hm.h1[hm.h_hit_slab]->Fill(_data.hit_slab[ihit]);
     hm.h1[hm.h_hit_energy]->Fill(_data.hit_energy[ihit]);
@@ -104,8 +97,6 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
   }
 
   hm.h1[hm.h_nhit_len]->Fill(hit_counter);
-  // hm.h1[hm.h_nhit_len_radius]->Fill(hit_counter_radius);
-
   hm.h1[hm.h_sum_energy_corrected]->Fill(sum_energy_corrected);
 
   std::vector<std::vector<Float_t>> Mean_SD_x;
@@ -129,44 +120,59 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
     Mean_SD_y.push_back(iMean_SD_y);
   }
 
-  Int_t n_valid_slab = Mean_SD_x.size();
+  
+  Float_t valid_radius = 10;
+  Float_t valid_radius_coordinate[2] = {-42, -42};
+
   std::vector<Int_t> valid_slabs;
-  if(n_valid_slab){
-    for (int islab=0; islab<n_valid_slab; islab++){
+  for (int islab=0; islab<Mean_SD_x.size(); islab++){
 
-      Bool_t is_nhit   =  10 < Mean_SD_x.at(islab).at(1);
-      Bool_t is_sigw_x = ( 15 < Mean_SD_x.at(islab).at(3) ) && ( Mean_SD_x.at(islab).at(3) < 25 );
-      Bool_t is_sigw_y = ( 15 < Mean_SD_y.at(islab).at(3) ) && ( Mean_SD_y.at(islab).at(3) < 25 );
+    Bool_t is_nhit   =  10 < Mean_SD_x.at(islab).at(1);
+    Float_t radius   = Radius( Mean_SD_x.at(islab).at(2) - valid_radius_coordinate[0], Mean_SD_y.at(islab).at(2) - valid_radius_coordinate[1] );
+    Bool_t is_radius = radius < valid_radius;
 
-      if( is_nhit && is_sigw_x && is_sigw_y ){
-        valid_slabs.push_back(Mean_SD_x.at(islab).at(0));
-      }
-
+    if( is_radius ){
+      valid_slabs.push_back(Mean_SD_x.at(islab).at(0));
     }
+
   }
 
   // just for radius analysis
   Int_t hit_counter_radius = 0;
   Float_t sum_energy_radius = 0;
   Int_t hit_coutner_radius_slab[NSLABS] = {0};
-  Float_t set_radius = 3;
+  Float_t set_radius = 10;
 
-  for (int ihit = 0; ihit < _data.nhit_len; ihit++)
-  {
-    Float_t radius = Radius(_data.hit_x[ihit] - Mean_SD_x.at(_data.hit_slab[ihit]).at(2), _data.hit_y[ihit] - Mean_SD_y.at(_data.hit_slab[ihit]).at(2));
-    if (radius < set_radius)
+  Bool_t ind_check0 = Radius( Mean_SD_x.at(0).at(2) - valid_radius_coordinate[0], Mean_SD_y.at(0).at(2) - valid_radius_coordinate[1] ) < valid_radius;
+  Bool_t ind_check1 = Radius( Mean_SD_x.at(1).at(2) - valid_radius_coordinate[0], Mean_SD_y.at(1).at(2) - valid_radius_coordinate[1] ) < valid_radius;
+  Bool_t ind_check2 = Radius( Mean_SD_x.at(2).at(2) - valid_radius_coordinate[0], Mean_SD_y.at(2).at(2) - valid_radius_coordinate[1] ) < valid_radius;
+  
+
+  if( 3 < valid_slabs.size() ){
+    for (int ihit = 0; ihit < _data.nhit_len; ihit++)
     {
-      hit_counter_radius++;
-      hit_coutner_radius_slab[_data.hit_slab[ihit]]++;
-      sum_energy_radius += _data.hit_energy[ihit];
+      Float_t radius = Radius(_data.hit_x[ihit] - Mean_SD_x.at(_data.hit_slab[ihit]).at(2), _data.hit_y[ihit] - Mean_SD_y.at(_data.hit_slab[ihit]).at(2));
+      if (radius < set_radius)
+      {
+        hit_counter_radius++;
+        hit_coutner_radius_slab[_data.hit_slab[ihit]]++;
+        sum_energy_radius += _data.hit_energy[ihit];
+      }
+
+    }
+    hm.h1[hm.h_nhit_len_radius]->Fill(hit_counter_radius);
+    hm.h1[hm.h_sum_energy_radius]->Fill(sum_energy_radius);
+    for(int islab=0; islab<NSLABS; islab++){
+      hm.h1_layer[hm.h_nhit_len_radius_slab][islab]->Fill(hit_coutner_radius_slab[islab]);
     }
 
+    // cout << "hit_counter: " << hit_counter << ", (" << Mean_SD_x.at(0).at(2) << "," << Mean_SD_y.at(0).at(2) << ") (" << Mean_SD_x.at(1).at(2) << "," << Mean_SD_y.at(0).at(2) << ")\n";
+
   }
-  hm.h1[hm.h_nhit_len_radius]->Fill(hit_counter_radius);
-  hm.h1[hm.h_sum_energy_radius]->Fill(sum_energy_radius);
-  for(int islab=0; islab<NSLABS; islab++){
-    hm.h1_layer[hm.h_nhit_len_radius_slab][islab]->Fill(hit_coutner_radius_slab[islab]);
-  }
+
+  // if( 150 < hit_counter ){
+  //   cout << "hit_counter: " << hit_counter << ", (" << Mean_SD_x.at(0).at(2) << "," << Mean_SD_y.at(0).at(2) << ") (" << Mean_SD_x.at(1).at(2) << "," << Mean_SD_y.at(0).at(2) << ")\n";
+  // }
 
   if( 5 < valid_slabs.size() ){
     hm.h1[hm.h_sum_energy_corrected_MeanSD]->Fill(_data.sum_energy);
@@ -215,8 +221,18 @@ bool ECALAnalyzer::Select()
     }
   }
 
-  // if (_data.nhit_len < nhit_len_th)
-  //   return false;
+  // number of hits cut
+  Int_t count_slab[NSLABS] = {0};
+  for( int ihit =0; ihit < _data.nhit_len; ihit++ ){
+    count_slab[_data.hit_slab[ihit]]++;
+  }
+  for( int islab = 0; islab < NSLABS; islab++ ){
+    if( 0 < islab && islab < 8 && count_slab[islab] == 0 ) return false;
+    if( 5 < islab && islab < 9 && count_slab[islab] < 3 )  return false;
+  }
+
+  if (_data.nhit_len < 90)
+    return false;
 
   return true;
 }
@@ -232,10 +248,11 @@ Bool_t ECALAnalyzer::Is_SCA_Maxed()
 
 }
 
-std::vector<Float_t> ECALAnalyzer::Mean_SD(int slab, std::vector<Float_t> arr)
+std::vector<Float_t> ECALAnalyzer::Mean_SD(int slab, std::vector< std::pair<Float_t,Float_t> > arr)
 {
   static std::vector<Float_t> Mean_SD_vec;
-  Float_t sum = 0;
+  Float_t sum_ep = 0;
+  Float_t sum_e = 0;
   Int_t nhits = arr.size();
   Mean_SD_vec = {static_cast<float>(slab), static_cast<float>(nhits), -1000.0, -1000.0};
 
@@ -246,14 +263,15 @@ std::vector<Float_t> ECALAnalyzer::Mean_SD(int slab, std::vector<Float_t> arr)
 
   for (int i = 0; i < nhits; i++)
   {
-    sum += arr.at(i);
+    sum_ep += arr.at(i).first * arr.at(i).second;
+    sum_e  += arr.at(i).second;
   }
 
-  Float_t mean = sum / nhits;
+  Float_t mean = sum_ep / sum_e;
   Float_t sigma = 0;
   for (int i = 0; i < nhits; i++)
   {
-    sigma += pow(arr.at(i) - mean, 2);
+    sigma += pow(arr.at(i).first - mean, 2);
   }
 
   sigma = sqrt(sigma / nhits);
