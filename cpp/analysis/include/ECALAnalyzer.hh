@@ -46,12 +46,15 @@ class ECALAnalyzer
     long entriesInNtuple  ;     // Number of events that were processed to make the Ntuple.
 
   // Fixed size dimensions of array or collections stored in the TTree if any.
+    Int_t total_events;
+    Int_t selected_events;
 
   private:
 
     ECAL_data   _data;
     ECAL_branch _branch;
     TString    _recosim;
+
 
 };
 

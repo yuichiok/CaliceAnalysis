@@ -193,6 +193,8 @@ bool ECALAnalyzer::Select()
   Int_t energy = fs.GetEnergy();
   Int_t nhit_len_th = 0;
 
+  total_events++;
+
   if (_recosim == "conv_sim")
     return true;
 
@@ -233,6 +235,8 @@ bool ECALAnalyzer::Select()
 
   if (_data.nhit_len < 90)
     return false;
+
+  selected_events++;
 
   return true;
 }
