@@ -8,7 +8,7 @@
 #include "include/tools.h"
 
 const static int NSLABS = 15;
-TFile *file = readfile("reco e- 10");
+TFile *file = readfile("conv_sim e- 10");
 
 void draw_profile(TCanvas *c, TH2F *h, Int_t ih, TString option)
 {
@@ -27,8 +27,7 @@ void draw_profile(TCanvas *c, TH2F *h, Int_t ih, TString option)
   h_proj->Draw("h");
 }
 
-template <typename Txy>
-void draw_xy(TCanvas *c, Txy *h, Int_t ih)
+void draw_xy(TCanvas *c, TH2F *h, Int_t ih)
 {
   h->SetTitle(TString::Format("Hit XY e^{-} 10 GeV slab %d;X (mm);Y (mm)",ih));
   c->cd(ih+1);
