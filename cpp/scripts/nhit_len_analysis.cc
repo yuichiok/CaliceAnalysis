@@ -6,6 +6,7 @@
 #include <TStyle.h>
 #include <TCanvas.h>
 #include "../analysis/src/FileSelector.cc"
+#include "include/Styles.h"
 
 using std::cout;
 using std::endl;
@@ -59,13 +60,18 @@ void Legend(TH1F *rh,TH1F *sh)
 
 void Draw2H(TH1F *h, Int_t recosim)
 {
-	if(recosim==0){
-		// h->GetXaxis()->SetRangeUser(0,600);
-		// h->GetYaxis()->SetRangeUser(0,0.15);
+	if(recosim==1){
+		StyleHist(h, kBlue);
 		h->Draw("h");
-	}else{
-		h->Draw("hsame");
 	}
+
+	// if(recosim==0){
+	// 	// h->GetXaxis()->SetRangeUser(0,600);
+	// 	// h->GetYaxis()->SetRangeUser(0,0.15);
+	// 	h->Draw("h");
+	// }else{
+	// 	h->Draw("hsame");
+	// }
 }
 
 TFile * readfile( TString option )
@@ -132,6 +138,8 @@ void analysis_allE( TString particle = "e-" )
 	TFile *MyFile = new TFile("rootfiles/nhit_len_analysis/nhit_len_analysis_" + particle + "_" + ".root","RECREATE");
 	TCanvas *c_nhit_len = new TCanvas("c_nhit_len","c_nhit_len",700,700);
 	c_nhit_len->Divide(3,3);
+	TCanvas *c_nhit_len_1slab = new TCanvas("c_nhit_len_1slab","c_nhit_len_1slab",700,700);
+
 	TDirectory *dir_nhit_len_slab = MyFile->mkdir("nhit_len_slab");
 
 	const static int nEconfigs = 7;
@@ -183,7 +191,17 @@ void analysis_allE( TString particle = "e-" )
 
 			h_nhit_len[irecosim]->Scale(1/h_nhit_len[irecosim]->GetEntries());
 			c_nhit_len->cd(ie+1);
+			StylePad(gPad,0,0.12,0,0.15);
 			Draw2H(h_nhit_len[irecosim],irecosim);
+
+			if(ie==0 && irecosim==1){
+				c_nhit_len_1slab->cd();
+				StylePad(gPad,0,0.12,0,0.15);
+				StyleHist(h_nhit_len[irecosim],kBlue);
+				h_nhit_len[irecosim]->SetTitle("Number of total hits at 10 GeV;nhits; Entries / Event");
+				h_nhit_len[irecosim]->GetXaxis()->SetRangeUser(0,300);
+				h_nhit_len[irecosim]->Draw("hist");
+			}
 
 			for( int islab = 0; islab < NSLABS; islab++ ){
 				
@@ -195,13 +213,15 @@ void analysis_allE( TString particle = "e-" )
 				h_nhit_len_slab[irecosim][islab]->SetTitle(TString::Format("Number of total hits at %d GeV in slab %d;nhits; Entries",energies[ie],islab));
 
 				h_nhit_len_slab[irecosim][islab]->Scale(1/h_nhit_len[irecosim]->GetEntries());
-				h_nhit_len_slab[irecosim][islab]->GetYaxis()->SetRangeUser(0,0.2);
+				h_nhit_len_slab[irecosim][islab]->GetYaxis()->SetRangeUser(0,0.35);
 				c_nhit_len_slab->cd(islab+1);
+				StylePad(gPad,0,0.12,0,0.15);
+				h_nhit_len_slab[irecosim][islab]->GetXaxis()->SetRangeUser(0,30);
 				Draw2H(h_nhit_len_slab[irecosim][islab],irecosim);
 			}
 
 			c_nhit_len_slab->cd(1);
-			Legend(h_nhit_len_slab[irecosim][1],h_nhit_len_slab[irecosim][0]);
+			// Legend(h_nhit_len_slab[irecosim][1],h_nhit_len_slab[irecosim][0]);
 
 			dir_nhit_len_slab->cd();
 			c_nhit_len_slab->Write();
@@ -210,7 +230,7 @@ void analysis_allE( TString particle = "e-" )
 		}
 
 		c_nhit_len->cd(ie+1);
-		Legend(h_nhit_len[1],h_nhit_len[0]);
+		// Legend(h_nhit_len[1],h_nhit_len[0]);
 
 	}
 
