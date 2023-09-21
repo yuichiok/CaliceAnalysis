@@ -8,7 +8,7 @@
 #include "include/tools.h"
 
 const static int NSLABS = 15;
-TFile *file = readfile("conv_sim e- 10");
+TFile *file = readfile("reco e- 20");
 
 void draw_profile(TCanvas *c, TH2F *h, Int_t ih, TString option)
 {

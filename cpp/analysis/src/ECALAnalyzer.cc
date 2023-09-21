@@ -66,7 +66,10 @@ void ECALAnalyzer::Analyze(Long64_t entry, HistManager hm)
   for (int ihit = 0; ihit < _data.nhit_len; ihit++)
   {
     // mask check
-    if (_data.hit_isMasked[ihit] == 1 || _data.hit_energy[ihit] < 1)
+    if (_data.hit_energy[ihit] < 1)
+      continue;
+
+    if (_recosim == "conv_sim" && _data.hit_isMasked[ihit] == 1)
       continue;
 
     hit_counter++;
