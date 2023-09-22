@@ -1,4 +1,5 @@
 #include <iostream>
+#include <unordered_map>
 #include <TString.h>
 #include <TFile.h>
 #include "../include/ECALAnalyzer.hh"
@@ -7,6 +8,7 @@
 
 using std::cout;
 using std::endl;
+using std::unordered_map;
 
 ECALAnalyzer::ECALAnalyzer(TString o)
     : options(o)
@@ -202,13 +204,13 @@ bool ECALAnalyzer::Select()
     return true;
 
   std::pair<Int_t, Int_t> opt_nhit_len_threshold[7] = {
-      std::make_pair(10, 150),
-      std::make_pair(20, 250),
-      std::make_pair(40, 410),
-      std::make_pair(60, 535),
-      std::make_pair(80, 641),
-      std::make_pair(100, 736),
-      std::make_pair(150, 935)};
+      std::make_pair(10, 10),
+      std::make_pair(20, 100),
+      std::make_pair(40, 200),
+      std::make_pair(60, 300),
+      std::make_pair(80, 300),
+      std::make_pair(100, 400),
+      std::make_pair(150, 500)};
 
   if (_data.nhit_slab < 13)
     return false;
@@ -236,8 +238,15 @@ bool ECALAnalyzer::Select()
     if( 5 < islab && islab < 9 && count_slab[islab] < 3 )  return false;
   }
 
-  if (_data.nhit_len < 90)
-    return false;
+  Int_t hitCount = 0;
+  for (int ihit = 0; ihit < _data.nhit_len; ihit++)
+  {
+    if (_data.hit_energy[ihit] < 1)
+      continue;
+    hitCount++;
+  }
+
+  if( hitCount < nhit_len_th ) return false;
 
   selected_events++;
 
