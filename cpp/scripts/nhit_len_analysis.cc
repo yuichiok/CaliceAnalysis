@@ -60,23 +60,17 @@ void Legend(TH1F *rh,TH1F *sh)
 
 void Draw2H(TH1F *h, Int_t recosim)
 {
-	if(recosim==1){
-		StyleHist(h, kBlue);
+	if(recosim==0){
+		h->GetXaxis()->SetRangeUser(0,600);
+		h->GetYaxis()->SetRangeUser(0,0.15);
 		h->Draw("h");
+	}else{
+		h->Draw("hsame");
 	}
-
-	// if(recosim==0){
-	// 	// h->GetXaxis()->SetRangeUser(0,600);
-	// 	// h->GetYaxis()->SetRangeUser(0,0.15);
-	// 	h->Draw("h");
-	// }else{
-	// 	h->Draw("hsame");
-	// }
 }
 
 TFile * readfile( TString option )
 {
-
 	TString suffix      = "_quality.root";
 
 	FileSelector fs(option);
@@ -84,7 +78,7 @@ TFile * readfile( TString option )
 	TString data_path = "../analysis/rootfiles/" + fs.GetRecoSim() + "/";
 
 	if(fs.GetRecoSim() == "conv_sim"){
-		suffix = "_quality_masked.root";
+		// suffix = "_quality_masked.root";
 	}
 
 	cout << data_path + name + suffix << endl;
@@ -136,9 +130,8 @@ void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 void analysis_allE( TString particle = "e-" )
 {
 	TFile *MyFile = new TFile("rootfiles/nhit_len_analysis/nhit_len_analysis_" + particle + "_" + ".root","RECREATE");
-	TCanvas *c_nhit_len = new TCanvas("c_nhit_len","c_nhit_len",700,700);
+	TCanvas *c_nhit_len = new TCanvas("c_nhit_len","c_nhit_len",900,900);
 	c_nhit_len->Divide(3,3);
-	TCanvas *c_nhit_len_1slab = new TCanvas("c_nhit_len_1slab","c_nhit_len_1slab",700,700);
 
 	TDirectory *dir_nhit_len_slab = MyFile->mkdir("nhit_len_slab");
 
@@ -161,7 +154,7 @@ void analysis_allE( TString particle = "e-" )
 	for (int ie=0; ie < nEconfigs; ie++)
 	{
 		TString c_nhit_len_slab_name = TString::Format("c_nhit_len_slab_%d",ie);
-		TCanvas *c_nhit_len_slab = new TCanvas(c_nhit_len_slab_name,c_nhit_len_slab_name,700,700);
+		TCanvas *c_nhit_len_slab = new TCanvas(c_nhit_len_slab_name,c_nhit_len_slab_name,900,900);
 		c_nhit_len_slab->Divide(4,4);	
 
 		TH1F * h_nhit_len[2];
@@ -194,15 +187,6 @@ void analysis_allE( TString particle = "e-" )
 			StylePad(gPad,0,0.12,0,0.15);
 			Draw2H(h_nhit_len[irecosim],irecosim);
 
-			if(ie==0 && irecosim==1){
-				c_nhit_len_1slab->cd();
-				StylePad(gPad,0,0.12,0,0.15);
-				StyleHist(h_nhit_len[irecosim],kBlue);
-				h_nhit_len[irecosim]->SetTitle("Number of total hits at 10 GeV;nhits; Entries / Event");
-				h_nhit_len[irecosim]->GetXaxis()->SetRangeUser(0,300);
-				h_nhit_len[irecosim]->Draw("hist");
-			}
-
 			for( int islab = 0; islab < NSLABS; islab++ ){
 				
 				TString h_nhit_len_slab_name = TString::Format("nhit_len_slab/h_nhit_len_slab%d",islab);
@@ -216,7 +200,7 @@ void analysis_allE( TString particle = "e-" )
 				h_nhit_len_slab[irecosim][islab]->GetYaxis()->SetRangeUser(0,0.35);
 				c_nhit_len_slab->cd(islab+1);
 				StylePad(gPad,0,0.12,0,0.15);
-				h_nhit_len_slab[irecosim][islab]->GetXaxis()->SetRangeUser(0,30);
+				h_nhit_len_slab[irecosim][islab]->GetXaxis()->SetRangeUser(0,100);
 				Draw2H(h_nhit_len_slab[irecosim][islab],irecosim);
 			}
 
