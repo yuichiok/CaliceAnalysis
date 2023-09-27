@@ -11,6 +11,7 @@ TFile * readfile( TString option )
 
 	if(fs.GetRecoSim() == "conv_sim"){
 		suffix = "_quality_masked.root";
+		// suffix = "_quality.root";
 	}
 
 	cout << data_path + name + suffix << endl;
