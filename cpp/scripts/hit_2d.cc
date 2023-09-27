@@ -8,7 +8,8 @@
 #include "include/tools.h"
 
 const static int NSLABS = 15;
-TFile *file = readfile("reco e- 20");
+TString energy = "10";
+TFile *file = readfile("conv_sim e- " + energy);
 
 void draw_profile(TCanvas *c, TH2F *h, Int_t ih, TString option)
 {
@@ -18,9 +19,9 @@ void draw_profile(TCanvas *c, TH2F *h, Int_t ih, TString option)
   else if(option == "y")
     h_proj = (TH1D*)h->ProjectionY("h_proj_" + option + TString::Format("_%d",ih),-90,90);
   else
-    return std::cout << "Invalid option" << std::endl;
+    std::cout << "Invalid option" << std::endl;
 
-  h_proj->SetTitle(TString::Format("Hit Distribution e^{-} 10 GeV slab %d;" + option + " (mm);Entry",ih));
+  h_proj->SetTitle(TString::Format("Hit Distribution e^{-} " + energy + " GeV slab %d;" + option + " (mm);Entry",ih));
   c->cd(ih+1);
   StylePad(gPad,0,0.12,0,0.15);
   StyleHist(h_proj,kBlue);
@@ -29,7 +30,7 @@ void draw_profile(TCanvas *c, TH2F *h, Int_t ih, TString option)
 
 void draw_xy(TCanvas *c, TH2F *h, Int_t ih)
 {
-  h->SetTitle(TString::Format("Hit XY e^{-} 10 GeV slab %d;X (mm);Y (mm)",ih));
+  h->SetTitle(TString::Format("Hit XY e^{-} " + energy + " GeV slab %d;X (mm);Y (mm)",ih));
   c->cd(ih+1);
   StylePad(gPad,0,0.12,0,0.15);
   h->Draw("colz");
@@ -38,11 +39,11 @@ void draw_xy(TCanvas *c, TH2F *h, Int_t ih)
 void hit_2d()
 {
   gStyle->SetOptStat(0);
-  TCanvas *c_xy = new TCanvas("c_xy", "c_xy", 800, 800);
+  TCanvas *c_xy = new TCanvas("c_xy", "c_xy", 900, 900);
   c_xy->Divide(4,4);
-  TCanvas *c_projx = new TCanvas("c_projx", "c_projx", 800, 800);
+  TCanvas *c_projx = new TCanvas("c_projx", "c_projx", 900, 900);
   c_projx->Divide(4,4);
-  TCanvas *c_projy = new TCanvas("c_projy", "c_projy", 800, 800);
+  TCanvas *c_projy = new TCanvas("c_projy", "c_projy", 900, 900);
   c_projy->Divide(4,4);
 
   TH2F *h_xy[NSLABS];
