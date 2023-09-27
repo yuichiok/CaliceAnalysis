@@ -60,6 +60,18 @@ void Legend(TH1F *rh,TH1F *sh)
 
 void Draw2H(TH1F *h, Int_t recosim)
 {
+	// if(recosim==1){
+	// 	StyleHist(h, kBlue);
+	// 	h->Draw("h");
+	// }
+
+	if(recosim==0){
+		h->GetXaxis()->SetRangeUser(0,600);
+		h->GetYaxis()->SetRangeUser(0,0.15);
+		h->Draw("h");
+	}else{
+		h->Draw("hsame");
+	}
 	if(recosim==0){
 		h->GetXaxis()->SetRangeUser(0,600);
 		h->GetYaxis()->SetRangeUser(0,0.15);
@@ -131,6 +143,7 @@ void analysis_allE( TString particle = "e-" )
 {
 	TFile *MyFile = new TFile("rootfiles/nhit_len_analysis/nhit_len_analysis_" + particle + "_" + ".root","RECREATE");
 	TCanvas *c_nhit_len = new TCanvas("c_nhit_len","c_nhit_len",900,900);
+	TCanvas *c_nhit_len = new TCanvas("c_nhit_len","c_nhit_len",900,900);
 	c_nhit_len->Divide(3,3);
 
 	TDirectory *dir_nhit_len_slab = MyFile->mkdir("nhit_len_slab");
@@ -185,6 +198,7 @@ void analysis_allE( TString particle = "e-" )
 			h_nhit_len[irecosim]->Scale(1/h_nhit_len[irecosim]->GetEntries());
 			c_nhit_len->cd(ie+1);
 			StylePad(gPad,0,0.12,0,0.15);
+			// if(recosims[irecosim]== "conv_sim") Draw2H(h_nhit_len[irecosim],irecosim);
 			Draw2H(h_nhit_len[irecosim],irecosim);
 
 			for( int islab = 0; islab < NSLABS; islab++ ){
@@ -200,6 +214,7 @@ void analysis_allE( TString particle = "e-" )
 				h_nhit_len_slab[irecosim][islab]->GetYaxis()->SetRangeUser(0,0.35);
 				c_nhit_len_slab->cd(islab+1);
 				StylePad(gPad,0,0.12,0,0.15);
+				h_nhit_len_slab[irecosim][islab]->GetXaxis()->SetRangeUser(0,100);
 				h_nhit_len_slab[irecosim][islab]->GetXaxis()->SetRangeUser(0,100);
 				Draw2H(h_nhit_len_slab[irecosim][islab],irecosim);
 			}
