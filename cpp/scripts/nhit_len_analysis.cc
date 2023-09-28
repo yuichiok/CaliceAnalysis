@@ -38,7 +38,7 @@ void Normalize(TH1F* h)
 
 void MakePretty(TH1F *h, TString option)
 {
-	h->SetLineWidth(1);
+	h->SetLineWidth(3);
 	if(option == "reco"){
 		h->SetLineColor(kBlue+1);
 	}else{
@@ -90,7 +90,7 @@ TFile * readfile( TString option )
 	TString data_path = "../analysis/rootfiles/" + fs.GetRecoSim() + "/";
 
 	if(fs.GetRecoSim() == "conv_sim"){
-		// suffix = "_quality_masked.root";
+		suffix = "_quality_masked.root";
 	}
 
 	cout << data_path + name + suffix << endl;
@@ -103,6 +103,7 @@ void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 {
 	TFile   *MyFile			  = new TFile("rootfiles/nhit_len_analysis/nhit_len_analysis_" + particle + "_" + ".root","RECREATE");
 	TCanvas *c_nhit_len  = new TCanvas("c_nhit_len" ,"c_nhit_len" ,700,700);
+	gPad->SetGrid(1,1);
 
 	TString recosims[2] = {"conv_sim","reco"};
 	TString energy  = TString::Format("%d",ienergy);
@@ -119,7 +120,7 @@ void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 	{
 		h_nhit_len[irecosim]   = (TH1F*) files[irecosim]->Get("h_nhit_len");
 
-		// Normalize(h_nhit_len[irecosim]);
+		Normalize(h_nhit_len[irecosim]);
 		MakePretty(h_nhit_len[irecosim],recosims[irecosim]);
 
 		h_nhit_len[irecosim]->SetTitle(TString::Format("Number of total hits at %d GeV;nhits; Entries",ienergy));
@@ -142,7 +143,6 @@ void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 void analysis_allE( TString particle = "e-" )
 {
 	TFile *MyFile = new TFile("rootfiles/nhit_len_analysis/nhit_len_analysis_" + particle + "_" + ".root","RECREATE");
-	TCanvas *c_nhit_len = new TCanvas("c_nhit_len","c_nhit_len",900,900);
 	TCanvas *c_nhit_len = new TCanvas("c_nhit_len","c_nhit_len",900,900);
 	c_nhit_len->Divide(3,3);
 
@@ -249,7 +249,8 @@ void nhit_len_analysis(TString particle = "e-", Int_t ienergy = 150)
 	SetStyle();
 
 	if( particle == "e-" ){
-		analysis_allE( particle );
+		// analysis_allE( particle );
+		analysis( particle, 20 );
 	}else if ( particle == "mu-" ){
 		analysis( particle, ienergy );
 	}
