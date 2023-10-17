@@ -38,7 +38,7 @@ void Normalize(TH1F* h)
 
 void MakePretty(TH1F *h, TString option)
 {
-	h->SetLineWidth(1);
+	h->SetLineWidth(3);
 	if(option == "reco"){
 		h->SetLineColor(kBlue+1);
 	}else{
@@ -72,11 +72,17 @@ void Draw2H(TH1F *h, Int_t recosim)
 	}else{
 		h->Draw("hsame");
 	}
+	if(recosim==0){
+		h->GetXaxis()->SetRangeUser(0,600);
+		h->GetYaxis()->SetRangeUser(0,0.15);
+		h->Draw("h");
+	}else{
+		h->Draw("hsame");
+	}
 }
 
 TFile * readfile( TString option )
 {
-
 	TString suffix      = "_quality.root";
 
 	FileSelector fs(option);
@@ -97,6 +103,7 @@ void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 {
 	TFile   *MyFile			  = new TFile("rootfiles/nhit_len_analysis/nhit_len_analysis_" + particle + "_" + ".root","RECREATE");
 	TCanvas *c_nhit_len  = new TCanvas("c_nhit_len" ,"c_nhit_len" ,700,700);
+	gPad->SetGrid(1,1);
 
 	TString recosims[2] = {"conv_sim","reco"};
 	TString energy  = TString::Format("%d",ienergy);
@@ -113,7 +120,7 @@ void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 	{
 		h_nhit_len[irecosim]   = (TH1F*) files[irecosim]->Get("h_nhit_len");
 
-		// Normalize(h_nhit_len[irecosim]);
+		Normalize(h_nhit_len[irecosim]);
 		MakePretty(h_nhit_len[irecosim],recosims[irecosim]);
 
 		h_nhit_len[irecosim]->SetTitle(TString::Format("Number of total hits at %d GeV;nhits; Entries",ienergy));
@@ -138,7 +145,6 @@ void analysis_allE( TString particle = "e-" )
 	TFile *MyFile = new TFile("rootfiles/nhit_len_analysis/nhit_len_analysis_" + particle + "_" + ".root","RECREATE");
 	TCanvas *c_nhit_len = new TCanvas("c_nhit_len","c_nhit_len",900,900);
 	c_nhit_len->Divide(3,3);
-	// TCanvas *c_nhit_len_1slab = new TCanvas("c_nhit_len_1slab","c_nhit_len_1slab",700,700);
 
 	TDirectory *dir_nhit_len_slab = MyFile->mkdir("nhit_len_slab");
 
@@ -209,6 +215,7 @@ void analysis_allE( TString particle = "e-" )
 				c_nhit_len_slab->cd(islab+1);
 				StylePad(gPad,0,0.12,0,0.15);
 				h_nhit_len_slab[irecosim][islab]->GetXaxis()->SetRangeUser(0,100);
+				h_nhit_len_slab[irecosim][islab]->GetXaxis()->SetRangeUser(0,100);
 				Draw2H(h_nhit_len_slab[irecosim][islab],irecosim);
 			}
 
@@ -242,7 +249,8 @@ void nhit_len_analysis(TString particle = "e-", Int_t ienergy = 150)
 	SetStyle();
 
 	if( particle == "e-" ){
-		analysis_allE( particle );
+		// analysis_allE( particle );
+		analysis( particle, 20 );
 	}else if ( particle == "mu-" ){
 		analysis( particle, ienergy );
 	}
