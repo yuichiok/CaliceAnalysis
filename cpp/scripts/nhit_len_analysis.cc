@@ -185,6 +185,7 @@ void analysis_allE( TString particle = "e-" )
 			h_nhit_len[irecosim]->Scale(1/h_nhit_len[irecosim]->GetEntries());
 			c_nhit_len->cd(ie+1);
 			StylePad(gPad,0,0.12,0,0.15);
+			// if(recosims[irecosim]== "conv_sim") Draw2H(h_nhit_len[irecosim],irecosim);
 			Draw2H(h_nhit_len[irecosim],irecosim);
 
 			for( int islab = 0; islab < NSLABS; islab++ ){

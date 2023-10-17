@@ -1,4 +1,5 @@
 #include <iostream>
+#include <unordered_map>
 #include <TString.h>
 #include <TFile.h>
 #include "../include/ECALAnalyzer.hh"
@@ -7,6 +8,7 @@
 
 using std::cout;
 using std::endl;
+using std::unordered_map;
 
 ECALAnalyzer::ECALAnalyzer(TString o)
     : options(o)
