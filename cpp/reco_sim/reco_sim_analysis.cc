@@ -40,6 +40,7 @@ void readfiles(string particle, int energy, TFile *f_rs[])
 	std::map<int, std::string> run_list {
 		{10, "90320"},
 		{20, "90378"},
+		// {20, "90282"},
 		{40, "90375"},
 		{60, "90372"},
 		{80, "90367"},

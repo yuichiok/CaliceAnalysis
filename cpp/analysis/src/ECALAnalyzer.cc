@@ -246,7 +246,7 @@ bool ECALAnalyzer::Select()
     hitCount++;
   }
 
-  if( hitCount < nhit_len_th ) return false;
+  // if( hitCount < nhit_len_th ) return false;
 
   selected_events++;
 

@@ -41,6 +41,7 @@ class FileSelector
     std::map<std::pair<TString, Int_t>, Int_t > RunMap {
       {std::make_pair("e-", 10),  90320},
       {std::make_pair("e-", 20),  90378},
+      // {std::make_pair("e-", 20),  90282},
       {std::make_pair("e-", 40),  90375},
       {std::make_pair("e-", 60),  90372},
       {std::make_pair("e-", 80),  90367},
