@@ -52,10 +52,13 @@ void readfiles(string particle, int energy, TFile *f_rs[])
 	TString reco_name	= "raw_siwecal_" + run_list[energy];
 	TString sim_name  = "ECAL_QGSP_BERT_conf6";
 	
-	TString common_name = "_" + particle + "_" + to_string(energy) + ".0GeV_quality.root";
+	TString common_name = "_" + particle + "_" + to_string(energy);
 
-	TString reco_file = reco_path + reco_name + common_name;
-	TString sim_file  = sim_path  + sim_name  + common_name;
+	TString reco_suffix = ".0GeV_quality.root";
+	TString sim_suffix  = ".0GeV_quality_masked.root";
+
+	TString reco_file = reco_path + reco_name + common_name + reco_suffix;
+	TString sim_file  = sim_path  + sim_name  + common_name + sim_suffix;
 
 	cout << "reco file: " << reco_file << endl;
 	cout << " sim file: " << sim_file  << endl;

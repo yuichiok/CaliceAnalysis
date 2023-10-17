@@ -98,6 +98,7 @@ TFile * readfile( TString option )
 	TString data_path = "../analysis/rootfiles/" + fs.GetRecoSim() + "/";
 	if(fs.GetRecoSim() == "conv_sim"){
 		suffix = "_quality_masked.root";
+		// suffix = "_quality.root";
 	}
 
 	cout << data_path + name + suffix << endl;
@@ -171,8 +172,6 @@ void analysis_allE( TString particle = "e-" )
 	c_sum_energy->Divide(3,3);
 	TCanvas *c_nhit_slab = new TCanvas("c_nhit_slab","c_nhit_slab",700,700);
 	c_nhit_slab->Divide(3,3);
-	TCanvas *c_nhit_slab_1slab = new TCanvas("c_nhit_slab_1slab","c_nhit_slab_1slab",700,700);
-	TCanvas *c_sum_energy_1slab = new TCanvas("c_sum_energy_1slab","c_sum_energy_1slab",700,700);
 
 	const static int nEconfigs = 7;
 	TString recosims[2]       = {"conv_sim","reco"};
@@ -208,8 +207,9 @@ void analysis_allE( TString particle = "e-" )
 			Int_t NHits   = hs_hit_slab[irecosim]->GetEntries();
 			cout << "NEvents: " << NEvents << " NHits: " << NHits << " Hits/Events = " << (Float_t) NHits / (Float_t) NEvents << endl;
 
-			// Normalize(hs_sum_energy[irecosim]);
+			Normalize(hs_sum_energy[irecosim]);
 			MakePretty(hs_sum_energy[irecosim],recosims[irecosim]);
+			hs_sum_energy[irecosim]->GetXaxis()->SetRangeUser(1,5E3);
 
 			// Normalize(hs_hit_slab[irecosim]);
 			hs_hit_slab[irecosim]->Scale((Float_t)1/(Float_t)NEvents);
@@ -222,51 +222,6 @@ void analysis_allE( TString particle = "e-" )
 			Draw2H(hs_sum_energy[irecosim],irecosim);
 			c_nhit_slab->cd(ie+1);
 			Draw2H(hs_hit_slab[irecosim],irecosim);
-
-			if(ie==0 && irecosim==1){
-				c_nhit_slab_1slab->cd();
-				StylePad(gPad,0,0.12,0,0.15);
-				StyleHist(hs_hit_slab[irecosim],kBlue);
-				hs_hit_slab[irecosim]->SetTitle("Hits per layer at 10 GeV;Layer; Entries / Event");
-				hs_hit_slab[irecosim]->GetXaxis()->SetRangeUser(0,300);
-				hs_hit_slab[irecosim]->Draw("hist");
-
-				c_sum_energy_1slab->cd();
-				StylePad(gPad,0,0.12,0,0.15);
-				StyleHist(hs_sum_energy[irecosim],kBlue);
-				hs_sum_energy[irecosim]->Scale(1./NEvents);
-
-				// TF1* crystalball = new TF1("crystalball", crystalball_function, 200, 1200, 5) ;
-				// crystalball->SetParNames("Constant", "Mean", "Sigma", "Alpha", "N");
-				// crystalball->SetTitle("crystalball");
-				// crystalball->SetLineColor(kBlue);
-				// crystalball->SetLineWidth(6);
-				// float p0 = 0.14;
-				// float p1 = hs_sum_energy[irecosim]->GetMean();
-				// float p2 = 100;
-				// float p3 = -2.05;
-				// float p4 = 3.0;
-				// crystalball->SetParameters(p0,p1,p2,p3,p4);
-				// hs_sum_energy[irecosim]->Fit(crystalball,"MN");
-
-				TF1* fgaus = new TF1("fgaus","gaus",200,1200);
-				fgaus->SetLineColor(kBlue);
-				fgaus->SetLineWidth(6);
-				hs_sum_energy[irecosim]->Fit(fgaus,"MN");
-
-				hs_sum_energy[irecosim]->SetTitle("Total Hit Energy at 10 GeV;Energy (MIP); Entries / Event");
-				hs_sum_energy[irecosim]->GetXaxis()->SetRangeUser(0,2000);
-				hs_sum_energy[irecosim]->Draw("hist");
-				fgaus->Draw("same");
-
-				// TLegend *leg0 = new TLegend(0.5,0.65,0.75,0.75,"","brNDC");
-				// // leg0->SetFillStyle(0);
-				// leg0->SetBorderSize(0);
-				// leg0->SetTextSize(0.03);
-				// leg0->AddEntry(fgaus,"  #sigma / #mu = 15.7%","l");
-				// leg0->Draw("same");
-
-			}
 
 		}
 

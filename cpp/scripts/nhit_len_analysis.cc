@@ -60,11 +60,6 @@ void Legend(TH1F *rh,TH1F *sh)
 
 void Draw2H(TH1F *h, Int_t recosim)
 {
-	// if(recosim==1){
-	// 	StyleHist(h, kBlue);
-	// 	h->Draw("h");
-	// }
-
 	if(recosim==0){
 		h->GetXaxis()->SetRangeUser(0,600);
 		h->GetYaxis()->SetRangeUser(0,0.15);
@@ -76,7 +71,6 @@ void Draw2H(TH1F *h, Int_t recosim)
 
 TFile * readfile( TString option )
 {
-
 	TString suffix      = "_quality.root";
 
 	FileSelector fs(option);
@@ -84,7 +78,7 @@ TFile * readfile( TString option )
 	TString data_path = "../analysis/rootfiles/" + fs.GetRecoSim() + "/";
 
 	if(fs.GetRecoSim() == "conv_sim"){
-		suffix = "_quality_masked.root";
+		// suffix = "_quality_masked.root";
 	}
 
 	cout << data_path + name + suffix << endl;
@@ -138,7 +132,6 @@ void analysis_allE( TString particle = "e-" )
 	TFile *MyFile = new TFile("rootfiles/nhit_len_analysis/nhit_len_analysis_" + particle + "_" + ".root","RECREATE");
 	TCanvas *c_nhit_len = new TCanvas("c_nhit_len","c_nhit_len",900,900);
 	c_nhit_len->Divide(3,3);
-	// TCanvas *c_nhit_len_1slab = new TCanvas("c_nhit_len_1slab","c_nhit_len_1slab",700,700);
 
 	TDirectory *dir_nhit_len_slab = MyFile->mkdir("nhit_len_slab");
 

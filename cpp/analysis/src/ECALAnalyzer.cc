@@ -200,8 +200,20 @@ bool ECALAnalyzer::Select()
 
   total_events++;
 
-  if (_recosim == "conv_sim")
-    return true;
+  Int_t hitCount = 0;
+  Int_t count_slab[NSLABS] = {0};
+  for(int ihit = 0; ihit < _data.nhit_len; ihit++){
+    if (_data.hit_energy[ihit] < 1)
+      continue;
+    if (_recosim == "conv_sim" && _data.hit_isMasked[ihit] == 1)
+      continue;
+    hitCount++;
+    count_slab[_data.hit_slab[ihit]]++;
+  }
+
+  if (_recosim == "conv_sim"){
+    return (hitCount != 0);
+  }
 
   std::pair<Int_t, Int_t> opt_nhit_len_threshold[7] = {
       std::make_pair(10, 10),
@@ -229,24 +241,16 @@ bool ECALAnalyzer::Select()
   }
 
   // number of hits cut
-  Int_t count_slab[NSLABS] = {0};
-  for( int ihit =0; ihit < _data.nhit_len; ihit++ ){
-    count_slab[_data.hit_slab[ihit]]++;
-  }
   for( int islab = 0; islab < NSLABS; islab++ ){
     if( 0 < islab && islab < 8 && count_slab[islab] == 0 ) return false;
     if( 5 < islab && islab < 9 && count_slab[islab] < 3 )  return false;
   }
 
-  Int_t hitCount = 0;
-  for (int ihit = 0; ihit < _data.nhit_len; ihit++)
-  {
-    if (_data.hit_energy[ihit] < 1)
-      continue;
-    hitCount++;
-  }
+  // if (hitCount < nhit_len_th)
+  //   return false;
 
-  if( hitCount < nhit_len_th ) return false;
+  if (_data.nhit_len < 90)
+    return false;
 
   selected_events++;
 
