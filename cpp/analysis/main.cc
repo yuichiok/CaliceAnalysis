@@ -19,6 +19,7 @@ int main(int argc, char* argv[])
 {
 
   if(argc < 3) cerr << "Error: Arguments missing. (e.g. ./main.exe reco e- 10 for 10 GeV electron)" << endl;
+  // ./main.exe conv_sim e- 10 masked
 
   TString option;
   for( int i = 1; i <= argc; i++ ){
