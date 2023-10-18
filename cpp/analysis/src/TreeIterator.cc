@@ -81,5 +81,6 @@ void TreeIterator::Terminate()
     cout << "  [TreeIterator] Output: " << outname << endl;
 
     hm.WriteLists(outfile);
+    outfile->Close();
 
 }
