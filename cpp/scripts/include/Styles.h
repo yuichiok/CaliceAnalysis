@@ -7,7 +7,7 @@ using std::vector;
 template <class P1>
 void StylePad(P1 *pad, Float_t t, Float_t b, Float_t r, Float_t l)
 {
-  pad->SetGrid(1,1);
+  // pad->SetGrid(1,1);
   if(t) pad->SetTopMargin(t);
   if(b) pad->SetBottomMargin(b);
   if(r) pad->SetRightMargin(r);

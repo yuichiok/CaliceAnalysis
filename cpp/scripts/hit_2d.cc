@@ -24,6 +24,7 @@ void draw_profile(TCanvas *c, TH2F *h, Int_t ih, TString option)
   h_proj->SetTitle(TString::Format("Hit Distribution e^{-} " + energy + " GeV slab %d;" + option + " (mm);Entry",ih));
   c->cd(ih+1);
   StylePad(gPad,0,0.12,0,0.15);
+  gPad->SetGrid();
   StyleHist(h_proj,kBlue);
   h_proj->Draw("h");
 }
@@ -32,18 +33,19 @@ void draw_xy(TCanvas *c, TH2F *h, Int_t ih)
 {
   h->SetTitle(TString::Format("Hit XY e^{-} " + energy + " GeV slab %d;X (mm);Y (mm)",ih));
   c->cd(ih+1);
-  StylePad(gPad,0,0.12,0,0.15);
+  StylePad(gPad,0,0.12,0.12,0.15);
+  h->GetZaxis()->SetTitle("Hits");
   h->Draw("colz");
 }
 
 void hit_2d()
 {
   gStyle->SetOptStat(0);
-  TCanvas *c_xy = new TCanvas("c_xy", "c_xy", 900, 900);
+  TCanvas *c_xy = new TCanvas("c_xy", "c_xy", 1200, 1200);
   c_xy->Divide(4,4);
-  TCanvas *c_projx = new TCanvas("c_projx", "c_projx", 900, 900);
+  TCanvas *c_projx = new TCanvas("c_projx", "c_projx", 1200, 1200);
   c_projx->Divide(4,4);
-  TCanvas *c_projy = new TCanvas("c_projy", "c_projy", 900, 900);
+  TCanvas *c_projy = new TCanvas("c_projy", "c_projy", 1200, 1200);
   c_projy->Divide(4,4);
 
   TH2F *h_xy[NSLABS];
