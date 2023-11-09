@@ -192,7 +192,7 @@ void analysis_allE( TString particle = "e-" )
 				cout << "Fit at "  << energies[ie] << ".0GeV ====\n"
 						 << "  mean : " << mean  << "\n"
 						 << "  sigma: " << sigma << "\n"
-						 << "  mean - sigma = " << mean - sigma << endl;
+						 << "  mean - 5*sigma = " << mean - 5*sigma << endl;
 
 			}
 
@@ -245,7 +245,7 @@ void analysis_allE_sim( TString particle = "e-" )
 {
 
 	TCanvas *c_nhit_len_sim = new TCanvas("c_nhit_len_sim","c_nhit_len_sim",800,800);
-	THStack *hs_nhit_len_sim = new THStack("hs_nhit_len_sim",";Total hits;Entries (norm.)");
+	THStack *hs_nhit_len_sim = new THStack("hs_nhit_len_sim",";Total hits / event;Entries (norm.)");
 
 	for(auto ienergy : energies){
 		TString energy  = TString::Format("%d",ienergy);
@@ -272,7 +272,9 @@ void analysis_allE_sim( TString particle = "e-" )
 	leg0->SetBorderSize(0);
 	leg0->SetTextSize(0.02);
 	for (auto ienergy : energies){
-		leg0->AddEntry(hs_nhit_len_sim->GetHists()->FindObject(TString::Format("%d GeV",ienergy)),TString::Format("%d GeV",ienergy));
+		TString space = "";
+		if(ienergy<100) space = "  ";
+		leg0->AddEntry(hs_nhit_len_sim->GetHists()->FindObject(TString::Format("%d GeV",ienergy)),TString::Format(space + "%d GeV",ienergy));
 	}
 	leg0->Draw("same");
 
@@ -288,6 +290,7 @@ void nhit_len_analysis(TString particle = "e-", Int_t ienergy = 10)
 	if( particle == "e-" ){
 		// analysis_allE( particle );
 		analysis( particle, ienergy );
+		analysis_allE();
 		analysis_allE_sim( particle );
 	}else if ( particle == "mu-" ){
 		analysis( particle, ienergy );
