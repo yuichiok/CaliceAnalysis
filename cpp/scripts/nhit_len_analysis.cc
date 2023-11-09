@@ -14,6 +14,9 @@ using std::endl;
 #define MAXV 8
 #define NSLABS 15
 
+const static int nEconfigs = 7;
+Int_t energies[nEconfigs] = {10, 20, 40, 60, 80, 100, 150};
+
 void SetStyle()
 {
 	gStyle->SetOptFit(0);
@@ -148,10 +151,8 @@ void analysis_allE( TString particle = "e-" )
 
 	TDirectory *dir_nhit_len_slab = MyFile->mkdir("nhit_len_slab");
 
-	const static int nEconfigs = 7;
 	TString recosims[2]       = {"conv_sim","reco"};
 	// TString recosims[2]       = {"reco","conv_sim"};
-	Int_t energies[nEconfigs] = {10, 20, 40, 60, 80, 100, 150};
 	TFile * files[2][nEconfigs];
 
 	for (int irecosim=0; irecosim < 2; irecosim++)
@@ -240,6 +241,42 @@ void analysis_allE( TString particle = "e-" )
 
 }
 
+void analysis_allE_sim( TString particle = "e-" )
+{
+
+	TCanvas *c_nhit_len_sim = new TCanvas("c_nhit_len_sim","c_nhit_len_sim",800,800);
+	THStack *hs_nhit_len_sim = new THStack("hs_nhit_len_sim",";Total hits;Entries (norm.)");
+
+	for(auto ienergy : energies){
+		TString energy  = TString::Format("%d",ienergy);
+		TString setting = "conv_sim " + particle + " " + energy;
+		TFile *file = readfile(setting);
+		TH1F * h_nhit_len = (TH1F*) file->Get("h_nhit_len");
+		Normalize(h_nhit_len);
+		h_nhit_len->SetFillStyle(3004);
+		h_nhit_len->SetLineWidth(3);
+		h_nhit_len->SetName(TString::Format("%d GeV",ienergy));
+		hs_nhit_len_sim->Add(h_nhit_len);
+	}
+
+	gStyle->SetPalette(55);
+
+	c_nhit_len_sim->cd();
+	c_nhit_len_sim->SetGrid();
+	hs_nhit_len_sim->Draw("HIST nostack plc pfc");
+	hs_nhit_len_sim->GetXaxis()->SetLimits(0,1E3);
+	c_nhit_len_sim->Draw();
+
+	TLegend *leg0 = new TLegend(0.6,0.85,0.75,0.65,"","brNDC");
+	leg0->SetFillStyle(0);
+	leg0->SetBorderSize(0);
+	leg0->SetTextSize(0.02);
+	for (auto ienergy : energies){
+		leg0->AddEntry(hs_nhit_len_sim->GetHists()->FindObject(TString::Format("%d GeV",ienergy)),TString::Format("%d GeV",ienergy));
+	}
+	leg0->Draw("same");
+
+}
 
 void nhit_len_analysis(TString particle = "e-", Int_t ienergy = 10)
 {
@@ -251,6 +288,7 @@ void nhit_len_analysis(TString particle = "e-", Int_t ienergy = 10)
 	if( particle == "e-" ){
 		// analysis_allE( particle );
 		analysis( particle, ienergy );
+		analysis_allE_sim( particle );
 	}else if ( particle == "mu-" ){
 		analysis( particle, ienergy );
 	}
