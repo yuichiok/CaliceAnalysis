@@ -9,7 +9,8 @@
 
 const static int NSLABS = 15;
 TString energy = "10";
-TFile *file = readfile("conv_sim e- " + energy);
+// TFile *file = readfile("conv_sim e- " + energy);
+TFile *file = readfile("reco e- " + energy);
 
 void fit_hit(TH1D *h, Int_t ih)
 {
@@ -94,7 +95,7 @@ void draw_xy(TCanvas *c, TH2F *h, Int_t ih)
 void hit_2d()
 {
   gStyle->SetOptStat(0);
-  gStyle->SetOptFit(1);
+  gStyle->SetOptFit(11);
   TCanvas *c_xy = new TCanvas("c_xy", "c_xy", 1200, 1200);
   c_xy->Divide(4,4);
   TCanvas *c_projx = new TCanvas("c_projx", "c_projx", 1200, 1200);
