@@ -241,7 +241,7 @@ void analysis_allE( TString particle = "e-" )
 }
 
 
-void nhit_len_analysis(TString particle = "e-", Int_t ienergy = 150)
+void nhit_len_analysis(TString particle = "e-", Int_t ienergy = 10)
 {
 
 	TGaxis::SetMaxDigits(3);
@@ -250,7 +250,7 @@ void nhit_len_analysis(TString particle = "e-", Int_t ienergy = 150)
 
 	if( particle == "e-" ){
 		// analysis_allE( particle );
-		analysis( particle, 20 );
+		analysis( particle, ienergy );
 	}else if ( particle == "mu-" ){
 		analysis( particle, ienergy );
 	}
