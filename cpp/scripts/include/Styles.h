@@ -20,7 +20,7 @@ void StylePad(P1 *pad, Float_t t, Float_t b, Float_t r, Float_t l)
 template <class H>
 void StyleHist(H *h, Color_t col)
 {
-  h->SetLineWidth(3);
+  h->SetLineWidth(2);
   h->SetLineColor(col);
   h->SetFillStyle(3002);
   h->SetFillColor(col);
