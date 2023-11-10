@@ -179,6 +179,26 @@ void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 
 		Draw2E(hs_sum_energy[irecosim],irecosim);
 		crystalball->Draw("same");
+
+		TLatex *latex = new TLatex();
+		latex->SetTextSize(0.025);
+		latex->SetTextAlign(13);  //align at top
+
+		TString recosim = (irecosim==0) ? "Simulation" : "Reconstruction"; 
+		TString text = TString::Format("#splitline{#splitline{#splitline{%s}{#mu_{E} = %.1f #pm %.1f}}{#sigma_{E} = %.1f #pm %.1f}}{#chi^{2}/ndf = %.1f/%d = %.1f}",
+		recosim.Data(),
+		crystalball->GetParameter(1), crystalball->GetParError(1),
+		crystalball->GetParameter(2), crystalball->GetParError(2),
+		crystalball->GetChisquare(), crystalball->GetNDF(), crystalball->GetChisquare() / crystalball->GetNDF()
+		);
+
+		if(irecosim==0){
+			latex->DrawLatex(807,0.285,text);
+		}else{
+			latex->DrawLatex(807,0.222,text);
+		}
+
+
 		c_nhit_slab->cd();
 		StylePad(gPad,0,0.12,0,0.15);
 		Draw2H(hs_hit_slab[irecosim]  ,irecosim);
