@@ -93,9 +93,8 @@ TFile * readfile( TString option )
 
 void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 {
-	// TFile   *MyFile			  = new TFile("rootfiles/nhit_len_analysis/nhit_len_analysis_" + particle + "_" + ".root","RECREATE");
-	TCanvas *c_nhit_len  = new TCanvas("c_nhit_len_single" ,"c_nhit_len_single" ,700,700);
-	// gPad->SetGrid(1,1);
+	TCanvas *c_nhit_len  = new TCanvas("c_nhit_len_single" ,"c_nhit_len_single" ,900,900);
+	TCanvas *c_nhit_len_slab  = new TCanvas("c_nhit_len_slab" ,"c_nhit_len_slab" ,900,900);
 
 	TString recosims[2] = {"conv_sim","reco"};
 	TString energy  = TString::Format("%d",ienergy);
@@ -108,14 +107,21 @@ void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 	}
 
 	TH1F * h_nhit_len[2];
+	TH1F * h_nhit_len_slab[2];
 	for (int irecosim=0; irecosim < 2; irecosim++)
 	{
 		h_nhit_len[irecosim]   = (TH1F*) files[irecosim]->Get("h_nhit_len");
+		h_nhit_len_slab[irecosim] = (TH1F*) files[irecosim]->Get("nhit_len_slab/h_nhit_len_slab3");
 
 		Normalize(h_nhit_len[irecosim]);
 		MakePretty(h_nhit_len[irecosim],recosims[irecosim]);
 
+		Normalize(h_nhit_len_slab[irecosim]);
+		MakePretty(h_nhit_len_slab[irecosim],recosims[irecosim]);
+
+
 		h_nhit_len[irecosim]->SetTitle(";Hits;Entries (norm.)");
+		h_nhit_len_slab[irecosim]->SetTitle(";Hits;Entries (norm.)");
 
 		c_nhit_len->cd();
 		gPad->SetGrid();
@@ -123,15 +129,25 @@ void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 		h_nhit_len[irecosim]->GetXaxis()->SetRangeUser(0,250);
 		h_nhit_len[irecosim]->GetYaxis()->SetRangeUser(0,0.1);
 		Draw2H(h_nhit_len[irecosim],irecosim);
+
+		c_nhit_len_slab->cd();
+		gPad->SetGrid();
+		StylePad(gPad,0,0.12,0,0.15);
+		h_nhit_len_slab[irecosim]->GetXaxis()->SetRangeUser(0,30);
+		h_nhit_len_slab[irecosim]->GetYaxis()->SetRangeUser(0,0.15);
+		Draw2H(h_nhit_len_slab[irecosim],irecosim);
 	}
 
 	c_nhit_len->cd();
 	Legend(h_nhit_len[1],h_nhit_len[0]);
 
+	c_nhit_len_slab->cd();
+	Legend(h_nhit_len_slab[1],h_nhit_len_slab[0]);
+
 
 	// MyFile->cd();
-	c_nhit_len->Write();
-	c_nhit_len->Print("rootfiles/nhit_len_analysis/nhit_len_" + particle + "_" + energy + ".0GeV.png");
+	// c_nhit_len->Write();
+	// c_nhit_len->Print("rootfiles/nhit_len_analysis/nhit_len_" + particle + "_" + energy + ".0GeV.png");
 
 
 }
@@ -204,7 +220,7 @@ void analysis_allE( TString particle = "e-" )
 
 				MakePretty(h_nhit_len_slab[irecosim][islab],recosims[irecosim]);
 
-				h_nhit_len_slab[irecosim][islab]->SetTitle(TString::Format("Number of total hits at %d GeV in slab %d;nhits; Entries",energies[ie],islab));
+				h_nhit_len_slab[irecosim][islab]->SetTitle(TString::Format("Number of total hits at %d GeV in slab %d;Hits; Entries (norm.)",energies[ie],islab));
 
 				h_nhit_len_slab[irecosim][islab]->Scale(1/h_nhit_len[irecosim]->GetEntries());
 				c_nhit_len_slab->cd(islab+1);
