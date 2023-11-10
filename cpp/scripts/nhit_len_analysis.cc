@@ -41,7 +41,7 @@ void Normalize(TH1F* h)
 
 void MakePretty(TH1F *h, TString option)
 {
-	h->SetLineWidth(2);
+	h->SetLineWidth(3);
 	if(option == "reco"){
 		h->SetLineColor(kBlue+1);
 	}else{
@@ -52,10 +52,10 @@ void MakePretty(TH1F *h, TString option)
 
 void Legend(TH1F *rh,TH1F *sh)
 {
-	TLegend *leg0 = new TLegend(0.6,0.85,0.75,0.65,"","brNDC");
+	TLegend *leg0 = new TLegend(0.16,0.76,0.40,0.86,"","brNDC");
 	leg0->SetFillStyle(0);
 	leg0->SetBorderSize(0);
-	leg0->SetTextSize(0.04);
+	leg0->SetTextSize(0.03);
 	leg0->SetMargin(0.7);
 	leg0->AddEntry(rh,"Reco");
 	leg0->AddEntry(sh,"Sim");
@@ -66,8 +66,6 @@ void Draw2H(TH1F *h, Int_t recosim)
 {
 
 	if(recosim==0){
-		h->GetXaxis()->SetRangeUser(0,40);
-		h->GetYaxis()->SetRangeUser(0,0.5);
 		h->Draw("h");
 	}else{
 		h->Draw("hsame");
@@ -95,8 +93,8 @@ TFile * readfile( TString option )
 
 void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 {
-	TFile   *MyFile			  = new TFile("rootfiles/nhit_len_analysis/nhit_len_analysis_" + particle + "_" + ".root","RECREATE");
-	TCanvas *c_nhit_len  = new TCanvas("c_nhit_len" ,"c_nhit_len" ,700,700);
+	// TFile   *MyFile			  = new TFile("rootfiles/nhit_len_analysis/nhit_len_analysis_" + particle + "_" + ".root","RECREATE");
+	TCanvas *c_nhit_len  = new TCanvas("c_nhit_len_single" ,"c_nhit_len_single" ,700,700);
 	// gPad->SetGrid(1,1);
 
 	TString recosims[2] = {"conv_sim","reco"};
@@ -117,10 +115,13 @@ void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 		Normalize(h_nhit_len[irecosim]);
 		MakePretty(h_nhit_len[irecosim],recosims[irecosim]);
 
-		h_nhit_len[irecosim]->SetTitle(TString::Format("Number of total hits at %d GeV;nhits; Entries",ienergy));
+		h_nhit_len[irecosim]->SetTitle(";Hits;Entries (norm.)");
 
 		c_nhit_len->cd();
 		gPad->SetGrid();
+		StylePad(gPad,0,0.12,0,0.15);
+		h_nhit_len[irecosim]->GetXaxis()->SetRangeUser(0,250);
+		h_nhit_len[irecosim]->GetYaxis()->SetRangeUser(0,0.1);
 		Draw2H(h_nhit_len[irecosim],irecosim);
 	}
 
@@ -128,7 +129,7 @@ void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 	Legend(h_nhit_len[1],h_nhit_len[0]);
 
 
-	MyFile->cd();
+	// MyFile->cd();
 	c_nhit_len->Write();
 	c_nhit_len->Print("rootfiles/nhit_len_analysis/nhit_len_" + particle + "_" + energy + ".0GeV.png");
 
@@ -193,6 +194,8 @@ void analysis_allE( TString particle = "e-" )
 			StylePad(gPad,0,0.12,0,0.15);
 			// if(recosims[irecosim]== "conv_sim") Draw2H(h_nhit_len[irecosim],irecosim);
 			Draw2H(h_nhit_len[irecosim],irecosim);
+			// h_nhit_len[irecosim]->GetXaxis()->SetRangeUser(0,40);
+			// h_nhit_len[irecosim]->GetYaxis()->SetRangeUser(0,0.5);
 
 			for( int islab = 0; islab < NSLABS; islab++ ){
 				
@@ -208,6 +211,8 @@ void analysis_allE( TString particle = "e-" )
 				StylePad(gPad,0,0.12,0,0.15);
 				gPad->SetGrid();
 				Draw2H(h_nhit_len_slab[irecosim][islab],irecosim);
+				h_nhit_len_slab[irecosim][islab]->GetXaxis()->SetRangeUser(0,40);
+				h_nhit_len_slab[irecosim][islab]->GetYaxis()->SetRangeUser(0,0.5);
 			}
 
 		}
