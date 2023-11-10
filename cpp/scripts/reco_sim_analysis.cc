@@ -12,6 +12,7 @@ using std::cout;
 using std::endl;
 
 #define MAXV 8
+#define NSLABS 15
 
 double crystalball_function(double x, double alpha, double n, double sigma, double mean) {
   // evaluate the crystal ball function
@@ -54,7 +55,7 @@ void Normalize(TH1F* h)
 {
 	h->Scale(1.0/h->GetEntries());
 	// h->GetYaxis()->SetRangeUser(0.0001,1.0);
-	h->GetYaxis()->SetRangeUser(0.,0.3);
+	// h->GetYaxis()->SetRangeUser(0.,0.3);
 }
 
 template <class P1>
@@ -74,7 +75,7 @@ void Legend(TH1F *rh,TH1F *sh)
 	TLegend *leg0 = new TLegend(0.16,0.76,0.40,0.86,"","brNDC");
 	leg0->SetFillStyle(0);
 	leg0->SetBorderSize(0);
-	leg0->SetTextSize(0.03);
+	leg0->SetTextSize(0.04);
 	leg0->SetMargin(0.7);
 	leg0->AddEntry(rh,"Reco");
 	leg0->AddEntry(sh,"Sim");
@@ -219,6 +220,72 @@ void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 
 }
 
+void analysis_slab( TString particle = "e-", Int_t ienergy = 10 )
+{
+	TString recosims[2] = {"conv_sim","reco"};
+	TString energy  = TString::Format("%d",ienergy);
+	TFile * files[2];
+	for (int irecosim=0; irecosim < 2; irecosim++){
+
+		TString setting = recosims[irecosim] + " " + particle + " " + energy;
+		files[irecosim] = readfile(setting);
+	
+	}
+
+	TCanvas * c_hit_slab_energy = new TCanvas("c_hit_slab_energy","c_hit_slab_energy",1200,1200);
+	TCanvas * c_sum_slab_energy = new TCanvas("c_sum_slab_energy","c_sum_slab_energy",1200,1200);
+	c_hit_slab_energy->Divide(4,4);
+	c_sum_slab_energy->Divide(4,4);
+
+	TH1F * hs_hit_slab_energy[2][NSLABS];
+	TH1F * hs_sum_slab_energy[2][NSLABS];
+	for (int irecosim=0; irecosim < 2; irecosim++)
+	{
+
+		for( int islab = 0; islab < NSLABS; islab++ ){
+
+			TString hs_hit_slab_energy_name = TString::Format("hit_slab_energy/h_hit_slab_energy_corrected%d",islab);
+			TString hs_sum_slab_energy_name = TString::Format("sum_slab_energy/h_sum_slab_energy_corrected%d",islab);
+			hs_hit_slab_energy[irecosim][islab] = (TH1F*) files[irecosim]->Get(hs_hit_slab_energy_name);
+			hs_sum_slab_energy[irecosim][islab] = (TH1F*) files[irecosim]->Get(hs_sum_slab_energy_name);
+
+			MakePretty(hs_hit_slab_energy[irecosim][islab],recosims[irecosim]);
+			MakePretty(hs_sum_slab_energy[irecosim][islab],recosims[irecosim]);
+		
+			hs_hit_slab_energy[irecosim][islab]->SetTitle(TString::Format("Layer %d;Hit energy (MIPs);Entries (norm.)",islab));
+			hs_sum_slab_energy[irecosim][islab]->SetTitle(TString::Format("Layer %d;Total energy / layer (MIPs);Entries (norm.)",islab));
+
+			Normalize(hs_hit_slab_energy[irecosim][islab]);
+			Normalize(hs_sum_slab_energy[irecosim][islab]);
+
+			c_hit_slab_energy->cd(islab+1);
+			StylePad(gPad,0,0.12,0,0.15);
+			gPad->SetGrid();
+			Draw2H(hs_hit_slab_energy[irecosim][islab],irecosim);
+
+			c_sum_slab_energy->cd(islab+1);
+			StylePad(gPad,0,0.12,0,0.15);
+			gPad->SetGrid();
+			Draw2H(hs_sum_slab_energy[irecosim][islab],irecosim);
+
+			hs_hit_slab_energy[irecosim][islab]->GetXaxis()->SetRangeUser(0,20);
+			hs_sum_slab_energy[irecosim][islab]->GetXaxis()->SetRangeUser(0,200);
+
+			hs_hit_slab_energy[irecosim][islab]->GetYaxis()->SetRangeUser(0,0.5);
+			hs_sum_slab_energy[irecosim][islab]->GetYaxis()->SetRangeUser(0,1);
+
+		}
+
+	}
+
+	c_hit_slab_energy->cd(1);
+	Legend(hs_hit_slab_energy[1][0],hs_hit_slab_energy[0][0]);
+	c_sum_slab_energy->cd(1);
+	Legend(hs_sum_slab_energy[1][0],hs_sum_slab_energy[0][0]);
+
+
+}
+
 void analysis_allE( TString particle = "e-" )
 {
 	TFile *MyFile = new TFile("rootfiles/reco_sim_analysis/reco_sim_analysis_" + particle + "_" + ".root","RECREATE");
@@ -306,7 +373,8 @@ void reco_sim_analysis(TString particle = "e-", Int_t ienergy = 150)
 
 	if( particle == "e-" ){
 		// analysis_allE( particle );
-		analysis( particle, ienergy );
+		// analysis( particle, ienergy );
+		analysis_slab( particle, ienergy );
 	}else if ( particle == "mu-" ){
 		analysis( particle, ienergy );
 	}
