@@ -124,7 +124,8 @@ TFile * readfile( TString option )
 	TString name = fs.GetRunName();
 	TString data_path = "../analysis/rootfiles/" + fs.GetRecoSim() + "/";
 	if(fs.GetRecoSim() == "conv_sim"){
-		suffix = "_quality_masked.root";
+		// suffix = "_quality_masked.root";
+		suffix = "_quality.root";
 	}
 
 	cout << data_path + name + suffix << endl;
@@ -145,10 +146,15 @@ void profile( TString particle = "e-" )
 {
 	TFile *MyFile = new TFile("rootfiles/shower_profile/shower_profile_" + particle + "_" + ".root","RECREATE");
 	TCanvas *c_shower_profile[2];
-	c_shower_profile[0] = new TCanvas("c_sim_shower_profile","c_sim_shower_profile",800,800);
+	c_shower_profile[0] = new TCanvas("c_sim_shower_profile","c_sim_shower_profile",1200,800);
+	c_shower_profile[1] = new TCanvas("c_reco_shower_profile","c_reco_shower_profile",1200,800);
 	gPad->SetGrid(1,1);
-	c_shower_profile[1] = new TCanvas("c_reco_shower_profile","c_reco_shower_profile",800,800);
-	gPad->SetGrid(1,1);
+	for(auto ic : c_shower_profile){
+		ic->cd();
+		gPad->SetGrid(1,1);
+		ic->SetLeftMargin(0.12);
+		ic->SetRightMargin(0.07);
+	}
 
 	TString recosims[2]       = {"conv_sim","reco"};
 	TFile * files[2][nEconfigs];
