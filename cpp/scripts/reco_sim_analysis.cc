@@ -57,7 +57,8 @@ void Normalize(TH1F* h)
 	h->GetYaxis()->SetRangeUser(0.,0.3);
 }
 
-void MakePretty(TH1F *h, TString option)
+template <class P1>
+void MakePretty(P1 *h, TString option)
 {
 	h->SetLineWidth(3);
 	if(option == "reco"){
@@ -70,13 +71,23 @@ void MakePretty(TH1F *h, TString option)
 
 void Legend(TH1F *rh,TH1F *sh)
 {
-	TLegend *leg0 = new TLegend(0.6,0.85,0.75,0.65,"","brNDC");
+	TLegend *leg0 = new TLegend(0.16,0.76,0.40,0.86,"","brNDC");
 	leg0->SetFillStyle(0);
 	leg0->SetBorderSize(0);
-	leg0->SetTextSize(0.04);
+	leg0->SetTextSize(0.03);
+	leg0->SetMargin(0.7);
 	leg0->AddEntry(rh,"Reco");
 	leg0->AddEntry(sh,"Sim");
 	leg0->Draw("same");	
+}
+
+void Draw2E(TH1F *h, Int_t recosim)
+{
+	if(recosim==0){
+		h->Draw("E1");
+	}else{
+		h->Draw("E1 same");
+	}
 }
 
 void Draw2H(TH1F *h, Int_t recosim)
@@ -110,9 +121,9 @@ TFile * readfile( TString option )
 void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 {
 	TFile   *MyFile			  = new TFile("rootfiles/reco_sim_analysis/reco_sim_analysis_" + particle + "_" + ".root","RECREATE");
-	TCanvas *c_sum_energy = new TCanvas("c_sum_energy","c_sum_energy",700,700);
+	TCanvas *c_sum_energy = new TCanvas("c_sum_energy","c_sum_energy",900,900);
 	gPad->SetGrid(1,1);
-	TCanvas *c_nhit_slab  = new TCanvas("c_nhit_slab" ,"c_nhit_slab" ,700,700);
+	TCanvas *c_nhit_slab  = new TCanvas("c_nhit_slab" ,"c_nhit_slab" ,900,900);
 	gPad->SetGrid(1,1);
 
 	TString recosims[2] = {"conv_sim","reco"};
@@ -135,21 +146,41 @@ void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 
 		Normalize(hs_sum_energy[irecosim]);
 		MakePretty(hs_sum_energy[irecosim],recosims[irecosim]);
-		hs_sum_energy[irecosim]->GetXaxis()->SetRangeUser(1,3E3);
+		hs_sum_energy[irecosim]->GetXaxis()->SetRangeUser(1,1.2E3);
 
 		Normalize(hs_hit_slab[irecosim]);
 		MakePretty(hs_hit_slab[irecosim],recosims[irecosim]);
 
-		hs_sum_energy[irecosim]->SetTitle(TString::Format("sum energy at %d GeV;Stack energy (MIPs); Entries",ienergy));
-		hs_hit_slab[irecosim]->SetTitle(TString::Format("hit slab at %d GeV;nhits; Entries",ienergy));
+		hs_sum_energy[irecosim]->SetTitle(";Total energy (MIPs); Entries (norm.)");
+		hs_hit_slab[irecosim]->SetTitle(";Layer; Entries (norm.)");
 
 		c_sum_energy->cd();
 		if( particle == "mu-" ){
-			// hs_sum_energy[irecosim]->GetYaxis()->SetRangeUser(0.0001,0.20);
 			hs_sum_energy[irecosim]->GetXaxis()->SetRangeUser(1,2E3);
 		}
-		Draw2H(hs_sum_energy[irecosim],irecosim);
+		StylePad(gPad,0,0.12,0,0.15);
+
+		Float_t xmin = 0.4E3;
+		Float_t xmax = 0.75E3;
+		TF1 *crystalball = new TF1("crystalball", crystalball_function, xmin, xmax, 5);
+		crystalball->SetParNames("Constant", "Mean", "Sigma", "Alpha", "N");
+		crystalball->SetTitle("crystalball");
+
+		float p0 = 1.3E-1;
+		float p1 = 5.8E2;
+		float p2 = 8.7E1;
+		float p3 = 1.0;
+		float p4 = 1.0;
+		crystalball->SetParameters(p0,p1,p2,p3,p4);
+		hs_sum_energy[irecosim]->Fit("crystalball","NR");
+		cout << "chi2/ndf = " << crystalball->GetChisquare() << " / " << crystalball->GetNDF() << " = " << crystalball->GetChisquare() / crystalball->GetNDF() << endl;
+
+		MakePretty(crystalball,recosims[irecosim]);
+
+		Draw2E(hs_sum_energy[irecosim],irecosim);
+		crystalball->Draw("same");
 		c_nhit_slab->cd();
+		StylePad(gPad,0,0.12,0,0.15);
 		Draw2H(hs_hit_slab[irecosim]  ,irecosim);
 	}
 
@@ -255,7 +286,7 @@ void reco_sim_analysis(TString particle = "e-", Int_t ienergy = 150)
 
 	if( particle == "e-" ){
 		// analysis_allE( particle );
-		analysis( particle, 20 );
+		analysis( particle, ienergy );
 	}else if ( particle == "mu-" ){
 		analysis( particle, ienergy );
 	}
