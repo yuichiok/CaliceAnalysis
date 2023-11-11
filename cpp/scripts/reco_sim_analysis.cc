@@ -286,17 +286,17 @@ void analysis_slab( TString particle = "e-", Int_t ienergy = 10 )
 	TCanvas *c_ihit_slab_enery = new TCanvas("c_ihit_slab_enery","c_ihit_slab_enery",900,900);
 	StylePad(gPad,0,0.12,0,0.15);
 	gPad->SetGrid();
-	hs_hit_slab_energy[0][3]->Draw("h");
-	hs_hit_slab_energy[1][3]->Draw("hsame");
-	Legend(hs_hit_slab_energy[1][3],hs_hit_slab_energy[0][3]);
+	hs_hit_slab_energy[0][0]->Draw("h");
+	hs_hit_slab_energy[1][0]->Draw("hsame");
+	Legend(hs_hit_slab_energy[1][0],hs_hit_slab_energy[0][0]);
 
 	TCanvas *c_isum_slab_enery = new TCanvas("c_isum_slab_enery","c_isum_slab_enery",900,900);
 	StylePad(gPad,0,0.12,0,0.15);
 	gPad->SetGrid();
-	hs_sum_slab_energy[0][3]->GetYaxis()->SetRangeUser(0,0.15);
-	hs_sum_slab_energy[0][3]->Draw("h");
-	hs_sum_slab_energy[1][3]->Draw("hsame");
-	Legend(hs_sum_slab_energy[1][3],hs_sum_slab_energy[0][3]);
+	// hs_sum_slab_energy[0][0]->GetYaxis()->SetRangeUser(0,0.15);
+	hs_sum_slab_energy[0][0]->Draw("h");
+	hs_sum_slab_energy[1][0]->Draw("hsame");
+	Legend(hs_sum_slab_energy[1][0],hs_sum_slab_energy[0][0]);
 
 }
 
