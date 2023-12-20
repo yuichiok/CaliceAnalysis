@@ -57,7 +57,7 @@ void Legend(TH1F *rh,TH1F *sh)
 	leg0->SetBorderSize(0);
 	leg0->SetTextSize(0.03);
 	leg0->SetMargin(0.7);
-	leg0->AddEntry(rh,"Reco");
+	leg0->AddEntry(rh,"Data");
 	leg0->AddEntry(sh,"Sim");
 	leg0->Draw("same");	
 }
@@ -301,8 +301,8 @@ void nhit_len_analysis(TString particle = "e-", Int_t ienergy = 10)
 	if( particle == "e-" ){
 		// analysis_allE( particle );
 		analysis( particle, ienergy );
-		analysis_allE();
-		analysis_allE_sim( particle );
+		// analysis_allE();
+		// analysis_allE_sim( particle );
 	}else if ( particle == "mu-" ){
 		analysis( particle, ienergy );
 	}

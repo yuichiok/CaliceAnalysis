@@ -77,7 +77,7 @@ void Legend(TH1F *rh,TH1F *sh)
 	leg0->SetBorderSize(0);
 	leg0->SetTextSize(0.04);
 	leg0->SetMargin(0.7);
-	leg0->AddEntry(rh,"Reco");
+	leg0->AddEntry(rh,"Data");
 	leg0->AddEntry(sh,"Sim");
 	leg0->Draw("same");	
 }
@@ -119,7 +119,7 @@ TFile * readfile( TString option )
 
 }
 
-void analysis ( TString particle = "e-", Int_t ienergy = 150 )
+void analysis ( TString particle = "e-", Int_t ienergy = 10 )
 {
 	TFile   *MyFile			  = new TFile("rootfiles/reco_sim_analysis/reco_sim_analysis_" + particle + "_" + ".root","RECREATE");
 	TCanvas *c_sum_energy = new TCanvas("c_sum_energy","c_sum_energy",900,900);
@@ -137,6 +137,7 @@ void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 	
 	}
 
+	Float_t ymax = 0.2;
 	TH1F * hs_sum_energy[2];
 	TH1F * hs_hit_slab[2];
 	for (int irecosim=0; irecosim < 2; irecosim++)
@@ -148,6 +149,8 @@ void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 		Normalize(hs_sum_energy[irecosim]);
 		MakePretty(hs_sum_energy[irecosim],recosims[irecosim]);
 		hs_sum_energy[irecosim]->GetXaxis()->SetRangeUser(1,1.2E3);
+		hs_sum_energy[irecosim]->GetXaxis()->SetTitleOffset(1.2);
+		hs_sum_energy[irecosim]->GetYaxis()->SetRangeUser(0,ymax);
 
 		Normalize(hs_hit_slab[irecosim]);
 		MakePretty(hs_hit_slab[irecosim],recosims[irecosim]);
@@ -185,7 +188,7 @@ void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 		latex->SetTextSize(0.025);
 		latex->SetTextAlign(13);  //align at top
 
-		TString recosim = (irecosim==0) ? "Simulation" : "Reconstruction"; 
+		TString recosim = (irecosim==0) ? "Simulation" : "Data"; 
 		TString text = TString::Format("#splitline{#splitline{#splitline{%s}{#mu_{E} = %.1f #pm %.1f}}{#sigma_{E} = %.1f #pm %.1f}}{#chi^{2}/ndf = %.1f/%d = %.1f}",
 		recosim.Data(),
 		crystalball->GetParameter(1), crystalball->GetParError(1),
@@ -194,9 +197,9 @@ void analysis ( TString particle = "e-", Int_t ienergy = 150 )
 		);
 
 		if(irecosim==0){
-			latex->DrawLatex(807,0.285,text);
+			latex->DrawLatex(807,ymax - 0.015,text);
 		}else{
-			latex->DrawLatex(807,0.222,text);
+			latex->DrawLatex(807,ymax - 0.050,text);
 		}
 
 
@@ -377,8 +380,68 @@ void analysis_allE( TString particle = "e-" )
 
 }
 
+void simNoMask( TString particle = "e-", Int_t ienergy = 10 )
+{
+	TFile *MyFile = new TFile("rootfiles/reco_sim_analysis/reco_sim_analysis_" + particle + "_" + ".root","RECREATE");
+	TCanvas *c_sum_energy = new TCanvas("c_sum_energy","c_sum_energy",800,800);
+	gPad->SetGrid(1,1);
 
-void reco_sim_analysis(TString particle = "e-", Int_t ienergy = 150)
+	TString input = "conv_sim " + particle + " " + TString::Format("%d",ienergy);
+	TString recosim = "conv_sim";
+
+	TFile* file = readfile(input);
+
+	Float_t ymax = 0.25;
+	TH1F * hs_sum_energy = (TH1F*) file->Get("h_sum_energy_corrected");
+	Normalize(hs_sum_energy);
+	MakePretty(hs_sum_energy,recosim);
+	hs_sum_energy->GetXaxis()->SetRangeUser(1,1.2E3);
+	hs_sum_energy->GetXaxis()->SetTitleOffset(1.2);
+	hs_sum_energy->GetYaxis()->SetRangeUser(0,ymax);
+	hs_sum_energy->SetTitle(";Total energy (MIPs); Entries (norm.)");
+	hs_sum_energy->Draw("E1");
+
+
+	StylePad(gPad,0,0.12,0,0.15);
+
+	Float_t xmin = 0.4E3;
+	Float_t xmax = 1.0E3;
+	TF1 *crystalball = new TF1("crystalball", crystalball_function, xmin, xmax, 5);
+	crystalball->SetParNames("Constant", "Mean", "Sigma", "Alpha", "N");
+	crystalball->SetTitle("crystalball");
+
+	float p0 = 1.3E-1;
+	float p1 = 5.8E2;
+	float p2 = 8.7E1;
+	float p3 = 1.0;
+	float p4 = 1.0;
+	crystalball->SetParameters(p0,p1,p2,p3,p4);
+	hs_sum_energy->Fit("crystalball","NR");
+	cout << "chi2/ndf = " << crystalball->GetChisquare() << " / " << crystalball->GetNDF() << " = " << crystalball->GetChisquare() / crystalball->GetNDF() << endl;
+
+	MakePretty(crystalball,recosim);
+
+	crystalball->Draw("same");
+
+	TLatex *latex = new TLatex();
+	latex->SetTextSize(0.025);
+	latex->SetTextAlign(13);  //align at top
+
+	TString latexsim = "Simulation (no mask)"; 
+	TString text = TString::Format("#splitline{#splitline{#splitline{%s}{#mu_{E} = %.1f #pm %.1f}}{#sigma_{E} = %.1f #pm %.1f}}{#chi^{2}/ndf = %.1f/%d = %.1f}",
+	latexsim.Data(),
+	crystalball->GetParameter(1), crystalball->GetParError(1),
+	crystalball->GetParameter(2), crystalball->GetParError(2),
+	crystalball->GetChisquare(), crystalball->GetNDF(), crystalball->GetChisquare() / crystalball->GetNDF()
+	);
+
+	latex->DrawLatex(807,ymax - 0.015,text);
+	
+
+}
+
+
+void reco_sim_analysis(TString particle = "e-", Int_t ienergy = 10)
 {
 
 	TGaxis::SetMaxDigits(3);
@@ -387,8 +450,11 @@ void reco_sim_analysis(TString particle = "e-", Int_t ienergy = 150)
 
 	if( particle == "e-" ){
 		// analysis_allE( particle );
-		// analysis( particle, ienergy );
-		analysis_slab( particle, ienergy );
+
+		analysis( particle, ienergy );
+		// simNoMask( particle, ienergy );
+		
+		// analysis_slab( particle, ienergy );
 	}else if ( particle == "mu-" ){
 		analysis( particle, ienergy );
 	}
